@@ -25,6 +25,7 @@ argc: 2,*argcv++: 1
 argc: 1,*argcv++: 2
 argc: 0,*argcv++: 3
 */
+//省略符形参使用，如果首形参为int类型，系统调用第二个func函数
 void func(...){
 	cout<<"func1"<<endl;
 }

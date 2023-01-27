@@ -33,7 +33,7 @@ void test3(){
 	void *p=&a;
 	double *dp=static_cast<double*>(p);//将void*转换为原始类型
 	const char *ccp="apple";
-	char *cp=const_cast<char*>(ccp);//改变了常量属性，但是不可通过pp写值
+	char *cp=const_cast<char*>(ccp);//改变了常量属性，但是不可通过cp写值
 	string s=static_cast<string>(ccp);//合法，把字符转字面值转换为string类型
 	cout<<s<<endl;
 	//const_cast<string>(pc);//报错，const_cast只能改变常量属性
