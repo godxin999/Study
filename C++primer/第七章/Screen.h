@@ -2,6 +2,8 @@
 #include <iostream>
 #include <cstring>
 class Screen {
+private:
+	friend class Window_mgr;//Window_mgr的成员可以访问Screen类的私有部分
 public:
 	typedef std::string::size_type pos;//类型别名
 	//using pos=std::string::size_type;
