@@ -19,3 +19,14 @@ inline Screen& Screen::set(pos r, pos c, char ch) {
 	contents[r * width + c] = ch;
 	return *this;
 }
+void Screen::dummy_fcn(pos height) {
+	//cursor = width * height;//输出10，说明这里的height是参数声明
+	//cursor = width * this->height;//输出2
+	cursor = width * Screen::height;//输出2
+	//cursor = width * ::height;使用域作用符调用全局的height
+	std::cout << cursor << std::endl;
+/*
+	Screen s(1, 2, ' ');
+	s.dummy_fcn(5);
+*/
+}

@@ -25,4 +25,6 @@ public:
 	const Screen &display(std::ostream& os)const { do_display(os); return *this; }//常量对象会调用这个
 private:
 	void do_display(std::ostream& os)const { os << contents; }//打印
+public:
+	void dummy_fcn(pos);//测试名字查找
 };
