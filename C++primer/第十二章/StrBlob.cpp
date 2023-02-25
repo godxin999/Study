@@ -1,10 +1,11 @@
 #include "StrBlob.h"
+#include "StrBlobPtr.h"
 using namespace std;
 StrBlob::StrBlob() :data(make_shared<vector<string> >()) {
 
 }
 
-StrBlob::StrBlob(initializer_list<string> il) :data(make_shared<vector<string> >(il)) {
+StrBlob::StrBlob(initializer_list<string> il) :data(make_shared<vector<string> >(il)) {//使用初始化列表来初始化数据
 
 }
 
@@ -37,4 +38,13 @@ const string& StrBlob::back() const {
 void StrBlob::pop_back() {
 	check(0, "pop_back on empty StrBlob");
 	data->pop_back();
+}
+
+StrBlobPtr StrBlob::begin() {
+	return StrBlobPtr(*this);
+}
+
+StrBlobPtr StrBlob::end() {
+	auto ret = StrBlobPtr(*this, data->size());
+	return ret;
 }
