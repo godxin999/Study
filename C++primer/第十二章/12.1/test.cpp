@@ -27,6 +27,14 @@ void test2(){
 	auto q(p);//p、q指向相同对象
 	auto r=make_shared<int> (100);
 	r=q;//对r赋值，q的引用计数增加，r原来所指向的对象会被自动释放
+
+	shared_ptr<int> pi(new int(100));
+	vector<shared_ptr<int>> v1;
+	vector<int> v2;
+	v1.push_back(pi);//拷贝智能指针会增加引用计数
+	cout<<pi.use_count()<<endl;//2
+	v2.push_back(*pi);//拷贝只能指针指向的对象不会增加引用计数
+	cout<<pi.use_count()<<endl;//2
 }
 //new
 void test3(){
