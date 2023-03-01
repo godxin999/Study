@@ -22,3 +22,28 @@ StrBlobPtr& StrBlobPtr::incr() {
 	++curr;
 	return *this;
 }
+
+StrBlobPtr& StrBlobPtr::operator++() {
+	check(curr, "increment past end of StrBlobPtr");//检查curr是否已经指向尾后位置
+	++curr;
+	return *this;
+}
+
+StrBlobPtr& StrBlobPtr::operator--() {
+	check(curr, "decrement past begin of StrBlobPtr");//检查curr是否是首位置，防止产生无效下标
+	--curr;
+	return *this;
+}
+
+StrBlobPtr StrBlobPtr::operator++(int) {
+	//此处不需要检查，调用前置递增运算时才需要检查
+	StrBlobPtr ret = *this;//记录当前值
+	++*this;
+	return ret;//返回之前记录的状态
+}
+
+StrBlobPtr StrBlobPtr::operator--(int) {
+	StrBlobPtr ret = *this;
+	--*this;
+	return ret;
+}

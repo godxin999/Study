@@ -26,7 +26,13 @@ public:
 	std::string* end()const {
 		return first_free;
 	}
-
+	StrVec& operator=(std::initializer_list<std::string>);
+	std::string& operator[](std::size_t n) {
+		return elements[n];
+	}
+	const std::string& operator[](std::size_t n)const {
+		return elements[n];
+	}
 private:
 	static std::allocator<std::string> alloc;//分配空间
 	void chk_n_alloc() {

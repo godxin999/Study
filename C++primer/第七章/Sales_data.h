@@ -4,6 +4,9 @@
 class Sales_data {
 	friend std::istream& read(std::istream&, Sales_data&);
 	friend std::ostream& print(std::ostream&, const Sales_data&);
+	friend std::ostream& operator<<(std::ostream&, const Sales_data&);
+	friend std::istream& operator>>(std::istream&, Sales_data&);
+	friend bool operator==(const Sales_data&, const Sales_data&);
 public:
 	//Sales_data() = default;
 	/*
@@ -26,6 +29,7 @@ public:
 	}
 	std::string isbn()const { return bookNo; }
 	Sales_data& combine(const Sales_data&);
+	Sales_data& operator+=(const Sales_data&);
 private:
 	double avg_price()const;
 	std::string bookNo;
@@ -36,3 +40,6 @@ private:
 
 std::ostream& print(std::ostream&, const Sales_data&);
 std::istream& read(std::istream&, Sales_data&);
+
+Sales_data operator+(const Sales_data&, const Sales_data&);
+bool operator!=(const Sales_data&, const Sales_data&);
