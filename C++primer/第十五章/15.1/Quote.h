@@ -6,6 +6,10 @@
 class Quote {
 public:
 	Quote() = default;
+	Quote(const Quote&) = default;
+	Quote(Quote&&) = default;
+	Quote& operator=(const Quote&) = default;
+	Quote& operator=(Quote&&) = default;
 	Quote(const std::string& book, double sales_price) :bookNo(book), price(sales_price) {}
 	virtual ~Quote() = default;
 	std::string isbn()const {
