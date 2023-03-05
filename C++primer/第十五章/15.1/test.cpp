@@ -5,7 +5,7 @@
 	> Created Time: 2023/3/2 17:56:09
  ************************************************************************/
 
-#include "Bulk_quote.h"
+#include "Basket.h"
 using namespace std;
 //虚函数
 void test1() {
@@ -39,10 +39,22 @@ void test4() {
 	delete ip;//调用Bulk_quote的析构函数
 }
 
-int main(){
+void test5() {
+	Quote a("aaaaaa",150);
+	Bulk_quote b("hhhhhh",100,10, 0.5);
+	Basket bas;
+	bas.add_item(a);
+	for (int i = 0; i != 15; i++) {
+		bas.add_item(b);
+	}
+	bas.total_receipt(cout);
+}
+
+int main() {
 	//test1();
 	//test2();
 	//test3();
-	test4();
+	//test4();
+	test5();
 }
 

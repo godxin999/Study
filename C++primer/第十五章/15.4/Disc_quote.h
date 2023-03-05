@@ -9,6 +9,9 @@ public:
 	std::pair<std::size_t, double> discount_policy()const {
 		return { quantity,discount };
 	}
+	Quote* clone()const& = 0;
+	Quote* clone() && = 0;
+
 protected:
 	std::size_t quantity = 0;//折扣适用的购买量
 	double discount = 0;//折扣

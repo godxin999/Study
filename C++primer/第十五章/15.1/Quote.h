@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <memory>
+#include <set>
 
 class Quote {
 public:
@@ -17,6 +19,12 @@ public:
 	}
 	virtual double net_price(std::size_t n)const {//virtual关键字可以让派生类各自定义适合自身的版本的函数
 		return n * price;
+	}
+	virtual Quote* clone()const& {//为了将不同书籍加入basket，所以定义虚clone函数，各自对应左值和右值
+		return new Quote(*this);
+	}
+	virtual Quote* clone()&& {
+		return new Quote(std::move(*this));
 	}
 private:
 	std::string bookNo;

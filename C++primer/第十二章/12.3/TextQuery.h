@@ -3,7 +3,8 @@
 
 class TextQuery {
 public:
-	using line_no = std::vector<std::string>::size_type;//行号
+	//using line_no = std::vector<std::string>::size_type;//行号
+	using line_no = QueryResult::line_no;
 	TextQuery(std::ifstream&);//通过文件构造
 	QueryResult query(const std::string&)const;//查询函数
 private:
