@@ -32,6 +32,8 @@
 *.out
 *.app
 
+# Qtbuild
+build-*
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
@@ -70,7 +72,7 @@ core
 moc_*.cpp
 qrc_*.cpp
 tags
-ui_*.h
+# ui_*.h
 wrapper.bat
 wrapper.sh
 debug_toolchain.cmake
