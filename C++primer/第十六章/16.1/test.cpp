@@ -55,12 +55,88 @@ void test4(){
 	int *p1=&a,*p2=&b;
 	cout<<compare(p1,p2)<<endl;
 }
+//模板友元声明
+template <typename T> class Pal;//前置声明
+class C{
+	friend class Pal<C>;//用C实例化的Pal是C的友元
+	template <typename T> friend class Pal2;//Pal2的所有实例都是C的友元，这种情况无需前置声明
+};
+template <typename T> class C2{
+	friend class Pal<T>;//C2的每个实例把相同类型实例化的Pal声明为友元
+	template <typename X> friend class Pal2;//Pal2的所有实例都是C2每个实例的友元，为了让所有实例成为友元，友元声明中必须使用与类模板本身不同的模板参数
+	friend class Pal3;//Pal3是一个非模板类，它是C2所有实例的友元
+};
+//模板参数声明为友元
+template <typename Type>
+class ObjectCounter{
+	friend Type;
+private:
+	static ObjectCounter* getInstance(){
+		if(m_instance==nullptr){
+			m_instance=new ObjectCounter;
+		}
+		return m_instance;
+	}
+	void incCounter(){
+		m_counter++;
+		cout<<typeid(Type).name()<<" counter:"<<m_counter<<endl;
+	}
+	void decCounter(){
+		m_counter--;
+		cout<<typeid(Type).name()<<" counter:"<<m_counter<<endl;
+	}
+	int m_counter=0;
+	static ObjectCounter* m_instance;
+};
+template <typename Type>
+ObjectCounter<Type>* ObjectCounter<Type>::m_instance =nullptr;
+class A{
+public:
+	A(){
+		ObjectCounter<A>::getInstance()->incCounter();
+	}
+	~A(){
+		ObjectCounter<A>::getInstance()->decCounter();
+	}
+};
+class B{
+public:
+	B(){
+		ObjectCounter<B>::getInstance()->incCounter();
+	}
+	~B(){
+		ObjectCounter<B>::getInstance()->decCounter();
+	}
+};
+void test5(){
+	A a1;
+	A a2;
+	B b;
+}
+/*
+class A counter:1
+class A counter:2
+class B counter:1
+class B counter:0
+class A counter:1
+class A counter:0
+*/
+//模板类型别名
+template <typename T> using twin=pair<T,T>;//可以固定一个或多个模板参数
+template <typename T> using partNo=pair<T,unsigned>;
+void test6(){
+	twin<string> authors{"a","an"};
+	cout<<authors.first<<" "<<authors.second<<endl;
+	partNo<string> pn{"a",100};
+	cout<<pn.first<<" "<<pn.second<<endl;
+}
+
 int main(){
 	//test1();
 	//test2();
 	//test3();
-	test4();
-
-
+	//test4();
+	//test5();
+	test6();
 }
 
