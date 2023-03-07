@@ -34,6 +34,7 @@
 
 # Qtbuild
 build-*
+!CMakeLists.txt
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
@@ -117,6 +118,13 @@ phony.c
 *.vcxproj
 *vcproj.*.*.user
 *vcxproj.*
+
+# 过滤文件夹Debug,Release,obj和.vs
+Debug/
+Release/
+obj/
+.vs/
+build/
 
 # gcov files
 *.gcda
@@ -321,3 +329,4 @@ tmp/
 # qbs builds
 /*-debug/
 /*-release/
+
