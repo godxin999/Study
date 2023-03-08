@@ -130,6 +130,28 @@ void test6(){
 	partNo<string> pn{"a",100};
 	cout<<pn.first<<" "<<pn.second<<endl;
 }
+//类模板的static成员
+template <typename T>
+class Foo{
+public:
+	static size_t count(){return ctr;}
+	void add(){++ctr;}
+private:
+	static size_t ctr;
+};
+template <typename T>
+size_t Foo<T>::ctr=0;//定义并初始化ctr，所有相同类型的实例共享相同的静态成员
+void test7(){
+	Foo<int> fi;
+	auto ct=Foo<int>::count();//实例化Foo<int>::count
+	ct=fi.count();//使用Foo<int>::count
+	Foo<string> fs;
+	cout<<fi.count()<<endl;//0
+	fi.add();
+	Foo<int> fi2;
+	cout<<fi2.count()<<endl;//1
+	cout<<fs.count()<<endl;//0
+}
 
 int main(){
 	//test1();
@@ -137,6 +159,7 @@ int main(){
 	//test3();
 	//test4();
 	//test5();
-	test6();
+	//test6();
+	test7();
 }
 
