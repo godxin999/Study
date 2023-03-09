@@ -152,6 +152,22 @@ void test7(){
 	cout<<fi2.count()<<endl;//1
 	cout<<fs.count()<<endl;//0
 }
+//模板参数和作用域
+typedef double D;
+template <typename D,typename E>
+void f(D d,E e){
+	D temp=d;//typedef的类型参数D被模板参数隐藏
+	cout<<typeid(D).name()<<endl;//int
+	//double E;//错误，重声明模板参数E
+}
+void test8(){
+	int a=100,b=1000;
+	f(a,b);
+}
+/*
+template <typename A,typename A>//错误，模板参数名不能重用
+void f(){}
+*/
 
 int main(){
 	//test1();
@@ -160,6 +176,7 @@ int main(){
 	//test4();
 	//test5();
 	//test6();
-	test7();
+	//test7();
+	test8();
 }
 
