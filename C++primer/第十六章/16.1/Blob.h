@@ -19,6 +19,8 @@ public:
 	typedef typename std::vector<T>::size_type size_type;
 	Blob() :data(std::make_shared<std::vector<T>>()) {}
 	Blob(std::initializer_list<T> il) :data(std::make_shared<std::vector<T>>(il)) {}
+	template <typename It>
+	Blob(It b, It e);
 	size_type size()const {
 		return data->size();
 	}
@@ -80,3 +82,8 @@ bool operator==(const Blob<T>& lhs, const Blob<T>& rhs) {
 	return true;
 }
 
+template <typename T>
+template <typename It>
+Blob<T>::Blob(It b, It e):data(std::make_shared<std::vector<T>>(b,e)) {
+
+}

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cstring>
 #include <vector>
+#include <memory>
 using namespace std;
 //实例化函数模板
 template <typename T>
@@ -168,7 +169,52 @@ void test8(){
 template <typename A,typename A>//错误，模板参数名不能重用
 void f(){}
 */
-
+//如果希望使用一个模板类型参数的类型成员，需要使用typename显式告诉编译器该名字是一个类型，且不能使用class
+template <typename T>
+typename T::value_type top(const T&c){//使用typename显式告知编译器类型
+	if(!c.empty()){
+		return c.back();
+	}
+	else return typename T::value_type();//返回一个值初始化的元素
+}
+//使用模板默认实参
+template <typename T=int>//默认实参为int
+class Numbers{
+public:
+	Numbers(T v=0):val(v){}
+private:
+	T val;
+};
+void test9(){
+	Numbers<long long> l;
+	Numbers<> r;//如果一个类模板为其所有参数均提供了默认实参，且我们希望使用这些默认实，就必须在类模板之后加一个尖括号对
+}
+//成员模板
+class DebugDelete{
+public:
+	DebugDelete(ostream &s=cerr):os(s){}
+	template <typename T> void operator()(T *p)const{//重载调用运算符的成员模板
+		os<<"deleting unique_ptr"<<endl;
+		delete p;
+	}
+private:
+	ostream &os;
+};
+void test10(){
+	double *p=new double;
+	DebugDelete d;
+	d(p);
+	int *ip=new int;
+	DebugDelete()(ip);
+	unique_ptr<int,DebugDelete> ip2(new int,DebugDelete());//重载unique_ptr的默认删除器，当unique_ptr的析构函数实例化时，DebugDelete的调用运算符也会被实例化
+}
+//控制实例化，类模板会将全部成员实例化
+/*
+extern template class Blob<string>;//使用extern进行声明，这样就不会在本文件中进行实例化，但是必须在其他地方进行定义
+template class Blob<string>;//在其余文件中定义
+extern template int compare(const int&,const int&);//同样使用extern进行声明
+int compare(const int&,const int&){return 1};//在其余文件中定义
+*/
 int main(){
 	//test1();
 	//test2();
@@ -177,6 +223,8 @@ int main(){
 	//test5();
 	//test6();
 	//test7();
-	test8();
+	//test8();
+	//test9();
+	test10();
 }
 
