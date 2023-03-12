@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <type_traits>
+#include <utility>
 using namespace std;
 
 //在模板中可以应用的类型转换只有const转换和函数或数组到指针的转换
@@ -90,6 +91,61 @@ void test7(){
 	cout<<fcn_copy(begin(ia),end(ia))<<endl;//1
 	cout<<fcn_copy(vi.begin(),vi.end())<<endl;//2
 }
+//函数指针和实参推断
+/*
+template <typename T>
+void compare(const T&,const T&){}
+*/
+void func(void(*)(const string&,const string&)){}
+void func(void(*)(const int&,const int&)){}
+void test8(){
+	//func(compare);//错误，无法确定使用哪个实例
+	func(compare<int>);//正确，使用显式模板实参消除歧义
+}
+//类型推断、引用折叠
+template <typename T>
+void f1(T&){}//绑定左值
+template <typename T>
+void f2(const T&){}//绑定左值和const右值
+template <typename T>
+void f3(T&& val){//绑定非const左值
+	T t=val;//传入右值会进行拷贝,传入左值会把t绑定到val
+}
+void test9(){
+	int i=100;
+	const int ci=20;
+	f1(i);
+	f1(ci);
+	//f1(5);//错误，传递给一个&参数的实参必须是左值
+
+	f2(i);
+	f2(ci);
+	f2(5);//一个const&参数可以绑定到一个右值，T为int
+	
+	//T& &,T& &&,T&& &均折叠为T&
+	//T&& &&折叠为T&&
+	f3(i);//T为int&，int& &&折叠为int&
+	f2(ci);//T为constint&，同理进行折叠
+	f3(42);//实参为一个int类型的右值
+}
+//保持类型信息的函数
+template <typename F,typename T1,typename T2>
+void flip(F f,T1 &&t1,T2 &&t2){
+	f(forward<T2>(t2),forward<T1>(t1));//
+}
+void f(int v1, int &v2){
+	cout<<v1<<" "<<++v2<<endl;
+}
+void g(int &&i,int &j){
+	cout<<i<<" "<<j<<endl;
+}
+void test10(){
+	int i=0;
+	flip(g,i,42);
+	flip(f,i,42);
+	flip(f,i,i);
+	//flip(g,i,i);//错误，右值引用不能绑定到左值
+}
 int main(){
 	//test1();
 	//test2();
@@ -97,5 +153,8 @@ int main(){
 	//test4();
 	//test5();
 	//test6();
-	test7();
+	//test7();
+	//test8();
+	//test9();
+	test10();
 }
