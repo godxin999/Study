@@ -6,6 +6,8 @@
 
 class StrVec {
 public:
+	template<class... Args>
+	void emplace_back(Args&& ...);
 	StrVec() :elements(nullptr), first_free(nullptr), cap(nullptr) {}
 	StrVec(const StrVec&);
 	StrVec(StrVec&&)noexcept;//移动构造函数
@@ -45,3 +47,10 @@ private:
 	std::string* first_free;//指向数组第一个空闲元素的指针
 	std::string* cap;//指向数组尾后位置的指针
 };
+
+
+template <class... Args>
+inline void StrVec::emplace_back(Args&& ... args) {
+	chk_n_alloc();
+	alloc.construct(first_free++, std::forward<Args>(args)...);
+}

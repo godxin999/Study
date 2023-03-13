@@ -7,6 +7,10 @@
 
 #include "Screen.h"
 #include "Sales_data.h"
+#include <unordered_set>
+
+template <class T> class std::hash;//友元声明需要该前置声明
+
 int main(){
 	
 	std::string null_book = "9-999-99999-9";
@@ -22,8 +26,9 @@ int main(){
 	Sales_data item1(null_book);//explicit构造函数只能用于直接初始化
 	//Sales_data item2 = null_book;//explicit构造函数不可用于拷贝初始化
 	item.combine(Sales_data(null_book));//显式执行转换
-	item.combine(static_cast<Sales_data>(std::cin));//显式通过istream类型转换weiSales_data类型
-
-
+	//item.combine(static_cast<Sales_data>(std::cin));//显式通过istream类型转换weiSales_data类型
+	std::unordered_set<Sales_data> s;
+	s.insert(item1);
+	std::cout << *s.cbegin() <<std::endl;
 }
 

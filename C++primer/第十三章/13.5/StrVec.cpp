@@ -93,3 +93,4 @@ StrVec& StrVec::operator=(initializer_list<string> il) {
 	first_free = cap = data.second;
 	return *this;
 }
+

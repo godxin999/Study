@@ -8,37 +8,115 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <sstream>
 using namespace std;
-//å¯å˜å‚æ•°æ¨¡æ¿
-template<typename T,typename... Args>//Argsæ˜¯æ¨¡æ¿å‚æ•°åŒ…
-void foo(const T&,const Args& ... rest){}//restæ˜¯å‡½æ•°å‚æ•°åŒ…
+//¿É±ä²ÎÊıÄ£°å
+template<typename T,typename... Args>//ArgsÊÇÄ£°å²ÎÊı°ü
+void foo(const T&,const Args& ... rest){}//restÊÇº¯Êı²ÎÊı°ü
 void test1(){
 	int i=0;
 	double d=3.14;
 	string s="how now brown cow";
-	foo(i,s,42,d);//å®ä¾‹åŒ–ä¸ºfoo(const int&,const string&,const int&,const double&);
-	foo(s,42,"hi");//å®ä¾‹åŒ–ä¸ºfoo(const string&,const int&,const char[3]&);
-	foo(d,s);//å®ä¾‹åŒ–ä¸ºfoo(const double&,const stirng&);
-	foo("hi");//å®ä¾‹åŒ–ä¸ºfoo(const char[3]&);
+	foo(i,s,42,d);//ÊµÀı»¯Îªfoo(const int&,const string&,const int&,const double&);
+	foo(s,42,"hi");//ÊµÀı»¯Îªfoo(const string&,const int&,const char[3]&);
+	foo(d,s);//ÊµÀı»¯Îªfoo(const double&,const stirng&);
+	foo("hi");//ÊµÀı»¯Îªfoo(const char[3]&);
 }
-//sizeof...è¿ç®—ç¬¦è·å–å‚æ•°åŒ…çš„å‚æ•°æ•°é‡
+//sizeof...ÔËËã·û»ñÈ¡²ÎÊı°üµÄ²ÎÊıÊıÁ¿
 template <typename ...Args>
 void g(Args ... args){
-	cout<<sizeof...(Args)<<" ";//è¾“å‡ºç±»å‹å‚æ•°çš„æ•°ç›®
-	cout<<sizeof...(args)<<endl;//è¾“å‡ºå‡½æ•°å‚æ•°çš„æ•°ç›®
+	cout<<sizeof...(Args)<<" ";//Êä³öÀàĞÍ²ÎÊıµÄÊıÄ¿
+	cout<<sizeof...(args)<<endl;//Êä³öº¯Êı²ÎÊıµÄÊıÄ¿
 }
 void test2(){
 	g(1,2,3);//3 3
 	g(1,'a');//2 2
+}
+//¿É±ä²ÎÊıº¯ÊıÍ¨³£ÊÇµİ¹éµÄ£¬ĞèÒª¶¨ÒåÒ»¸ö·Ç¿É±ä²ÎÊıº¯ÊıÀ´ÖÕÖ¹µİ¹é
+template <typename T>
+ostream& print(ostream& os,const T &t){//Èç¹û²»¶¨Òå·Ç¿É±ä²ÎÊıÄ£°å£¬ÄÇÃ´¿É±ä²ÎÊı°æ±¾»á½øĞĞÎŞÏŞµİ¹é
+	return os<<t;
+}
+template <typename T,typename... Args>
+ostream& print(ostream& os,const T &t,const Args&... rest){
+	os<<t<<" ";
+	return print(os,rest...);
+}
+void test3(){
+	string s="100";
+	int i=6;
+	print(cout,i,s,42);//6 100 42
+}
+//°üÀ©Õ¹
+template <typename T>
+string debug_rep(const T &t){
+	ostringstream ret;
+	ret<<t;
+	return ret.str();
+}
+template <typename T>
+string debug_rep(T *p){
+	ostringstream ret;
+	ret<<"pointer: "<<p;
+	if(p){
+		ret<<" "<<debug_rep(*p);
+	}
+	else ret<<" null pointer";
+	return ret.str();
+}
+template <typename... Args>
+ostream& errorMsg(ostream &os,const Args&... rest){
+	return print(os,debug_rep(rest)...);//¶ÔrestÖĞµÄÃ¿¸öÔªËØµ÷ÓÃdebug_rep
+	//return print(os,debug_rep(rest...));//´íÎó£¬À©Õ¹restµÈ¼ÛÓÚµ÷ÓÃ½ÓÊÜ¿É±ä²ÎÊıµÄdebug_rep
+}
+void test4(){
+	errorMsg(cerr,1,"a",3.14);//1 pointer: a a 3.14
+}
+//Ä£°åÌØÀı»¯
+template <typename T>
+int compare(const T &a,const T &b){//¿ÉÒÔ±È½ÏÈÎÒâÁ½¸öÀàĞÍ
+	return a<b;
+}
+template <size_t N,size_t M>
+int compare(const char (&p1)[N],const char (&p2)[M]){//¿ÉÒÔ´¦Àí×Ö·û´®×ÖÃæ³£Á¿
+	return strcmp(p1,p2);
+}
+template<>//¿Õ¼âÀ¨ºÅÖ¸³öÎÒÃÇ½«ÒªÎªÔ­Ä£°æµÄËùÓĞÄ£°å²ÎÊıÌá¹©Êµ²Î£¬ĞèÒªÔ­Ä£°æµÄÉùÃ÷ÔÚ×÷ÓÃÓòÖĞ
+int compare(const char* const &p1,const char* const &p2){//ÌØÀı»¯Ä£°å£¬´¦Àí×Ö·ûÊı×éµÄÖ¸Õë
+	return strcmp(p1,p2);
+}
+void test5(){
+	const char *p1="hi",*p2="mom";
+	cout<<compare(p1,p2)<<endl;
+	cout<<compare("hi","mom")<<endl;
 
+}
+//ÌØÀı»¯³ÉÔ±¶ø²»ÊÇÀà
+template <typename T>
+struct Foo{
+	Foo(const T &t=T()):mem(t){}
+	void Bar(){
+		cout<<"Õı³£ÊµÀı»¯Ä£°å"<<endl;
+	}
+	T mem;
+};
+template <>
+void Foo<int>::Bar(){
+	cout<<"ÌØÀı»¯Foo<int>::Bar"<<endl;
+}
+void test6(){
+	Foo<string> fs;
+	fs.Bar();//Õı³£ÊµÀı»¯Ä£°å
+	Foo<int> fi;
+	fi.Bar();//ÌØÀı»¯Foo<int>::Bar
 }
 
 int main(){
 	//test1();
-	test2();
-
-
-
-
+	//test2();
+	//test3();
+	//test4();
+	//test5();
+	test6();
 }
 

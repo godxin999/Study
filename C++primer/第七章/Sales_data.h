@@ -1,7 +1,10 @@
 #include <iostream>
 #include <cstring>
 
+
+
 class Sales_data {
+	friend class std::hash<Sales_data>;//友元声明特例化模板
 	friend std::istream& read(std::istream&, Sales_data&);
 	friend std::ostream& print(std::ostream&, const Sales_data&);
 	friend std::ostream& operator<<(std::ostream&, const Sales_data&);
@@ -43,3 +46,12 @@ std::istream& read(std::istream&, Sales_data&);
 
 Sales_data operator+(const Sales_data&, const Sales_data&);
 bool operator!=(const Sales_data&, const Sales_data&);
+
+namespace std {//打开std命名空间，添加特例化类模板
+	template <>
+	struct hash<Sales_data> {
+		typedef size_t result_type;
+		typedef Sales_data argument_type;
+		size_t operator()(const Sales_data& s)const;
+	};
+}

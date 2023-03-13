@@ -14,9 +14,11 @@ int main(){
 	string s("some string or another");
 	v.push_back(s);//copy，调用push_back(const string&)
 	v.push_back("done");//move，调用push_back(string&&)
-
-
-
+	v.StrVec::emplace_back(10, 'c');
+	v.StrVec::emplace_back(s + "123");
+	for (auto i : v) {
+		cout << i << " ";
+	}
 
 }
 

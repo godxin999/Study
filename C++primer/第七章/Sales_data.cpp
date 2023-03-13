@@ -68,3 +68,11 @@ bool operator==(const Sales_data& lhs, const Sales_data& rhs) {
 bool operator!=(const Sales_data& lhs, const Sales_data& rhs) {
 	return !(lhs == rhs);
 }
+
+namespace std {//实现调用函数
+	size_t hash<Sales_data>::operator()(const Sales_data& s)const {
+		return hash<string>() (s.bookNo) ^
+			hash<unsigned>() (s.units_sold) ^
+			hash<double>() (s.revenue);
+	}
+}//命名空间右花括号后没有分号
