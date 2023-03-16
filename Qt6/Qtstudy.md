@@ -189,7 +189,7 @@ foreach(const QString str,list){
 对于关联容器会自动访问键值对中的值，所以不需要调用values()函数，如果需要访问键则可以使用keys()函数。
 ```C++
 QMap<QString,int> mp;
-foreach(const Qstring str,mp.keys()){
+foreach(const QString str,mp.keys()){
     qDebug()<<str<<":"<<mp.value(str);
 }
 ```
@@ -244,6 +244,150 @@ QFlags<Qt::AlignmentFlag> flags=ui->label->alignment();
 bool isLeft=flags.testFlag(Qt::AlignLeft);//测试是否含有AlignLeft属性
 ```
 #### QRandomGenerator类
+1. 随机数发生器和随机数种子
+
+QRandomGenerator有多种参数的构造函数，其中一种如下：
+```C++
+QRandomGenerator(quint32 seedValue=1)
+```
+参数seedValue是随机数种子，如果创建两个随机数发生器时随机数种子相同，那么其生成的随机数序列是完全相同的，所以一般要确保随机数种子不同，即随机数种子具有随机性。
+```C++
+QRandomGenerator *rand1=new QRandomGenerator(QDateTime::currentMSecsSinceEpoch());
+QRandomGenerator *rand1=new QRandomGenerator(QDateTime::currentSecsSinceEpoch());
+for(int i=0;i<5;++i){
+    qDebug("R1=%u, R2=%u",rand1->generate(),rand2->generate());
+}
+```
+上面这段代码在创建随机数发生器时使用了不同的种子，因为QDate的两个静态函数与当前时间有关，是变化的。
+QRandomGenerator有一个静态函数securelySeeded()可以创建出一个函数发生器，其函数原型如下：
+```C++
+QRandomGenerator QRandomGenerator::securelySeeded()
+```
+这个函数使用静态函数QRandomGenerator::system()产生的随机数作为种子来创建随机数发生器，如果只是短期内使用随机数发生器且生成的随机数的数据量较小，则不建议使用securelySeeded()生成随机数发生器，而可以使用静态函数QRandomGenerator::global()表示的全局随机数生成器。
+
+2. 全局的随机数发生器
+
+QRandomGenerator有两个静态函数会返回随机数发生器，我们可以直接使用这两个随机数发生器而不用提供种子。
+```C++
+QRandomGenerator *QRandomGenerator::system()
+QRandomGenerator *QRandomGenerator::global()
+```
+静态函数system()利用操作系统的一些特性产生随机数，且线程安全。因为其可能会使用硬件的随机数发生器，所以不建议使用它生成大量的随机数。
+静态函数global()返回全局的随机数发生器，在程序中一般使用全局的随机数发生器即可，例如：
+```C++
+quint32 rand=QRandomGenerator::global()->generate();
+```
+
+3. QRandomGenerator的接口函数
+
+QRandomGenerator生成随机数的几个基本函数定义如下：
+```C++
+quint32 QRandomGenerator::generate()//生成32位随机数
+quint64 QRandomGenerator::generate64()//生成64位随机数
+double QRandomGenerator::generateDouble()//生成[0,1)区间内的浮点数
+```
+QRandomGenerator支持调用运算符，例如：
+```C++
+QRandomGenerator rand(QDateTime::currentSecsSinceEpoch());
+for(int i=0;i<5;++i){
+    qDebug("number=%u",rand());
+}
+```
+这里的rand()等同于rand.generate()。
+QRandomGenerator的fillRange()函数可以生成一组随机数，可以将其填充到列表或者数组中，例如：
+```C++
+QList<quint32> list;
+list.resize(10);
+QRandomGenerator::global()->fillRange(list.data(),list.size());//将随机数填充到列表中
+
+quint32 array[10];
+QRandomGenerator::global()->fillRange(array);//将随机数填充到数组中
+```
+QRandomGenerator的bounded()函数可以生成指定范围内的随机数，其有很多参数类型，例如：
+```C++
+double bounded(double highest)//范围[0,highest)
+quint64 bound(quint64 lowest,quint64 highest)//范围[lowest,highest)
+```
+使用bounded()函数时要注意生成随机数的区间，均为左闭右开的区间，如下代码可以生成区间[60,100]内的随机数。
+```C++
+for(int i=0;i<10;++i){
+    quint32 score=QRandomGenerator::global()->bounded(60,101);
+    qDebug("score =%u",score);
+}
+```
+
+## 第四章 常用界面组件的使用
+### 4.3 QString字符串操作
+#### 4.3.1 QString简介
+QString最简单的构造方式为向其传递一个const char*的数据，例如：
+```C++
+QString str="Hello Qt";
+```
+在Qt Creator中，所有文件均默认使用UTF-8进行保存，QString使用静态函数fromUtf8()函数将这个const char*类型的数据转换为UTF-16编码的字符串。
+QString在被创建和初始化之后，其存储的字符串就是一个QChar字符数组，可以使用[]运算符或者at()函数进行访问。
+```C++
+QString str="dimple,酒窝";
+QChar ch0=str[0];
+QChar ch7=str.at(7);
+```
+因为QChar使用UTF-16进行编码，一个汉字也是一个字符，所以ch7是字符“酒”。
+#### 4.3.2 QChar的功能
+1. QChar和Latin1字符的转换
+
+QChar的toLatin1()函数可以将QChar转换为Latin1字符，即把UTF-16编码的字符转换为1字节Latin1编码的字符，这种操作仅在QChar字符的编码为0-255时才有意义。
+QChar含有一个静态函数QChar::fromLatin1()，其用于把Latin1字符转换为QChar字符，其定义如下：
+```C++
+QChar QChar::fromLatin1(char c)
+```
+此外QChar还有一个构造函数和这个静态函数的功能相同，其定义如下：
+```C++
+QChar::QChar(char ch)
+```
+下面这段代码使用了这两个函数，最终str的内容变成了"Pimple"。
+```C++
+QString str="Dimple";
+Qchar chP=QChar::fromLatin1('P');
+//QChar chP('P');
+str[0]=chP;
+```
+
+2. QChar字符的Unicode编码
+
+QChar的接口函数unicode()函数返回字符的UTF-16编码，即char16_t类型的数，我们也可以使用静态函数QChar::fromUcs2()来使用char16_t构造QChar字符，其声明如下：
+```C++
+QChar QChar::fromUcs2(char16_t c)
+```
+同样的，QChar也有一个有相同功能的构造函数
+```C++
+QChar::QChar(char16_t ch)
+```
+下面这段代码使用了这两个函数，最终str的内容变成了“Hello,青岛”。
+```C++
+QString str="Hello,北京";
+str[6]=QChar(0x9752);//'青'，使用构造函数
+str[7]=QChar::fromUcs2(0x5C9B);//'岛'，使用静态函数
+```
+要注意，如果一个字符的Latin1编码超过了255，那么就不能使用该字符构造QChar对象，因为QChar没有这种类型的构造函数。
+
+3. QChar的逻辑运算符
+
+QChar的逻辑比较就是两个QChar字符的UTF-16编码大小的比较。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
