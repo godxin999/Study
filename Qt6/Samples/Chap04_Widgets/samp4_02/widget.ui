@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>890</width>
-    <height>533</height>
+    <width>746</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,39 +19,45 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>GroupBox</string>
+          <string>字符串截取</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton">
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButton_3">
             <property name="text">
-             <string>PushButton</string>
+             <string>first &amp;&amp; last</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_2">
             <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="pushButton_3">
-            <property name="text">
-             <string>PushButton</string>
+             <string>left &amp;&amp; right</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="pushButton_4">
             <property name="text">
-             <string>PushButton</string>
+             <string>section *</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>front &amp;&amp; back</string>
             </property>
            </widget>
           </item>
@@ -61,34 +67,34 @@
        <item>
         <widget class="QGroupBox" name="groupBox_5">
          <property name="title">
-          <string>GroupBox</string>
+          <string>存储相关</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
            <widget class="QPushButton" name="pushButton_5">
             <property name="text">
-             <string>PushButton</string>
+             <string>isNull &amp;&amp; isEmpty</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_6">
             <property name="text">
-             <string>PushButton</string>
+             <string>resize</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="pushButton_7">
             <property name="text">
-             <string>PushButton</string>
+             <string>size &amp;&amp; length</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="pushButton_8">
             <property name="text">
-             <string>PushButton</string>
+             <string>fill</string>
             </property>
            </widget>
           </item>
@@ -98,34 +104,34 @@
        <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
-          <string>GroupBox</string>
+          <string>搜索和判断</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
            <widget class="QPushButton" name="pushButton_9">
             <property name="text">
-             <string>PushButton</string>
+             <string>indexOf &amp;&amp; lastIndexOf</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_10">
             <property name="text">
-             <string>PushButton</string>
+             <string>contains</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="pushButton_11">
             <property name="text">
-             <string>PushButton</string>
+             <string>endsWith &amp;&amp; startsWith</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="pushButton_12">
             <property name="text">
-             <string>PushButton</string>
+             <string>count</string>
             </property>
            </widget>
           </item>
@@ -135,34 +141,34 @@
        <item>
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
-          <string>GroupBox</string>
+          <string>转换或修改</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
            <widget class="QPushButton" name="pushButton_13">
             <property name="text">
-             <string>PushButton</string>
+             <string>trimmed &amp;&amp; simplified</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_14">
             <property name="text">
-             <string>PushButton</string>
+             <string>insert</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="pushButton_15">
             <property name="text">
-             <string>PushButton</string>
+             <string>remove</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="pushButton_16">
             <property name="text">
-             <string>PushButton</string>
+             <string>replace</string>
             </property>
            </widget>
           </item>
@@ -171,7 +177,13 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QGroupBox" name="groupBox_4">
@@ -179,18 +191,16 @@
           <string>输入</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>str1</string>
+          <item row="0" column="1" colspan="3">
+           <widget class="QComboBox" name="comboBox">
+            <property name="currentIndex">
+             <number>0</number>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>str2</string>
-            </property>
+            <item>
+             <property name="text">
+              <string>C:\Users\admin\Desktop\Study\Qt6\Samples\Chap04_Widgets\samp4_02\Widget.cpp</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="1" column="2">
@@ -214,6 +224,30 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>str2</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="comboBox_2">
+            <property name="currentText">
+             <string>\</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>\</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>_</string>
+             </property>
+            </item>
+           </widget>
+          </item>
           <item row="1" column="3">
            <widget class="QSpinBox" name="spinBox">
             <property name="specialValueText">
@@ -224,17 +258,10 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_2">
-            <property name="currentText">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" colspan="3">
-           <widget class="QComboBox" name="comboBox">
-            <property name="currentIndex">
-             <number>-1</number>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>str1</string>
             </property>
            </widget>
           </item>
@@ -248,7 +275,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QPushButton" name="pushButton_17">
+           <widget class="QPushButton" name="btnClearText">
             <property name="text">
              <string>清空文本框</string>
             </property>
