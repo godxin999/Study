@@ -10,6 +10,8 @@
 #include <cstring>
 #include <iomanip>
 #include <cmath>
+#include <fstream>
+#include <sstream>
 using namespace std;
 //控制布尔值的格式
 void test1(){
@@ -106,9 +108,31 @@ void test8(){
 	}
 	cin>>skipws;//恢复默认状态，丢弃空白符
 }
-//
+//读写同一个文件
 void test9(){
-
+	fstream inOut("a.txt",fstream::ate|fstream::in|fstream::out);
+	if(!inOut){
+		cerr<<"Unable to open file!"<<endl;
+		return ;
+	}
+	//inOut以ate模式打开，一开始就定位到其文件尾
+	auto end_mark=inOut.tellg();//记录文件尾
+	inOut.seekg(0,fstream::beg);//重定位到文件开始处
+	size_t cnt=0;
+	string line;
+	while(inOut&&inOut.tellg()!=end_mark&&getline(inOut,line)){
+		cnt+=line.size()+1;//+1用于统计换行符
+		auto mark=inOut.tellg();//记录读取的位置
+		inOut.seekp(0,fstream::end);//定义到尾部
+		inOut<<cnt;//输出长度
+		if(mark!=end_mark){
+			inOut<<" ";
+		}
+		inOut.seekg(mark);//恢复读取位置
+	}
+	inOut.seekp(0,fstream::end);//定位到文件尾
+	inOut<<"\n";
+	return ;
 }
 
 
