@@ -26,6 +26,12 @@ private slots:
 
     void on_calendarWidget_selectionChanged();
 
+    void on_btnDebugTime_clicked();
+
+    void on_btnDebugDate_clicked();
+
+    void on_btnDebugDateTime_clicked();
+
 private:
     Ui::Widget *ui;
 };

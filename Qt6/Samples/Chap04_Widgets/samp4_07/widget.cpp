@@ -63,3 +63,70 @@ void Widget::on_calendarWidget_selectionChanged(){
     QString str=dt.toString("yyyy年M月d日");//将时间转换为字符串
     ui->editCalendar->setText(str);//打印日期
 }
+
+void Widget::on_btnDebugTime_clicked()
+{
+    QTime TM1(9,47,40);//初始化时间
+    QString str=TM1.toString();
+    qDebug("Original time= %s",str.toLocal8Bit().data());
+
+    QTime TM2=TM1.addSecs(150);//延后150s
+    str=TM2.toString();
+    qDebug("150s later,time= %s",str.toLocal8Bit().data());
+
+    TM2=QTime::currentTime();//获取当前时间
+    str=TM2.toString("HH:mm:ss zzz");
+    qDebug("Current time= %s",str.toLocal8Bit().data());
+    qDebug("Hour= %d",TM2.hour());
+    qDebug("Minute= %d",TM2.minute());
+    qDebug("Second= %d",TM2.second());
+    qDebug("MSecond= %d",TM2.msec());
+}
+
+
+void Widget::on_btnDebugDate_clicked()
+{
+    QDate DT1(2023,3,1);//初始化日期
+    QString str=DT1.toString("yyyy-MM-dd");
+    qDebug("DT1= %s",str.toLocal8Bit().data());
+
+    QDate DT2;
+    DT2.setDate(2023,3,15);//设置日期
+    str=DT2.toString("yyyy-MM-dd");
+    qDebug("DT2= %s",str.toLocal8Bit().data());
+    qDebug("Days between DT2 and DT1= %lld",DT2.daysTo(DT1));
+
+    DT2=QDate::currentDate();//获取当前日期
+    str=DT2.toString("yyyy-MM-dd");
+    qDebug("Current date= %s",str.toLocal8Bit().data());
+    qDebug("Year= %d",DT2.year());
+    qDebug("Month= %d",DT2.month());
+    qDebug("Day= %d",DT2.day());
+    qDebug("Day of week= %d",DT2.dayOfWeek());//获取今天是周几
+
+}
+
+
+void Widget::on_btnDebugDateTime_clicked()
+{
+    QDateTime DT1=QDateTime::currentDateTime();//获取当前日期时间
+    QString str=DT1.toString();
+    qDebug("DT1= %s",str.toLocal8Bit().data());
+
+    QDate dt=DT1.date();
+    str=dt.toString("yyyy-MM-dd");
+    qDebug("DT1.date()= %s",str.toLocal8Bit().data());
+
+    QTime tm=DT1.time();
+    str=tm.toString("hh:mm:ss zzz");
+    qDebug("DT1.time()= %s",str.toLocal8Bit().data());
+
+    qint64 MS=DT1.toSecsSinceEpoch();//计算从Unix时间到现在的秒数
+    qDebug("DT1.toSecsSinceEpoch()= %lld",MS);
+
+    MS+=120;
+    DT1.setSecsSinceEpoch(MS);//根据秒数设置时间
+    str=DT1.toString("yyyy-MM-dd hh:mm:ss");
+    qDebug("DT1+120s= %s",str.toLocal8Bit().data());
+}
+
