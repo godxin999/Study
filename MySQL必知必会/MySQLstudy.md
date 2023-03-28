@@ -38,3 +38,54 @@ show warnings;--显示服务器警告消息
 ```
 
 ## 检索数据
+使用select检索单个列
+```sql
+--从websites表中检索名为name的列
+select name 
+from websites;
+```
+使用select检索多个列
+```sql
+--从websites表中检索名为name、id、url的列
+select id,name,url 
+from websites;
+```
+使用select检索所有列
+```sql
+--从websites表中检索所有列
+select * 
+from websites;
+```
+使用select检索不同的行
+```sql
+--检索country列中不同的值
+select distinct country 
+from websites;
+```
+使用limit子句限制检索的行数列数
+```sql
+--限定MySQL返回不多于5行
+select id 
+from websites
+limit 3;
+--指定MySQL返回从行2开始的3行
+select id 
+from websites
+limit 2,3;
+--MySQL5 only,功能同上
+select id
+from websites
+limit 3 offset 2;
+```
+使用完全限定的表名进行检索
+```sql
+--使用完全限定的表名
+select websites.id 
+from websites;
+--使用完全限定的表名和数据库名
+select websites.id 
+from mydb.websites;
+```
+
+## 排序检索数据
+
