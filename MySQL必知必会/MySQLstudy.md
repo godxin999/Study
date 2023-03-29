@@ -88,4 +88,38 @@ from mydb.websites;
 ```
 
 ## 排序检索数据
+使用order by子句进行排序
+```sql
+--使url列以字母排序
+select url 
+from websites
+order by url;
+```
+按多个列进行排序
+```sql
+--选择url、alexa、sal列并按照alexa、sal列依次进行排序
+select url,alexa,sal 
+from websites
+order by alexa,sal;
+```
+使用desc关键字进行降序排序
+```sql
+--选择url、alexa、sal列并按照sal列进行降序排列
+select url,alexa,sal 
+from websites
+order by sal desc;
+--选择url、alexa、sal列并先按照sal列进行降序排列再按照alexa列进行升序排列
+select url,alexa,sal 
+from websites
+order by sal desc,alexa;
+```
+利用order by子句和limit子句进行筛选
+```sql
+--选出sal列中值最大的一项
+select sal 
+from websites
+order by sal desc
+limit 1;
+```
 
+## 过滤数据
