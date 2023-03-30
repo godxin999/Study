@@ -123,3 +123,40 @@ limit 1;
 ```
 
 ## 过滤数据
+使用where子句指定搜索条件
+```sql
+--选择url、id列，并指定返回id=2的行
+select url,id 
+from websites
+where id=2;
+```
+使用where子句检查单个值
+```sql
+--选择url、id列并过滤掉id大于等于4的行
+select url,id 
+from websites
+where id<4;
+```
+使用where子句进行不匹配检查
+```sql
+--选择url、id列并过滤掉id不等于3的行
+select url,id 
+from websites
+where id<>3;
+```
+使用between关键字进行范围值检查
+```sql
+--选择url、id列，并返回id为1到3的数据
+select url,id 
+from websites
+where id between 1 and 3;
+```
+使用is null子句进行空值检查
+```sql
+--选中url、id列，并返回id为null的行
+select url,id 
+from websites
+where id is null;
+```
+
+## 数据过滤
