@@ -160,3 +160,44 @@ where id is null;
 ```
 
 ## 数据过滤
+使用and操作符使用多个过滤条件
+```sql
+--选中url、id列，并返回国家为中国且sal小于等于50的行
+select url,id 
+from websites
+where country='CN' and sal<=50;
+```
+使用or操作符检索满足任一条件的行
+```sql
+--选中url、id列，并返回满足sal等于50或500的行
+select url,id 
+from websites
+where sal=50 or sal=500;
+```
+同时使用and和or操作符，并使用圆括号保证优先级
+```sql
+--选中url、id列，并返回满足id等于1或2且alexa小于等于10的行
+select url,id 
+from websites
+where (id=1 or id=2) and alexa<=10;
+```
+使用in操作符指定条件范围
+```sql
+--选中name、url列并返回按照name排序id为3和5的行
+select name,url 
+from websites
+where id in (3,5)
+order by name;
+```
+使用not操作符不匹配条件
+```sql
+--选中name、url列并返回按照name排序id不为2和4的行
+select name,url 
+from websites
+where id not in (2,4)
+order by name;
+```
+
+## 使用通配符进行过滤
+
+
