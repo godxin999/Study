@@ -58,15 +58,28 @@ vector<int> getvec(){
 void test5(){
 	cout<<boolalpha<<is_same<decltype(authAndAccess4(std::move(getvec()),5)),int>::value<<endl;
 	cout<<boolalpha<<is_same<decltype(authAndAccess4(static_cast<vector<int>&&> (getvec()),5)),int>::value<<endl;
-	authAndAccess4(getvec(),5)=100;//返回值为一个左值引用，依旧为一个空悬引用
+	//authAndAccess4(getvec(),5)=100;//返回值为一个左值引用，依旧为一个空悬引用
 	auto v=authAndAccess4(getvec(),5);//获取第五个元素的拷贝
 }
-
+//decltype的特殊情况
+decltype(auto) f1(){
+	int x=0;
+	return x;//x是一个变量名，decltype(x)为int
+}
+decltype(auto) f2(){
+	int x=0;
+	return (x);//(x)是一个表达式，decltype((x))为int&，因为x是一个局部变量，所以这里会返回一个空悬引用
+}
+void test6(){
+	cout<<boolalpha<<is_same<decltype(f1()),int>::value<<endl;
+	cout<<is_same<decltype(f2()),int&>::value<<endl;
+}
 
 int main(){
 	//test1();
 	//test2();
 	//test3();
 	//test4();
-	test5();
+	//test5();
+	test6();
 }
