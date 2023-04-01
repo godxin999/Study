@@ -199,5 +199,36 @@ order by name;
 ```
 
 ## 使用通配符进行过滤
+- %通配符可以匹配0或多个字符，但是不能匹配NULL
+- _通配符只能匹配一个字符
+
+
+使用like操作符和%通配符进行过滤
+```sql
+--选中name、url列，并返回以url以https开头的行
+select name,url 
+from websites
+where url like 'https%';
+```
+使用多个通配符
+```sql
+--选中name、url列并返回url中包含google的行
+select name,url 
+from websites
+where url like '%google%';
+```
+使用like操作符和_通配符进行过滤
+```sql
+--选中所有列并返回满足name中任意两个字符后接ogle的行
+select *
+from websites
+where name like __ogle;
+```
+使用通配符有以下几点注意事项:
+- 不要过度使用通配符，如果其他操作符也能达到目的，那么应该使用其他操作符
+- 除非必要，不然不要把通配符用在搜索模式的开始处，这样的效率最慢
+
+
+## 用正则表达式进行搜索
 
 

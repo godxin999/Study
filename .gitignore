@@ -32,6 +32,9 @@
 *.out
 *.app
 
+# Windows bat
+*.bat
+
 # Qtbuild
 build-*
 !CMakeLists.txt
