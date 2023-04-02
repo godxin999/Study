@@ -231,4 +231,108 @@ where name like __ogle;
 
 ## 用正则表达式进行搜索
 
+使用正则表达式进行基础字符匹配
+```sql
+--选中url、id列，并返回按id排序的url中包含google的行
+select url,id 
+from websites
+where url regexp 'google'
+order by id;
+--选中url、id列，并返回按id排序的url中包含任一字符+oogle的行
+select url,id 
+from websites
+where url regexp '.oogle'
+order by id;
+```
+使用|进行or匹配
+```sql
+--选中url、id列，并返回按id排序的url中包含com或or的行
+select url,id 
+from websites
+where url regexp 'com|cn'
+order by id;
+```
+使用[]匹配几个字符之一
+```sql
+--选中url、id列，并返回按id排序的url中包含cn或cm的行
+select url,id 
+from websites
+where url regexp 'c[nm]'
+order by id;
+```
+使用^和[]不匹配几个字符之一
+```sql
+--选中url、id列，并返回按id排序的url中不包含cn或cm的行
+select url,id 
+from websites
+where url regexp 'c[^nm]'
+order by id;
+```
+使用[]匹配一个范围
+```sql
+--选中url、id列，并返回按id排序的id中包含1-9的行
+select url,id 
+from websites
+where id regexp '[1-9]'
+order by id;
+```
+使用\ \转义来匹配特殊字符，如.、[]、-、|、\
+```sql
+--选中url、id列，并返回按id排序的url中包含.的行
+select url,id 
+from websites
+where url regexp '\\.'
+order by id;
+```
+使用预定义的字符类进行匹配
+- [:alnum:] 匹配任意字母和数字
+- [:alpha:] 匹配任意字符
+- [:blank:] 匹配空格和制表符
+- [:cntrl:] 匹配控制字符
+- [:digit:] 匹配任意数字
+- [:graph:] 匹配任意可打印字符除空格
+- [:lower:] 匹配任意小写字母
+- [:print:] 匹配任意可打印字符
+- [:punct:] 匹配任意不在[:alnum:]和[:cntrl:]中的字符
+- [:space:] 匹配包括空格在内的任意空白字符
+- [:upper:] 匹配任意大写字母
+- [:xdigit:] 匹配任意十六进制数字
+
+使用重复元字符?进行可选的匹配
+```sql
+--选中url、id列，并返回按id排序的url中包含http(s可选)的行
+select url,id 
+from websites
+where url regexp 'https?'
+order by id;
+```
+使用重复元字符{n}进行指定数目的匹配
+```sql
+--选中url、id、sal列，并返回sal中按id排序的包含连续四个数字的行
+select url,id,sal 
+from websites
+where sal regexp '[[:digit:]]{4}'
+order by id;
+```
+其余的重复元字符如下:
+- \* 匹配0个或多个匹配
+- \+ 匹配一个或多个匹配
+- {n,} 匹配不少于指定数目的匹配
+- {n,m} 匹配数目的范围
+
+使用定位元字符^进行从文本开始的匹配
+```sql
+--选中url、id、sal列，并返回sal中按id排序的以一个数开头的行
+select url,id,sal
+from websites
+where sal regexp '^[0-9]\\.'
+order by id;
+```
+
+其余的定位元字符如下:
+- $ 定位文本的末尾
+- \[[:<:]] 定位词的开始
+- \[[:>:]] 定位词的结尾
+
+## 创建计算字段
 
