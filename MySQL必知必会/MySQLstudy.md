@@ -335,4 +335,34 @@ order by id;
 - \[[:>:]] 定位词的结尾
 
 ## 创建计算字段
+使用MySQL的Concat()函数拼接字段
+```sql
+--拼接vend_name和vend_country字段，并把vend_country使用括号括起来
+select Concat(vend_name,'(',vend_country,')')
+from vendors
+order by vend_name;
+```
+使用MySQL的(R/L)Trim()函数串两侧多余的空格
+```sql
+--使用RTrim()函数去除串右侧多余的空格
+select Concat(RTrim(vend_name),'(',RTrim(vend_country),')')
+from vendors
+order by vend_name; 
+```
+使用as关键字给拼接出的字段赋予列别名
+```sql
+--将拼接出的字段命名为vend_title
+select Concat(RTrim(vend_name),'(',RTrim(vend_country),')') as vend_title
+from vendors
+order by vend_name;
+```
+使用基础算数操作符进行算数操作
+```sql
+--使用乘法运算符计算出总价
+select prod_id,quantity,item_price,quantity*item_price as expanded_price
+from orderitems
+where order_num = 20005;
+```
+
+## 使用数据处理函数
 
