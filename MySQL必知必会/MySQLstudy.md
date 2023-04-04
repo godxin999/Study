@@ -365,4 +365,80 @@ where order_num = 20005;
 ```
 
 ## 使用数据处理函数
+使用Upper()函数将文本转换为大写
+```sql
+--将vend_name列转换为大写并取别名为vend_name_upcase
+select vend_name,Upper(vend_name) as vend_name_upcase
+from vendors
+order by vend_name;
+```
+使用Soundex()函数进行发音匹配
+```sql
+--在cust_contact列中搜索发音类似Y Lie的联系名
+select cust_name,cust_contact
+from customers
+where Soundex(cust_contact) = Soundex('Y Lie');
+```
+
+其余常用的文本处理函数如下:
+- Length(str) 返回串的长度
+- Locate(haystack,needle) 找出needle串在haystack串中第一次出现的位置
+- SubString(str,pos,length) 返回从pos开始长度为length的str的子串
+- SubString(str,pos) 返回从pos的str的子串，其中pos可以为负，表示从倒数位置开始截取
+- Lower(str) 将串转换为小写
+- Left(str,length) 返回串左边指定数量的字符
+- Right(str,length) 返回串右边指定数量的字符
+- LTrim(str) 去除左边的空格
+- RTrim(str) 去除右边的空格
+
+进行简单的日期比较，日期的标准格式必须为yyyy-mm-dd
+```sql
+--搜索日期时间为2005-09-01 00:00:00的订单记录
+select cust_id,order_num
+from orders
+where order_date='2005-09-01';
+```
+order_date的数据类型为datetime，当时间不匹配时，上述检索就会失效，应使用Date()函数指示MySQL提取列的日期部分
+```sql
+--搜索日期为2005-09-01的订单记录，忽略具体的时间
+select cust_id,order_num
+from orders
+where Date(order_date)='2005-09-01';
+```
+需要匹配月份中天数的日期比较
+```sql
+--匹配2005年九月的全部订单记录，但是需要知道该月有多少天
+select cust_id,order_num
+from orders
+where Date(order_date) between '2005-09-01' and '2005-09-30';
+--匹配2005年九月的全部订单记录，无需知道改月有多少天
+select cust_id,order_num
+from orders
+where Year(order_date) = 2005 and Month(order_date) = 9;   
+```
+其余的日期和时间处理函数如下:
+- Now() 返回当前日期时间
+- CurDate() 返回当前日期
+- CurTime() 返回当前时间
+- Day()
+- Hour()
+- Minute()
+- Second()
+- DayOfWeek() 返回一个日期对应的星期几
+- DateDiff(date1,date2) 计算两个日期之差
+- Date_Add(datetime,interval expr time) 返回一个日期时间值加上一个时间间隔expr之后的时间值
+
+还有一部分数值处理函数如下:
+- Abs(x)
+- Cos(x)
+- Exp(x) 返回e的x次方的值
+- Mod(x,y) 返回x%y
+- Pi() 返回圆周率
+- Rand() 返回一个随机数
+- Sin(x)
+- Sqrt(x)
+- Tan(x)
+
+## 汇总数据
+
 
