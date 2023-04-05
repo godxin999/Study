@@ -440,5 +440,64 @@ where Year(order_date) = 2005 and Month(order_date) = 9;
 - Tan(x)
 
 ## 汇总数据
+使用AVG函数计算特定列的平均值，AVG函数会自动忽略列值为NULL的行
+```sql
+--计算所有产品的价格的平均值
+select AVG(prod_price) as avg_price
+from products;
+--计算vend_id为1003的产品的价格的平均值
+select AVG(prod_price) as avg_price
+from products
+where vend_id = 1003;
+```
+使用COUNT函数统计表中行的数目
+```sql
+--统计customers表的行数，不忽略NULL值
+select COUNT(*) as num_cast
+from customers;
+--统计customers表中有邮件信息的行数，忽略NULL值
+select COUNT(cust_email) as num_cast
+from customers;
+```
+使用MAX函数获取列中的最大值
+```sql
+--获取prod_price列中的最大值
+select MAX(prod_price) as max_price
+from products;
+```
+使用MIN函数获取列中的最小值
+```sql
+--获取prod_price列中的最小值
+select MIN(prod_price) as max_price 
+from products;
+```
+使用SUM函数返回指定列值的和
+```sql
+--统计order_num为20005的所有物品的总量
+select SUM(quantity) as item_ordered
+from orderitems
+where order_num = 20005;
+--计算出order_num为20005的所有物品的总价格
+select SUM(quantity*item_price) as total_price 
+from orderitems
+where order_num = 20005;
+```
+使用distinct参数指定列名后，在使用聚集函数时就只统计不同的值
+```sql
+--计算vend_id为1003的不同产品的价格的平均值
+select AVG(distinct prod_price) as avg_price
+from products
+where vend_id = 1003;
+```
+可以组合使用聚集函数
+```sql
+--统计物品的数目的同时统计物品价格的最大值、最小值和平均值
+select COUNT(*) as num_items,       
+MIN(prod_price) as price_min,
+MAX(prod_price) as price_max, 
+AVG(prod_price) as price_avg 
+from products;
+```
 
+## 分组数据
 
