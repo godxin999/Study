@@ -63,17 +63,31 @@
     <property name="title">
      <string>目录树</string>
     </property>
+    <addaction name="actAddFolder"/>
+    <addaction name="actAddFiles"/>
+    <addaction name="actScanItems"/>
+    <addaction name="actDeleteItem"/>
+    <addaction name="separator"/>
+    <addaction name="actQuit"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
      <string>视图</string>
     </property>
+    <addaction name="actZoomIn"/>
+    <addaction name="actZoomOut"/>
+    <addaction name="actZoomRealSize"/>
+    <addaction name="actZoomFitH"/>
+    <addaction name="actZoomFitW"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
+   <property name="windowTitle">
+    <string>图片目录树</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
@@ -83,9 +97,33 @@
       <widget class="QTreeWidget" name="treeFiles">
        <column>
         <property name="text">
-         <string notr="true">1</string>
+         <string notr="true">节点</string>
+        </property>
+        <property name="font">
+         <font>
+          <bold>true</bold>
+         </font>
         </property>
        </column>
+       <column>
+        <property name="text">
+         <string>节点类型</string>
+        </property>
+        <property name="font">
+         <font>
+          <bold>true</bold>
+         </font>
+        </property>
+       </column>
+       <item>
+        <property name="text">
+         <string>图片文件</string>
+        </property>
+        <property name="icon">
+         <iconset resource="res.qrc">
+          <normaloff>:/icons/icons/15.ico</normaloff>:/icons/icons/15.ico</iconset>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -136,6 +174,9 @@
    </property>
   </action>
   <action name="actAddFiles">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/icons/icons/824.bmp</normaloff>:/icons/icons/824.bmp</iconset>
@@ -151,6 +192,9 @@
    </property>
   </action>
   <action name="actZoomIn">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/icons/icons/418.bmp</normaloff>:/icons/icons/418.bmp</iconset>
@@ -166,6 +210,9 @@
    </property>
   </action>
   <action name="actZoomOut">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/icons/icons/416.bmp</normaloff>:/icons/icons/416.bmp</iconset>
@@ -181,6 +228,9 @@
    </property>
   </action>
   <action name="actZoomRealSize">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/icons/icons/414.bmp</normaloff>:/icons/icons/414.bmp</iconset>
@@ -193,6 +243,9 @@
    </property>
   </action>
   <action name="actZoomFitW">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/icons/icons/424.bmp</normaloff>:/icons/icons/424.bmp</iconset>
@@ -208,6 +261,9 @@
    </property>
   </action>
   <action name="actDeleteItem">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/icons/icons/delete1.bmp</normaloff>:/icons/icons/delete1.bmp</iconset>
@@ -232,6 +288,9 @@
    </property>
   </action>
   <action name="actZoomFitH">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/icons/icons/426.bmp</normaloff>:/icons/icons/426.bmp</iconset>
@@ -292,5 +351,22 @@
  <resources>
   <include location="res.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
