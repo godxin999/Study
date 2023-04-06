@@ -500,4 +500,61 @@ from products;
 ```
 
 ## 分组数据
+使用group by子句建立分组，其使用要求如下:
+- group by子句可以包含任意数目的列
+- group by子句中列出的每个列都必须是检索列或者有效的表达式(不能为聚集函数或别名)
+- 除了聚集计算语句外，select语句中的每个列都必须在group by子句中给出
+- 如果分组列中包含NULL值，那么NULL将作为一个分组返回，如果列中包含多行NULL值，那么它们将分为一组
+- group by子句必须出现在where子句之后，order by子句之前
 
+```sql
+--按照vend_id进行分组，并计算每组中的产品总数
+select vend_id,COUNT(*) as num_prods
+from products
+group by vend_id;
+```
+使用with rollup关键字在分组时得到汇总(汇总对应的名称为NULL)
+```sql
+--按照vend_id进行分组，计算每组中的产品总数并汇总
+select vend_id,COUNT(*) as num_prods
+from products
+group by vend_id with rollup;
+```
+使用having子句对分组进行过滤
+```sql
+--按照cust_id进行分组，计算订单的总数并过滤出订单总数大于等于2的分组
+select cust_id,COUNT(*) as orders
+from orders
+group by cust_id
+having COUNT(*) >= 2;
+```
+同时使用having子句和where子句
+```sql
+--首先过滤掉prod_price小于10的行，然后按照vend_id进行分组和排序，计算产品的总数并过滤出产品总数大于等于2的分组
+select vend_id,COUNT(*) as num_prods
+from products
+where prod_price >= 10
+group by vend_id
+having COUNT(*) >= 2;
+```
+使用group by子句分组并使用order by子句进行排序
+```sql
+--按照order_num进行分组，计算出物品的总价并过滤出总价大于等于50的分组，最后按照总价大小进行排序
+select order_num,SUM(quantity*item_price) as ordertotal
+from orderitems
+group by order_num
+having SUM(quantity*item_price) >= 50
+order by ordertotal;
+```
+至此回顾一下select语句中子句的顺序
+|子句|说明|是否必须使用|
+|:-:|:-:|:-:|
+|select|要返回的列或表达式|是|
+|from|从中检索数据的表|仅在从表中选择数据时使用|
+|where|行级过滤|否|
+|group by|分组说明|仅在按组计算聚集时使用|
+|having|组级过滤|否|
+|order by|输出排序顺序|否|
+|limit|要检索的行数|否|
+
+## 使用子查询
