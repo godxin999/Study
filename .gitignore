@@ -32,6 +32,9 @@
 *.out
 *.app
 
+# datafile
+*.dat
+
 # Windows bat
 *.bat
 
