@@ -581,3 +581,34 @@ order by cust_name;
 上述例子的子查询涉及外部查询，被成为相关子查询，这时候列名可能存在多义性，需要使用完全限定的列名
 
 ## 联结表
+使用联结从多个表中检索数据
+```sql
+--从两个表中选择列，并使用where子句联结两表，指示MySQL匹配vendors表和products表中的vend_id
+select vend_name,prod_name,prod_price
+from vendors,products
+where vendors.vend_id = products.vend_id
+order by vend_name,prod_name;
+```
+如果没有`where`子句建立联结关系，那么就会返回两个表的笛卡尔积，即第一个表的每个行都会和第二个表的每个行配对，为了防止忘记联结条件可以使用`inner join`和`on`子句
+```sql
+--联结vendors表和products表并匹配两表中的vend_id
+select vend_name,prod_name,prod_price
+from vendors inner join products
+on vendors.vend_id = prodcts.vend_id;
+```
+使用`where`子句创建多个联结条件
+```sql
+--查询订单号为20005的产品名、供应商、价格和数量
+select prod_name,vend_name,prod_price,quantity
+from orderitems,products,vendors
+where products.vend_id = vendors.vend_id and orderitems.prod_id = products.prod_id and order_num = 20005;
+```
+使用联结替换上一章的子查询
+```sql
+--查询购买TNT2的客户的信息
+select cust_name,cust_contact
+from customers,orders,orderitems
+where customers.cust_id = orders.cust_id and orderitems.order_num = orders.order_num and prod_id = 'TNT2';
+```
+
+## 创建高级联结
