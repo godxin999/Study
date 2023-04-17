@@ -612,3 +612,52 @@ where customers.cust_id = orders.cust_id and orderitems.order_num = orders.order
 ```
 
 ## 创建高级联结
+使用表别名缩短SQL语句
+```sql
+select cust_name,cust_contact
+from customers as c,orders as o,orderitems as oi
+where c.cust_id = o.cust_id and oi.order_num = o.order_num and prod_id = 'TNT2';
+```
+使用自联结替换子查询
+```sql
+--将products表分别设置别名为p1、p2以防止二义性，然后进行自联结，并按照第二个表中的prod_id过滤数据
+select p1.prod_id,p1.prod_name
+from products as p1,products as p2
+where p1.vend_id = p2.vend_id and p2.prod_id = 'DTNTR';
+```
+使用自然连接排除多次出现的列，使每个列只返回一次
+```sql
+--只对第一个表使用通配符，其余的列明确列出，所以没有重复的列被检索出来
+select c.*,o.order_num,o.order_date,oi.prod_id,oi.quantity,oi.item_price  
+from customers as c,orders as o,orderitems as oi
+where c.cust_id = o.cust_id and oi.order_num = o.order_num and prod_id = 'FB';
+```
+使用外部联结可以包含没有关联行的那些行，在使用`outer join`子句时使用`left`关键字指定包括左表的所有行
+```sql
+--包含左侧表(customers)中的所有行，检索所有客户的订单号，包括从未下过订单的客户
+select customers.cust_id,orders.order_num 
+from customers left outer join orders
+on customers.cust_id = orders.cust_id;
+```
+同理使用`right`关键字指定包括右表的所有行
+```sql
+--包含右侧表(orders)中的所有行，检索所有订单的订单号
+select customers.cust_id,orders.order_num
+from customers right outer join orders
+on customers.cust_id = orders.cust_id;
+```
+使用带聚集函数的联结
+```sql
+--使用内部联结，检索每个客户和每个客户的订单数
+select customers.cust_name,customers.cust_id,COUNT(orders.order_num) as num_ord
+from customers inner join orders
+on customers.cust_id = orders.cust_id 
+group by customers.cust_id;
+--使用外部联结包含左侧表中的所有行，检索每个客户和每个客户的订单数，包括从未下过订单的客户
+select customers.cust_name,customers.cust_id,COUNT(orders.order_num) as num_ord
+from customers left outer join orders 
+on customers.cust_id = orders.cust_id
+group by customers.cust_id; 
+```
+
+## 组合查询
