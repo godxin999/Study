@@ -661,3 +661,39 @@ group by customers.cust_id;
 ```
 
 ## 组合查询
+使用`union`关键字来创建组合查询
+```sql
+--检索价格小于等于五的物品或者供应商id为1001或1002的物品
+select vend_id,prod_id,prod_price
+from products
+where prod_price <= 5 
+union
+select vend_id,prod_id,prod_price
+from products
+where vend_id in (1001,1002);
+```
+`union`关键字会自动对查询结果进行去重，这是可以使用`union all`关键字来返回所有匹配行
+```sql
+--不对检索结果进行去重
+select vend_id,prod_id,prod_price 
+from products
+where prod_price <= 5
+union all
+select vend_id,prod_id,prod_price 
+from products
+where vend_id in (1001,1002);
+```
+使用`union`进行组合查询时，只能使用一条`order by`语句进行排序，且需位于最后一条`select`语句之后
+```sql
+--对组合查询的结果进行排序
+select vend_id,prod_id,prod_price
+from products
+where prod_price <= 5
+union
+select vend_id,prod_id,prod_price
+from products
+where vend_id in (1001,1002) 
+order by vend_id,prod_price;
+```
+
+## 全文本搜索
