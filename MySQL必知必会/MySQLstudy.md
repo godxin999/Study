@@ -697,3 +697,74 @@ order by vend_id,prod_price;
 ```
 
 ## 全文本搜索
+并非所有的引擎都支持全文本搜索，比如InnoDB引擎不支持全文本搜索，而MyISAM引擎则支持，在创建表的时候需要根据需求选择对应的引擎。
+在创建表的时候，为了进行全文本搜索，MySQL根据子句`fulltext`的指示对列进行索引，在定义之后，MySQL会自动维护该索引，`fulltext`可以在创建表的时候指定，也可以在稍后指定。
+使用`Match()`函数和`Against()`函数进行全文本搜索，其中`Match()`函数用于指定被搜索的列，`Against()`函数用于指定要使用的搜索表达式
+```sql
+--检索列note_text并指定rabbit为搜索文本
+select note_text 
+from productnotes
+where Match(note_text) Against('rabbit');
+```
+全文本搜索会对结果进行排序，高优先级的行先返回
+```sql
+--rank列会显示出全文本搜索的优先级，不包含rabbit的rank值为0，文本中词靠前的rank值比词靠后的rank值高
+select note_text,
+Match(note_text) Against('rabbit') as `rank`
+from productnotes;
+```
+使用查询扩展可以找出可能相关的结果，即使它们并不精确的包含所查找的词
+```sql
+--对anvils使用查询扩展
+select note_text 
+from productnotes
+where Match(note_text) Against('anvils' with query expansion);
+```
+使用布尔文本搜索可以指定要排斥的词和词的优先级，还可以进行表达式分组，且布尔文本搜索在没有`fulltext`索引的情况下也可以使用
+```sql
+--匹配包含heavy但是不包含任意以rope开始的词的行
+select note_text
+from productnotes
+where Match(note_text) Against('heavy -rope*' in boolean mode);
+```
+全文本布尔操作符及其说明如下:
+- `+` 包含，词必须存在
+- `-` 排除 词必须不出现
+- `>` 包含，且增加优先级
+- `<` 包含，且减少优先级
+- `()` 把词组成子表达式(允许这些子表达式作为一个组被包含、排除、排列)
+- `~` 取消一个词的排序值
+- `*` 词尾的通配符
+- `""` 定义一个短语(与单个词的列表不同，它匹配整个短语以包含或排除这个短语)
+
+下面给出几个例子来说明一些操作符的使用方式
+```sql
+--匹配包含词rabbit和bait的行
+select note_text
+from productnotes
+where Match(note_text) Against('+rabbit +bait' in boolean mode);
+--匹配包含词rabbit和bait中至少一个词的行
+select note_text  
+from productnotes
+where Match(note_text) Against('rabbit bait' in boolean mode); 
+--匹配短语rabbit bait
+select note_text  
+from productnotes
+where Match(note_text) Against('"rabbit bait"' in boolean mode); 
+--匹配rabbit和carrot并增加前者的优先级和降低后者的优先级
+select note_text  
+from productnotes
+where Match(note_text) Against('>rabbit <carrot' in boolean mode); 
+--匹配safe和combination并降低后者的优先级
+select note_text  
+from productnotes
+where Match(note_text) Against('+safe +(<combination)' in boolean mode); 
+```
+全文本搜索有以下的使用规则
+- 短词(三个或三个字符以下的词)会被忽略且从索引中删除
+- MySQL内带有的非用词列表在索引时总是被忽略
+- 当一个词在50%以上的行都出现时，则将其作为一个非用词忽略，该条不适用于布尔文本搜索
+- 如果表中的行数少于3行，那么全文本搜索将不返回结果
+- 词中的单引号会被忽略，比如don't索引为dont
+
+## 插入数据
