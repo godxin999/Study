@@ -768,3 +768,92 @@ where Match(note_text) Against('+safe +(<combination)' in boolean mode);
 - 词中的单引号会被忽略，比如don't索引为dont
 
 ## 插入数据
+使用`insert`语句插入一个行
+```sql
+--向customers表中插入一行
+insert into customers
+values(NULL,
+'Pep E. LaPew',
+'100 Main Street',
+'Los Angeles',
+'CA',
+'90046',
+'USA',
+NULL,
+NULL);
+```
+上面的SQL语句高度依赖于表中列的定义次序，所以应该使用下述更安全的`insert`语句
+```sql
+--明确地给出列名，在插入行时，MySQL会将values中的相应值填入表中的对应项
+insert into customers(cust_name,
+cust_address,
+cust_city,
+cust_state,
+cust_zip,
+cust_country,
+cust_contact,
+cust_email)
+values('Pep E. LaPew',
+'100 Main Street', 
+'Los Angeles',
+'CA',
+'90046',
+'USA',
+NULL,
+NULL);
+```
+如果表的定义允许，则可以在`insert`操作中省略某些列，省略的列必须满足以下某个条件
+- 该列定义为允许`NULL`值
+- 在表定义中给出默认值，即不给出值时使用默认值
+
+为了提高性能，可以使用`insert low_priority into`语句，这样MySQL会延迟进行该条语句，直到没有客户端从表中读取数据为止
+
+可以一次提交多个`insert`语句以插入多个行，如果每条insert语句中的列名和次序相同时，可以组合各条`insert`语句
+```sql
+--向customers表中插入两行
+insert into customers(cust_name,
+cust_address,
+cust_city,
+cust_state,
+cust_zip,
+cust_country)
+values('Pep E. LaPew',
+'100 Main Street',
+'Los Angeles',
+'CA',
+'90046',
+'USA'),
+('M. Martain',
+'42 Galaxy Way',
+'New York',
+'NY',
+'11213',
+'USA'); 
+```
+使用`select`语句配合`insert`语句可以插入检索出的数据
+```sql
+--将customers表中检索出的数据插入到customers表中
+--注意不能在无法保证主键不重复的情况下导入主键列，这里为cust_id
+insert into customers(        
+cust_contact,
+cust_email,
+cust_name,
+cust_address,
+cust_city,
+cust_state,
+cust_zip,
+cust_country)
+select         
+cust_contact,          
+cust_email,
+cust_name,
+cust_address,
+cust_city,
+cust_state,
+cust_zip,
+cust_country
+from customers;
+```
+`insert select`并不要求列名匹配，其使用select中的第一列来填充表中指定的第一个列，其余列同理。
+
+## 更新和删除数据
