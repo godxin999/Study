@@ -857,3 +857,28 @@ from customers;
 `insert select`并不要求列名匹配，其使用select中的第一列来填充表中指定的第一个列，其余列同理。
 
 ## 更新和删除数据
+使用`update`语句更新(修改)表中数据
+```sql
+--更新客户10005的电子邮件地址
+update customers
+set cust_email = 'elmer@fudd.com'
+where cust_id = 10005;
+--更新客户10005的客户名和电子邮件地址
+update customers
+set cust_name = 'The Fudds',     
+cust_email = 'elmer@fudd.com'
+where cust_id = 10005;
+--使用NULL值去除客户10005的电子邮件地址
+update customers
+set cust_email = NULL            
+where cust_id = 10005;
+```
+使用`delete`语句删除表中数据
+```sql
+--删除客户10020的所有数据
+delete from customers
+where cust_id = 10020;
+```
+如果想要从表中删除所有的行，可以使用`truncate table`语句，该语句删除原有的表然后重新创建一个表，速度较`delete`语句快
+
+## 创建和操纵表
