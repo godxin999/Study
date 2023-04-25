@@ -882,3 +882,122 @@ where cust_id = 10020;
 如果想要从表中删除所有的行，可以使用`truncate table`语句，该语句删除原有的表然后重新创建一个表，速度较`delete`语句快
 
 ## 创建和操纵表
+使用`create table`创建表的时候，需要给出以下信息:
+- 新表的名字，在关键字`create table`之后给出
+- 表列的名字和定义，使用逗号分隔
+
+```sql
+--创建customers表并以cust_id为主键
+create table customers
+(
+cust_id int not NULL auto_increment,
+cust_name char(50) not NULL,
+cust_address char(50) NULL,
+cust_city char(50) NULL,    
+cust_state char(5) NULL,  
+cust_zip char(10) NULL,  
+cust_country char(50) NULL, 
+cust_contact char(50) NULL, 
+cust_email char(255) NULL,  
+primary key (cust_id)
+)
+engine = InnoDB;
+```
+在创建新表时，指定的表名必须不存在，否则将会出错，如果想仅在一个表不存在时创建它，那么可以使用`create table if not exists`创建表
+
+在创建表的时候，可以规定列是否接受`NULL`值，不允许`NULL`值的列在插入或更新行时必须有值，此外主键只能使用不允许`NULL`值的列
+```sql
+--订单号、订单时间、客户ID都需要，所以指定为not NULL
+create table orders
+(
+order_num int not NULL auto_increment,
+order_date datetime not NULL,
+cust_id int not NULL,
+primary key (order_num)
+)
+engine = InnoDB;
+--供应商ID和供应商名是需要的，指定为not NULL，其余指定为NULL
+create table vendors
+(
+vend_id int not NULL auto_increment,
+vend_name char(50) not NULL,
+vend_address char(50) NULL,
+vend_state char(5) NULL,    
+vend_zip char(10) NULL,   
+vend_country char(50) NULL, 
+primary key (vend_id)
+)
+engine = InnoDB;
+```
+可以使用多个列作为主键，前提为这些列的组合值必须唯一
+```sql
+--使用订单号和订单物品作为主键
+create table orderitems
+(
+order_num int not NULL,
+order_item int not NULL, 
+prod_id char(10) not NULL,
+quantity int not NULL,
+item_price decimal(8,2) not NULL,
+primary key (order_num,order_item)
+)
+engine = InnoDB;
+```
+使用`auto_increment`可以在执行`insert`操作时指示MySQL自动对该列增量，从而为该列赋予下一个可用的值，每个表只允许一个`auto_increment`列，且其必须被索引(例如使其成为主键)
+```sql
+cust_id int not NULL auto_increment
+```
+如果在插入行的时候没有给出值，MySQL允许指定此时使用的默认值，默认值使用`default`关键字在创建表时指定
+```sql
+--quantity列默认值为1
+create table orderitems
+(                                  
+order_num int not NULL,
+order_item int not NULL,
+prod_id char(10) not NULL,
+quantity int not NULL default 1,
+item_price decimal(8,2) not NULL,  
+primary key (order_num,order_item)
+)
+engine = InnoDB;
+```
+可以使用`engine=`语句来指定MySQL使用该引擎来创建表，当你使用`select`等语句时，该引擎在内部处理你的请求，常用的几个引擎如下:
+- InnoDB为一个可靠的事务处理引擎，但不支持全文本搜索
+- MEMORY在功能上等同于MyISAM，但是数据存储在内存中，速度快，适用于临时表
+- MyISAM是一个性能极高的引擎，其支持全文本搜索，但不支持事务处理
+
+引擎类型可以混用，但具有一个缺陷，就是外键不能跨引擎，即使用一个引擎的表不能引用具有使用不同引擎的表的外键
+
+如果需要更新表的定义，则可以使用`alter table`语句，其在使用时要求给出下面的信息:
+- 在`alter table`后给出要更改的表名(该表必须存在，否则将产生错误)
+- 所做更改的列表
+
+```sql
+--向vendors表中添加一列
+alter table vendors
+add vend_phone char(20);
+--删除刚刚添加的列
+alter table vendors      
+drop column vend_phone; 
+```
+可以使用`alter table`来定义外键
+```sql
+--添加外键order_item
+alter table orderitems
+add constraint fk_orderitems_orders
+foreign key (order_num) references orders (order_num);
+```
+可以使用`drop table`删除表
+```sql
+--删除orderitems表
+drop table orderitems;
+```
+可以使用`rename table`重命名表
+```sql
+--将customers表重命名为c
+rename table customers to c;
+--重命名多个表
+rename table a1 to a,b1 to b,c1 to c;
+```
+
+## 使用视图
