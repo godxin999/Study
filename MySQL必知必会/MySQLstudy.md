@@ -1001,3 +1001,70 @@ rename table a1 to a,b1 to b,c1 to c;
 ```
 
 ## 使用视图
+视图是虚拟的表，与包含数据的表不一样，视图只包含使用时动态数据的查询
+```sql
+--创建视图
+create view productcustomers as       
+select cust_name,cust_contact,prod_id
+from customers,orders,orderitems
+where customers.cust_id = orders.cust_id and orderitems.order_num = orders.order_num; 
+--使用视图进行查询
+select cust_name,cust_contact
+from productcustomers
+where prod_id = 'TNT2';
+```
+在视图创建之后，可以用与表基本相同的方式来利用它们，可以使用`select`操作，过滤和排序数据，或者将视图联结到其他视图或表，甚至添加和更新数据，但是使用视图有如下限制: 
+- 视图的名字必须唯一
+- 创建视图需要有足够的访问权限
+- `order by`可以用在视图中，如果从该视图检索数据`select`中也含有`order by`，那么视图中的`order by`将被覆盖
+- 视图不能索引，也不能有关联的触发器活默认值
+
+视图的基本使用如下: 
+- 视图使用`create view`语句来创建
+- 可以通过`show create view viewname`来查看创建视图的语句
+- 可以使用`drop view viewname`来删除视图
+- 更新视图时，可以先用`drop`再用`create`，也可以直接使用`create or replace view`
+
+可以使用视图来重新格式化检索出的数据
+```sql
+--创建视图
+create view vendorlocations as
+select Concat(RTrim(vend_name),'(',RTrim(vend_country),')') as vend_title
+from vendors
+order by vend_name;
+--获取格式化后的数据
+select * 
+from vendorlocations;
+```
+可以使用视图来过滤不想要的数据
+```sql
+--创建视图
+create view customeremaillist as
+select cust_id,cust_name,cust_email
+from customers
+where cust_email is not null;
+--获取过滤后的数据
+select *
+from customeremaillist;
+```
+使用视图和计算字段简化数据处理
+```sql
+--创建视图
+create view orderitemsexpanded as
+select order_num,prod_id,quantity,item_price,quantity*item_price as expanded_price
+from orderitems;
+--获取处理后的数据
+select *                  
+from orderitemsexpanded
+where order_num = 20005;  
+```
+通常情况下，视图是可更新的，即可以对它们使用`insert`、`update`和`delete`操作，但是如果视图包含以下操作，则其是不可更新的
+- 分组(使用`group by`和`having`)
+- 联结
+- 子查询
+- 并
+- 聚集函数
+- `distinct`
+- 导出列
+
+## 使用存储过程
