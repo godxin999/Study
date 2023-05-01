@@ -8,6 +8,8 @@
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <vector>
+#include <map>
 using namespace std;
 //列表初始化
 void test1(){
@@ -107,12 +109,64 @@ struct I{//H不是聚合类，但是I是聚合类
 void test6(){
 	I i{{},1,2.5};
 }
+//任意长度的初始化列表
+class FooVector{
+private:
+	vector<int> content_;
+public:
+	FooVector(std::initializer_list<int> list){
+		for(auto it=list.begin();it!=list.end();++it){
+			content_.push_back(*it);
+		}
+	}
+};
+class FooMap{
+private:
+	map<int,int> content_;
+	using pair_t=std::map<int,int>::value_type;
+public:
+	FooMap(std::initializer_list<pair_t> list){
+		for(auto it=list.begin();it!=list.end();++it){
+			content_.insert(*it);
+		}
+	}
+};
+void test7(){
+	FooVector foo_1={1,2,3,4,5};
+	FooMap foo_2={{1,2},{3,4},{5,6}};
+}
+//初始化列表的细节
+void test8(){
+	std::initializer_list<int> list;//使用无参构造函数
+	cout<<list.size()<<endl;//0
+	list={1,2,3,4,5};//可以直接赋值修改
+	cout<<list.size()<<endl;//5
+	cout<<typeid(list.begin()).name()<<endl;//int const * __ptr64，所以初始化列表在遍历的时候是只读的
+}
+//因为初始化列表存储了元素的引用，所以下列函数是错误的
+/*
+std::initializer_list<int> f(){
+	int a=1,b=2;
+	return {a,b};//警告，返回了局部变量的地址
+}
+*/
+//应该使用具有拷贝/移动语义的容器来替代初始化
+vector<int> f2(){
+	int a=1,b=2;
+	return {a,b};
+}
+//可以通过初始化列表来检查以及防止类型收窄
+void test9(){
+	//int b={1.1};//错误，发生类型收窄
+}
 int main(){
 	//test1();
 	//test2();
 	//test3();
 	//test4();
 	//test5();
-	test6();
+	//test6();
+	//test7();
+	//test8();
+	test9();
 }
-

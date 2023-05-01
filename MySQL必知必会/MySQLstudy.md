@@ -1068,3 +1068,104 @@ where order_num = 20005;
 - 导出列
 
 ## 使用存储过程
+使用`call`语句执行存储过程，`call`接受存储过程的名字以及需要传递给它的任意参数
+```sql
+--执行名为productpricing的存储过程，它计算并返回产品的最低、最高和平均价格
+call productpricing(@pricelow,@privehigh,@priceaverage);
+```
+使用`create procedure`语句创建存储过程
+```sql
+--因为创建存储过程中存在;所以先把分隔符更换为//，在创建后再更改回来，该存储过程是一个返回产品平均价格的存储过程
+delimiter //
+create procedure productpricing()
+begin
+select Avg(prod_price) as priceaverage
+from products;
+end //
+delimiter ;
+--调用该存储过程
+call productpricing();
+```
+使用`drop procedure`语句删除创建的存储过程，如果指定的过程不存在，则会发生错误，这是可以使用`drop procedure if exists`语句进行删除
+```sql
+--删除存储过程productpricing
+drop procedure productpricing;
+drop procedure if exists productpricing; 
+```
+一般的存储过程不会显示结果，而是把结果返回给你指定的变量
+```sql
+delimiter //
+create procedure productpricing(
+out pl decimal(8,2),--定义输出参数pl，表示最低价格，decimal(8,2)表示最大为8位数字，小数点后共两位
+out ph decimal(8,2),--定义输出参数ph，表示最高价格
+out pa decimal(8,2)--定义输出参数pa，表示平均价格
+)
+begin
+select Min(prod_price)
+into pl
+from products;
+select Max(prod_price)
+into ph
+from products;
+select Avg(prod_price)
+into pa
+from products;
+end //
+delimiter ;
+--调用该存储过程
+call productpricing(@pricelow,@privehigh,@priceaverage);
+```
+可以使用`select`语句显示存储过程中的变量
+```sql
+--显示存储过程中的变量
+select @pricehigh,@pricelow,@priceaverage;
+```
+定义可以传入参数的存储过程
+```sql
+delimiter //
+create procedure ordertotal(
+in onumber int,--定义输入参数
+out ototal decimal(8,2)
+)
+begin 
+select Sum(item_price*quantity)
+from orderitems
+where order_num = onumber
+into ototal;
+end //
+delimiter ;
+--调用该存储过程，计算订单号为20005的合计
+call ordertotal(20005,@total);
+--以另外的参数调用存储过程
+call ordertotal(20009,@total);
+```
+建立智能的存储过程
+```sql
+delimiter //
+mysql> create procedure ordertotal(
+in onumber int,
+in taxable boolean,
+out ototal decimal(8,2)
+)comment 'obtain order total,optionally adding tax'--注释
+begin
+declare total decimal(8,2);--声明变量
+declare taxrate int default 6;--声明变量
+select Sum(item_price*quantity)
+from orderitems
+where order_num = onumber
+into total;
+if taxable then--条件语句
+select total+(total/100*taxrate) into total;--计算税后价格
+end if;
+select total into ototal;--将总价保存到输出参数ototal中
+end //
+delimiter ;
+```
+可以使用`show create procedure`语句来查看显示创建存储过程的`create`语句，如果需要更详细的信息，可以使用`show procedure status`语句
+```sql
+--检查存储过程
+show create procedure ordertotal;
+show procedure status like 'ordertotal';
+```
+
+## 使用游标
