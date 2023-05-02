@@ -1142,7 +1142,7 @@ call ordertotal(20009,@total);
 建立智能的存储过程
 ```sql
 delimiter //
-mysql> create procedure ordertotal(
+create procedure ordertotal(
 in onumber int,
 in taxable boolean,
 out ototal decimal(8,2)
@@ -1169,3 +1169,92 @@ show procedure status like 'ordertotal';
 ```
 
 ## 使用游标
+使用游标可以使应用程序根据需要滚动或浏览结果集中的数据，可以使用`declare`语句创建游标，并定义对应的`select`语句
+```sql
+delimiter //
+create procedure processorders()
+begin
+declare ordernumbers cursor--创建一个游标
+for
+select order_num from orders;
+end //
+delimiter ;
+```
+可以使用`open`和`close`语句打开和关闭游标，如果没有明确关闭游标，那么将会在到达`end`语句时自动关闭
+```sql
+
+delimiter //
+create procedure processorders()
+begin
+declare ordernumbers cursor
+for
+select order_num from orders;
+open ordernumbers;--打开游标
+close ordernumbers;--关闭游标
+end //
+delimiter ;
+```
+可以使用`fetch`语句访问某一行数据
+```sql
+delimiter //
+create procedure processorders()
+begin
+declare o int;--创建一个局部变量
+declare ordernumbers cursor--定义游标
+for
+select order_num from orders;
+open ordernumbers;
+fetch ordernumbers into o;--检索当前行的order_num列，并将其存入局部变量o中
+close ordernumbers;
+end //
+delimiter ;
+```
+可以使用`repeat`语句来循环检索数据(对游标进行循环)
+```sql
+delimiter //
+create procedure processorders()
+begin
+declare done boolean default 0;
+declare o int;
+declare ordernumbers cursor
+for
+select order_num from orders;
+declare continue handler for sqlstate '02000' set done = 1;--continue handler定义在条件出现时被执行的代码
+--当sqlstate'02000'出现时，把done设置为1，sqlstate'02000'是一个未找到条件，当repeat没有更多的行供循环时，出现该条件
+open ordernumbers;
+repeat--开始循环
+fetch ordernumbers into o; 
+until done end repeat;--直到done结束循环
+close ordernumbers;
+end //
+delimiter ;
+```
+下面对取出的数据进行某种实际的处理
+```sql
+delimiter //
+create procedure processorders()
+begin
+declare done boolean default 0;
+declare o int;--存储订单号
+declare t decimal(8,2);--存储每个订单的合计
+declare ordernumbers cursor--创建游标
+for 
+select order_num from orders;
+declare continue handler for sqlstate '02000' set done = 1;
+create table if not exists ordertotals(--创建表
+order_num int,
+total decimal(8,2)
+);
+open ordernumbers;
+repeat 
+fetch ordernumbers into o;
+call ordertotal(o,1,t);--调用存储过程，计算待税的合计
+insert into ordertotals(order_num,total)--将数据插入新创建的表中
+values(o,t);
+until done end repeat;
+close ordernumbers;
+end //
+delimiter ;
+```
+
+## 使用触发器
