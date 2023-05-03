@@ -1258,3 +1258,61 @@ delimiter ;
 ```
 
 ## 使用触发器
+如果在某个表发生改变时需要自动进行处理，那么就需要触发器，触发器是MySQL响应以下任意语句而自动执行的一条MySQL语句
+- `delete`
+- `insert`
+- `update`
+
+其他的语句不支持触发器，在创建触发器时，需要给出四条信息:
+- 唯一的触发器名
+- 触发器关联的表
+- 触发器应响应的活动
+- 触发器应何时执行
+
+触发器使用`create trigger`语句创建，每个表最多支持6个触发器(每条`insert`、`update`和`delete`之前和之后)，单一触发器不能和多个事件或多个表关联。
+
+下面对应介绍这三种语句的触发器，首先是`insert`触发器，对于`insert`触发器需要了解以下几点:
+- 在`insert`触发器的代码中，可以引用一个名为`new`的虚拟表，访问被插入的行
+- 在`before insert`触发器中，`new`中的值也可以被更新
+- 对于`auto_increment`的列，`new`在`insert`执行前包含0，在`insert`执行之后包含新的自动生成值。
+```sql
+--创建insert触发器
+create trigger neworder after insert on orders
+for each row select new.order_num into @new_order_num;
+--向orders表中插入行
+insert into orders(order_date,cust_id)
+values(Now(),10001);
+--获取新得到的订单号
+select @new_order_num;
+```
+这个触发器在orders表发生插入后执行，对于每个新插入的行，触发器从new表中得到新生成的订单号的值，并将其存入new_order_num中，对于orders的每次插入使用这个触发器将返回新的订单号。
+
+然后是`delete`触发器，对于`delete`触发器需要了解以下几点:
+- 在`delete`触发器的代码中，可以引用一个名为`old`的虚拟表，访问被删除的行
+- `old`表中的值是只读的，不能更新
+```sql
+--创建delete触发器
+delimiter //
+create trigger deleteorder before delete on orders
+for each row
+begin
+insert into archive_orders(order_num,order_date,cust_id)  
+values(old.order_num,old.order_date,old.cust_id);          
+end //
+delimiter ;
+```
+这个触发器在orders表发生删除前执行，对于每个待删除的行，触发器从old表中读出数据，并将其保存到名为archive_orders的存档表中，使用`before delete`触发器的优点为，如果由于某种原因，订单不能存档，那么`delete`本身将被抛弃
+
+最后是`update`触发器，对于`update`触发器需要了解以下几点:
+- 在`update`触发器的代码中，可以引用一个名为`old`的虚拟表，访问更新前的值，还可以引用一个名为`new`的虚拟表，访问新更新的值
+- 在`before update`触发器中，`new`中的值也可以被更新
+- `old`表中的值是只读的，不能更新
+
+```sql
+--创建update触发器
+create trigger updatevendor before update on vendors 
+for each row set new.vend_state = Upper(new.vend_state);
+```
+这个触发器vendors表发生更新前执行，对于每个要更新的行，触发器将`new`表中的国家名替换为大写的
+
+## 管理事务处理
