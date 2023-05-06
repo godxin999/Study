@@ -1316,3 +1316,51 @@ for each row set new.vend_state = Upper(new.vend_state);
 这个触发器vendors表发生更新前执行，对于每个要更新的行，触发器将`new`表中的国家名替换为大写的
 
 ## 管理事务处理
+事务处理可以用来维护数据库的完整性，它保证成批的MySQL操作要么执行，要么完全不执行，最常用的MyISAM和InnoDB两种引擎中只有InnoDB引擎支持事务管理，MySQL使用下面的语句来标识事务的开始:
+```sql
+--开始事务处理
+start transaction
+```
+MySQL使用`rollback`指令来回退MySQL语句
+```sql
+--使用rollback回退了删除表中所有行的操作
+delimiter //
+select * from ordertotals;
+start transaction;
+delete from ordertotals;
+select * from ordertotals;
+rollback;
+select * from ordertotals //
+delimiter ;
+```
+此外`rollback`语句不能回退`select`语句，也不能回退`create`和`drop`操作
+
+在事务处理块中，提交不会隐含地进行，为了进行明确地提交，可以使用`commit`语句
+```sql
+--使用comiit提交
+delimiter // 
+start transaction; 
+delete from orderitems where order_num = 20010;
+delete from orders where order_num = 20010;
+commit //
+delimiter ;
+```
+在`rollback`和`commit`语句执行后，事务会自动关闭
+
+为了支持部分事务处理地回退，可以在事务处理块中放置占位符(保留点)
+```sql
+--创建一个保留点
+save delete1;
+```
+在事务处理块中可以使用`rollback`回退到已经设置地保留点
+```sql
+--回退到对应的保留点
+rollback to delete1;
+```
+默认的MySQL行为是自动提交所有更改，为了指示MySQL不自动提交更改，可以使用以下语句:
+```sql
+--设置不自动提交
+set autocommit = 0;
+```
+
+## 全球化和本地化
