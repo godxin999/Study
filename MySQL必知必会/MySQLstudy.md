@@ -1364,3 +1364,45 @@ set autocommit = 0;
 ```
 
 ## 全球化和本地化
+使用`show`语句可以查看所有可用的字符集和支持校对的完整列表
+```sql
+--查看所有可用的字符集
+show character set;
+--查看所有可用的校对
+show collation;
+```
+为了确认系统所用的字符集和校对，可以使用以下语句:
+```sql
+--使用通配符确定所用的字符集和校对
+show variables like 'character%';
+show variables like 'collation%';
+```
+为了给表指定字符集和校对，可以使用带子句的`create table`
+```sql
+--指定表使用的字符集和校对
+create table mytable
+(                
+col1 int,
+col2 varchar(10)
+)default character set hebrew
+collate hebrew_general_ci;
+```
+MySQL还允许对每个列设置字符集和校对
+```sql
+--指定col3列的字符集和校对
+create table mytable       
+( 
+col1 int,
+col2 varchar(10),
+col3 varchar(10) character set latin1 collate latin1_general_ci
+)default character set hebrew
+collate hebrew_general_ci;
+```
+可以在`select`语句中指定特定的校对顺序来进行排序
+```sql
+--按对应的校对顺序进行排序
+select * from customers
+order by lastname,firstname collate latin1_general_cs;
+```
+
+## 安全管理
