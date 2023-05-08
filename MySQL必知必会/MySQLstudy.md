@@ -1406,3 +1406,53 @@ order by lastname,firstname collate latin1_general_cs;
 ```
 
 ## 安全管理
+如果需要获得所有用户账号，则需要直接访问mysql数据库和表
+```sql
+--获取所有用户账号
+use mysql;
+select user from user;
+```
+可以使用`create user`语句创建一个用户
+```sql
+--创建名为ben的账号，口令为123456
+create user ben identified by '123456';
+```
+可以使用`rename user`语句来重命名账号名称
+```sql
+--将账号ben重命名为bforta
+rename user ben to bforta;
+```
+可以使用`drop user`语句来删除用户账号
+```sql
+--删除账号bforta
+drop user bforta;
+```
+可以使用`show grants for`来查看账号的权限
+```sql
+--查看账号bforta的权限
+show grants for bforta;
+--输出GRANT USAGE ON *.* TO `bforta`@`%`表示根本没有权限
+```
+为了设置权限，可以使用`grant`语句，并且至少给出以下信息:
+- 要授予的权限
+- 被授予访问的数据库或表
+- 用户名
+
+```sql
+--授予bforta对crashcourse所有表的select权限
+grant select on crashcourse.* to bforta;
+--授予bforta对crashcourse所有表的select和insert权限
+grant select,insert on crashcourse.* to bforta;
+```
+可以使用`revoke`语句来撤销特定的权限
+```sql
+--撤销bforta对crashcourse所有表的select权限
+revoke select on crashcourse.* from bforta;
+```
+可以使用`alter`语句来更改用户的密码
+```sql
+--更改bforta账户的密码
+alter user bforta identified by '654321';
+```
+
+## 数据库维护
