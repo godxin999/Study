@@ -1456,3 +1456,37 @@ alter user bforta identified by '654321';
 ```
 
 ## 数据库维护
+可以使用mysqldump来备份数据库的数据
+```sql
+--备份book数据库
+mysqldump -u root -p book > C:\Users\admin\Desktop\Study\MySQL必知必会\book.sql
+--备份所有数据库
+mysqldump -u root -p --opt --all-databases > C:\Users\admin\Desktop\Study\MySQL必知必会\all-data.sql
+```
+可以使用`analyze table`语句来检查表键是否正确
+```sql
+--检查orders表
+analyze table orders;
+```
+可以使用`check table`语句来发现和修复问题
+```sql
+--检查orders和orderitems表
+check table orders,orderitems;
+```
+如果MyISAM表访问产生不正确和不一致的结果，可能需要使用`repair table`语句来修复响应的表，如果从一个表中删除大量数据，应该使用`optimize table`语句来收回所用的空间
+
+如果需要排除系统启动问题，可以在命令行执行`mysqld`启动，下面是几个重要的命令行参数
+- --help 显示帮助
+- --safe-mode 装在减去某些最佳配置的服务器
+- --verbose 显示全文本消息
+- --version 显示版本信息
+
+MySQL有以下几种日志:
+- hostname.err 错误日志，包含启动和关闭问题以及关键错误的细节
+- hostname.log 查询日志，记录所有的MySQL活动，但因为日志增长过快不应该长期使用
+- hostname-bin 二进制日志，记录更新过数据的所有语句
+- hostname-slow.log 缓慢查询日志，在确定数据库何处需要优化时很有用
+
+上述日志均位于data目录中在使用日志时，可以使用`flush logs`语句来刷新和重新开始所有日志文件
+
+## 改善性能
