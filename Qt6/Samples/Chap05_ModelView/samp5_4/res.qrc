@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/exit.bmp</file>
+        <file>icons/fold.bmp</file>
+        <file>icons/828.bmp</file>
+    </qresource>
+</RCC>
