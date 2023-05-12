@@ -110,6 +110,31 @@ public:
 		return data.empty();
 	}
 };
+//使用lock一次性锁住多个互斥量
+class some_big_object{};
+void swap(some_big_object& lhs,some_big_object& rhs);
+class X{
+private:
+	some_big_object some_detail;
+	std::mutex m;
+public:
+	X(const some_big_object& sd):some_detail(sd){}
+	friend void swap(X& lhs,X& rhs){
+		if(&lhs==&rhs)return;
+		std::lock(lhs.m,rhs.m);//std::lock锁住两个互斥量
+		//当std::lock获取了一个互斥锁后，再尝试从另一个互斥量上获取锁时，就会抛出异常，第一个锁会自动释放，所以std::lock要么将两个锁都锁住，要么一个都不锁
+		std::lock_guard<std::mutex> lock_a(lhs.m,std::adopt_lock);//std::adopt_lock将锁交由std::lock_guard管理
+		std::lock_guard<std::mutex> lock_b(rhs.m,std::adopt_lock);
+		swap(lhs.some_detail,rhs.some_detail);
+	}
+	//C++17std::scoped_lock可以接收不定数量的互斥量类型作为模板参数，以及相应的互斥量作为构造参数
+	void swap2(X& lhs,X& rhs){
+		if(&lhs==&rhs)return;
+		std::scoped_lock guard(lhs.m,rhs.m);//用法和std::lock相同，互斥量在构造时上锁，在析构时解锁
+		swap(lhs.some_detail,rhs.some_detail);
+	}
+};
+
 
 
 int main(){
