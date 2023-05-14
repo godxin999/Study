@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>images/00.JPG</file>
+        <file>images/103.bmp</file>
+        <file>images/306.bmp</file>
+        <file>images/316.bmp</file>
+        <file>images/delete1.bmp</file>
+        <file>images/exit.bmp</file>
+        <file>images/open3.bmp</file>
+        <file>images/save1.bmp</file>
+        <file>images/ubdo.bmp</file>
+        <file>images/up.bmp</file>
+    </qresource>
+</RCC>
