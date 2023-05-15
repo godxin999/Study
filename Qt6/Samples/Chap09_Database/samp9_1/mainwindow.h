@@ -37,6 +37,34 @@ private slots:
     void do_currentRowChanged(const QModelIndex &current,const QModelIndex &previous);
     void on_actOpenDB_triggered();
 
+    void on_actRecAppend_triggered();
+
+    void on_actRecInsert_triggered();
+
+    void on_actRecDelete_triggered();
+
+    void on_actSubmit_triggered();
+
+    void on_actRevert_triggered();
+
+    void on_actPhoto_triggered();
+
+    void on_actPhotoClear_triggered();
+
+    void on_actScan_triggered();
+
+    void on_comboFields_currentIndexChanged(int index);
+
+    void on_radioBtnAscend_clicked();
+
+    void on_radioBtnDescend_clicked();
+
+    void on_radioBtnMan_clicked();
+
+    void on_radioBtnWoman_clicked();
+
+    void on_radioBtnBoth_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

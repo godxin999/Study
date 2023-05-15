@@ -149,7 +149,14 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QSpinBox" name="dbSpinEmpNo"/>
+            <widget class="QSpinBox" name="dbSpinEmpNo">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>10000</number>
+             </property>
+            </widget>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_4">
@@ -169,7 +176,18 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QComboBox" name="dbComboSex"/>
+            <widget class="QComboBox" name="dbComboSex">
+             <item>
+              <property name="text">
+               <string>男</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>女</string>
+              </property>
+             </item>
+            </widget>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_5">
@@ -186,7 +204,78 @@
             </widget>
            </item>
            <item row="4" column="1">
-            <widget class="QComboBox" name="dbComboProvince"/>
+            <widget class="QComboBox" name="dbComboProvince">
+             <item>
+              <property name="text">
+               <string>北京</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>上海</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>天津</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>重庆</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>安徽</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>河北</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>河南</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>湖北</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>湖南</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>山西</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>山东</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>陕西</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>江苏</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>江西</string>
+              </property>
+             </item>
+            </widget>
            </item>
            <item row="5" column="0">
             <widget class="QLabel" name="label_9">
@@ -196,7 +285,28 @@
             </widget>
            </item>
            <item row="5" column="1">
-            <widget class="QComboBox" name="dbComboDep"/>
+            <widget class="QComboBox" name="dbComboDep">
+             <item>
+              <property name="text">
+               <string>销售部</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>技术部</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>生产部</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>行政部</string>
+              </property>
+             </item>
+            </widget>
            </item>
            <item row="6" column="0">
             <widget class="QLabel" name="label_7">
@@ -206,10 +316,28 @@
             </widget>
            </item>
            <item row="6" column="1">
-            <widget class="QSpinBox" name="dbSpinSalary"/>
+            <widget class="QSpinBox" name="dbSpinSalary">
+             <property name="minimum">
+              <number>1000</number>
+             </property>
+             <property name="maximum">
+              <number>50000</number>
+             </property>
+             <property name="singleStep">
+              <number>100</number>
+             </property>
+            </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QDateEdit" name="dbEditBirth"/>
+            <widget class="QDateEdit" name="dbEditBirth">
+             <property name="date">
+              <date>
+               <year>2017</year>
+               <month>2</month>
+               <day>10</day>
+              </date>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -251,7 +379,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QPlainTextEdit" name="dbEditText"/>
+          <widget class="QPlainTextEdit" name="dbEditMemo"/>
          </item>
         </layout>
        </widget>
@@ -445,8 +573,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>555</x>
-     <y>350</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>555</x>
