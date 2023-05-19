@@ -106,18 +106,18 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
 void MainWindow::on_actTab_Locate_triggered()
 {
     TDialogLocate *dlgLocate=new TDialogLocate(this);
-    dlgLocate->setAttribute(Qt::WA_DeleteOnClose);
-    dlgLocate->setWindowFlag(Qt::WindowStaysOnTopHint);
+    dlgLocate->setAttribute(Qt::WA_DeleteOnClose);//对话框关闭时自动删除
+    dlgLocate->setWindowFlag(Qt::WindowStaysOnTopHint);//设置对话框特性StayOnTop
     dlgLocate->setSpinRange(m_model->rowCount(),m_model->columnCount());
     QModelIndex curIndex=m_selection->currentIndex();
     if(curIndex.isValid()){
         dlgLocate->setSpinValue(curIndex.row(),curIndex.column());
     }
-    connect(dlgLocate,&TDialogLocate::changeCellText,this,&MainWindow::do_setCellText);
-    connect(dlgLocate,&TDialogLocate::changeActionEnable,ui->actTab_Locate,&QAction::setEnabled);
-    connect(this,&MainWindow::cellIndexChanged,dlgLocate,&TDialogLocate::setSpinValue);
+    connect(dlgLocate,&TDialogLocate::changeCellText,this,&MainWindow::do_setCellText);//对话框发射changeCellText()信号，用于定位单元格并设置文字
+    connect(dlgLocate,&TDialogLocate::changeActionEnable,ui->actTab_Locate,&QAction::setEnabled);//对话框发射changeActionEnable()信号，用于设置action的enabled属性
+    connect(this,&MainWindow::cellIndexChanged,dlgLocate,&TDialogLocate::setSpinValue);//主窗口发射cellIndexChanged()信号，用于修改对话框上的spinBox的值
 
     dlgLocate->setModal(false);
-    dlgLocate->show();
+    dlgLocate->show();//以非模态方式显示对话框
 }
 
