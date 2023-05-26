@@ -133,15 +133,105 @@ public:
 		std::scoped_lock guard(lhs.m,rhs.m);//用法和std::lock相同，互斥量在构造时上锁，在析构时解锁
 		swap(lhs.some_detail,rhs.some_detail);
 	}
+	//使用std::unique_lock
+	void swap3(X& lhs,X& rhs){
+		if(&lhs==&rhs)return;
+		std::unique_lock<std::mutex> lock_a(lhs.m,std::defer_lock);
+		std::unique_lock<std::mutex> lock_b(rhs.m,std::defer_lock);//std::defer_lock会留下未上锁的互斥量
+		std::lock(lock_a,lock_b);//互斥量在这里上锁
+		swap(lhs.some_detail,rhs.some_detail);
+	}
+
 };
+//分层互斥
+class hierarchical_mutex{
+private:
+	std::mutex internal_mutex;
 
+	const unsigned long hierarchy_value;
+	unsigned long previous_hierarchy_value;
+	//因为声明中有thread_local，所以每个线程都有其副本，这样线程中变量状态完全独立
+	static thread_local unsigned long this_thread_hierarchy_value;//使用thread_local的值代表当前线程的层级值
 
+	void check_for_hierarchy_violation(){//保证有序
+		if(this_thread_hierarchy_value<=hierarchy_value){
+			throw std::logic_error("mutex hierarchy voilated");
+		}
+	}
 
+	void update_hierarchy_value(){//更新层级值
+		previous_hierarchy_value=this_thread_hierarchy_value;
+		this_thread_hierarchy_value=hierarchy_value;
+	}
+
+public:
+	explicit hierarchical_mutex(unsigned long value):hierarchy_value(value),previous_hierarchy_value(0){}
+
+	void lock(){
+		check_for_hierarchy_violation();
+		internal_mutex.lock();
+		update_hierarchy_value();
+	}
+
+	void unlock(){
+		if(this_thread_hierarchy_value!=hierarchy_value){//如果解锁的不是最近上锁的那个互斥量就抛出异常
+			throw std::logic_error("mutex hierarhy violated");
+		}
+		this_thread_hierarchy_value=previous_hierarchy_value;//恢复当前线程的层级值，以便其可以继续锁定其他互斥量
+		internal_mutex.unlock();
+	}
+
+	bool try_lock(){
+		check_for_hierarchy_violation();
+		if(!internal_mutex.try_lock()){//不能持有对应锁
+			return false;
+		}
+		update_hierarchy_value();
+		return true;
+	}
+};
+thread_local unsigned long hierarchical_mutex::this_thread_hierarchy_value(ULONG_MAX);//初始化为最大值，所以最初所有的线程都能被锁住
+//因为std::unique_lock不占有互斥量，所以互斥量的所有权可以在不同实例中传递
+std::unique_lock<std::mutex> get_lock(){
+	extern std::mutex some_mutex;
+	std::unique_lock<std::mutex> lk(some_mutex);
+	//prepare_data();
+	return lk;//编译器调用move函数移动unique_lock
+}
+void process_data(){
+	std::unique_lock<std::mutex> lk(get_lock());//lk接管互斥量
+	//do_something();
+}
+//锁的粒度
+/*
+void get_and_process_data(){
+	std::unique_lock<std::mutex> my_lock(the_mutex);
+	some_class data_to_process=get_next_data_chunk();
+	my_lock.unlock();//不需要让锁住的互斥量越过对process()函数的调用，所以可以在函数调用前手动解锁
+	result_type result=process(data_to_process);
+	my_lock.lock();//为了写入数据再次上锁
+	write_result(data_to_process,result);
+}
+*/
+//当持有锁的时间没有达到整个操作时间时，就会让自己处于条件竞争中
+class Y{
+private:
+	int some_detail;
+	mutable std::mutex m;
+	int get_detail()const{
+		std::lock_guard<std::mutex> lock_a(m);
+		return some_detail;
+	}
+public:
+	Y(int sd):some_detail(sd){}
+	friend bool operator==(const Y& lhs,const Y& rhs){
+		if(&rhs==&lhs){
+			return true;
+		}
+		const int lhs_value=lhs.get_detail();
+		const int rhs_value=rhs.get_detail();
+		return lhs_value==rhs_value;//返回true表示这个时间点的lhs.some_detial等于另一个时间点的rhs.some_detail，比较是没有意义的
+	}
+};
 int main(){
-
-
-
-
-
-
 }
