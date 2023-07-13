@@ -130,7 +130,9 @@ Debug/
 Release/
 obj/
 .vs/
+x64/
 build/
+*.props
 
 # gcov files
 *.gcda
