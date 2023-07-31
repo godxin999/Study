@@ -99,6 +99,54 @@ int main() {
 	auto m4xMsaaQuality = msQualityLevels.NumQualityLevels;
 	cout << "m4xMsaaQuality: " << m4xMsaaQuality << endl;
 	assert(m4xMsaaQuality > 0 && "Unexpected MSAA quality level.");
+	//创建命令队列和命令列表
+	ComPtr<ID3D12CommandQueue> mCmdQueue;
+	ComPtr<ID3D12CommandAllocator> mCmdListAlloc;
+	ComPtr<ID3D12GraphicsCommandList> mCmdList;
+	D3D12_COMMAND_QUEUE_DESC queueDesc = {};//描述队列类型和标志的结构体
+	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	ThrowIfFailed(md3dDevice->CreateCommandQueue(//创建命令队列
+		&queueDesc, IID_PPV_ARGS(&mCmdQueue)
+	));
+	ThrowIfFailed(md3dDevice->CreateCommandAllocator(//创建命令分配器
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(mCmdListAlloc.GetAddressOf())
+	));
+	ThrowIfFailed(md3dDevice->CreateCommandList(//创建图形命令列表
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		mCmdListAlloc.Get(),//关联命令分配器
+		nullptr,//初始化流水线状态对象
+		IID_PPV_ARGS(mCmdList.GetAddressOf())
+	));
+	mCmdList->Close();//关闭命令列表，因为在初次引用命令列表时需要对其进行重置，而在调用重置方法之前又需要将其先关闭
+	//描述并创建交换链
+	ComPtr<IDXGISwapChain> mSwapChain;
+	DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	mSwapChain.Reset();
+	DXGI_SWAP_CHAIN_DESC sd;
+	sd.BufferDesc.Width = 800;
+	sd.BufferDesc.Height = 600;
+	sd.BufferDesc.RefreshRate.Numerator = 60;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferDesc.Format = mBackBufferFormat;
+	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	sd.SampleDesc.Count = m4xMsaaQuality ? 4 : 1;
+	sd.SampleDesc.Quality = m4xMsaaQuality ? (m4xMsaaQuality - 1) : 0;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.BufferCount = 2;
+	//sd.OutputWindow=whd;
+	sd.Windowed = true;
+	sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	ThrowIfFailed(mdxgiFactory->CreateSwapChain(
+		mCmdQueue.Get(),
+		&sd,
+		mSwapChain.GetAddressOf()
+	));
+	
 	return 0;
 }
 
