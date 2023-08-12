@@ -29,6 +29,11 @@ public:
 	bool empty() const{
 		return elems.empty();
 	}
+public:
+	friend std::ostream& operator<<(std::ostream& os,const Stack<T>& s){
+		s.printOn(os);
+		return os;
+	}
 };
 
 template <typename T>

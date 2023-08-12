@@ -20,6 +20,6 @@ int main(){
 	Stack<int> si;
 	si.push(1);
 	si.push(2);
-	si.printOn(std::cout);
-
+	//si.printOn(std::cout);
+	std::cout<<si<<std::endl;
 }
