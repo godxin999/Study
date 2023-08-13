@@ -16,6 +16,7 @@ private:
 public:
 	Stack()=default;//在类模板内部可以省略<T>
 	Stack(const Stack&)=default;
+	Stack(const T& elem):elems({elem}){}
 	Stack& operator=(const Stack&)=default;
 	//对于没有提供operator<<运算符的元素，调用该函数会报错
 	void printOn(std::ostream& os)const{
