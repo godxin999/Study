@@ -16,11 +16,11 @@ public:
         currentChannel = channel;
         tv->tuneChannel(channel);
     }
-    void nextChannel(){
+    void nextChannel() override{
         ++currentChannel;
         tv->tuneChannel(currentChannel);
     }
-    void prevChannel(){
+    void prevChannel() override{
         --currentChannel;
         tv->tuneChannel(currentChannel);
     }

@@ -12,7 +12,7 @@
 
 int main(){
 	std::unique_ptr<TV> tv=std::make_unique<Sony>();
-	std::unique_ptr<ConcreteRemote> remote=std::make_unique<ConcreteRemote>(std::move(tv));
+	std::unique_ptr<RemoteControl> remote=std::make_unique<ConcreteRemote>(std::move(tv));
 	remote->on();
 	remote->setChannel(5);
 	remote->prevChannel();
