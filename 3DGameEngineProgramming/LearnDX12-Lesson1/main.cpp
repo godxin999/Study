@@ -319,7 +319,7 @@ void UpdateRenderTargetViews(ComPtr<ID3D12Device2> device, ComPtr<IDXGISwapChain
 
 		g_BackBuffers[i] = backBuffer;
 
-		rtvHandle.Offset(rtvDescriptorSize);//偏移到下一个描述符
+		rtvHandle.Offset(rtvDescriptorSize);//偏移到下一个描`述符
 	}
 }
 
