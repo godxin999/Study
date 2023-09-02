@@ -31,6 +31,43 @@ void Game::Destroy() {
 	m_pWindow.reset();
 }
 
+void Game::OnUpdate(UpdateEventArgs& e){
+
+}
+
+void Game::OnRender(RenderEventArgs& e){
+
+}
+
+void Game::OnKeyPressed(KeyEventArgs& e){
+
+}
+
+void Game::OnKeyReleased(KeyEventArgs& e){
+
+}
+
+void Game::OnMouseMoved(MouseMotionEventArgs& e){
+
+}
+
+void Game::OnMouseButtonPressed(MouseButtonEventArgs& e){
+
+}
+
+void Game::OnMouseButtonReleased(MouseButtonEventArgs& e){
+
+}
+
+void Game::OnMouseWheel(MouseWheelEventArgs& e){
+
+}
+
+void Game::OnResize(ResizeEventArgs& e){
+	m_Width = e.Width;
+	m_Height = e.Height;
+}
+
 void Game::OnWindowDestroy(){
 	UnloadContent();
 }

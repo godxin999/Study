@@ -21,7 +21,7 @@ public:
 
 protected:
 	friend class Window;
-	/*
+	
 	virtual void OnUpdate(UpdateEventArgs& e);
 
 	virtual void OnRender(RenderEventArgs& e);
@@ -39,7 +39,7 @@ protected:
 	virtual void OnMouseWheel(MouseWheelEventArgs& e);
 
 	virtual void OnResize(ResizeEventArgs& e);
-*/	
+	
 	virtual void OnWindowDestroy();
 
 	std::shared_ptr<Window> m_pWindow;
