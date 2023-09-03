@@ -1,5 +1,3 @@
-#pragma once
-
 #include <memory>
 
 class Font;

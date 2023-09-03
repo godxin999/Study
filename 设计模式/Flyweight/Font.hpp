@@ -1,5 +1,3 @@
-#pragma once
-
 #include <string>
 
 //享元对象类

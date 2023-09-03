@@ -1,4 +1,3 @@
-#pragma once
 #include "Font.hpp"
 #include <memory>
 #include <unordered_set>
