@@ -6,7 +6,7 @@
 
 class Cube :public Game {
 public:
-	using super = Game;
+
 	Cube(const std::wstring& name, int width, int height, bool vSync = false);
 
 	virtual bool LoadContent() override;
@@ -19,23 +19,12 @@ protected:
 	virtual void OnRender(RenderEventArgs& e) override;
 
 	virtual void OnKeyPressed(KeyEventArgs& e) override;
-
-	//rtual void OnKeyReleased(KeyEventArgs& e) override;
-
-	//virtual void OnMouseMoved(MouseMotionEventArgs& e) override;
-
-	//virtual void OnMouseButtonPressed(MouseButtonEventArgs& e) override;
-
-	//virtual void OnMouseButtonReleased(MouseButtonEventArgs& e) override;
-
+	
 	virtual void OnMouseWheel(MouseWheelEventArgs& e) override;
-
+	
 	virtual void OnResize(ResizeEventArgs& e) override;
-
-	//virtual void OnWindowDestroy() override;
-
 private:
-	void TranslationResource(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList2> commandList, Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState);
+	void TransitionResource(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList2> commandList, Microsoft::WRL::ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState);
 
 	void ClearRTV(Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList2> commandList, D3D12_CPU_DESCRIPTOR_HANDLE rtv, FLOAT* clearColor);
 

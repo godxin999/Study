@@ -14,7 +14,7 @@ public:
 	static Application& Get();//获取应用程序单例
 
 	static void Create(HINSTANCE hInst);//通过示例句柄创建应用单例
-	static void Destory();//销毁应用程序实例及该应用实例创建的所有窗口
+	static void Destroy();//销毁应用程序实例及该应用实例创建的所有窗口
 	
 	bool IsTearingSupported()const;//检查是否支持撕裂
 

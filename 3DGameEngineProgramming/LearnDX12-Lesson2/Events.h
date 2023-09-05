@@ -1,190 +1,164 @@
 #pragma once
 #include "KeyCodes.h"
 
-// Base class for all event args
-class EventArgs
-{
+class EventArgs {
 public:
-    EventArgs()
-    {}
-
+	EventArgs() {}
+	using base = EventArgs;
 };
 
-class KeyEventArgs : public EventArgs
-{
+class KeyEventArgs :public EventArgs {
 public:
-    enum KeyState
-    {
-        Released = 0,
-        Pressed = 1
-    };
+	enum KeyState {
+		Released = 0,
+		Pressed = 1
+	};
+public:
+	KeyEventArgs(KeyCode::Key key, unsigned int c, KeyState state, bool ctrl, bool shift, bool alt)
+		:Key(key)
+		, Character(c)
+		, State(state)
+		, Ctrl(ctrl)
+		, Shift(shift)
+		, Alt(alt)
+	{
 
-    typedef EventArgs base;
-    KeyEventArgs(KeyCode::Key key, unsigned int c, KeyState state, bool control, bool shift, bool alt)
-        : Key(key)
-        , Char(c)
-        , State(state)
-        , Control(control)
-        , Shift(shift)
-        , Alt(alt)
-    {}
+	}
+public:
+	KeyCode::Key Key;
+	unsigned int Character;
+	KeyState State;
 
-    KeyCode::Key    Key;    // The Key Code that was pressed or released.
-    unsigned int    Char;   // The 32-bit character code that was pressed. This value will be 0 if it is a non-printable character.
-    KeyState        State;  // Was the key pressed or released?
-    bool            Control;// Is the Control modifier pressed
-    bool            Shift;  // Is the Shift modifier pressed
-    bool            Alt;    // Is the Alt modifier pressed
+	bool Alt;
+	bool Ctrl;
+	bool Shift;
 };
 
-class MouseMotionEventArgs : public EventArgs
-{
+class MouseMotionEventArgs :public EventArgs {
 public:
-    typedef EventArgs base;
-    MouseMotionEventArgs(bool leftButton, bool middleButton, bool rightButton, bool control, bool shift, int x, int y)
-        : LeftButton(leftButton)
-        , MiddleButton(middleButton)
-        , RightButton(rightButton)
-        , Control(control)
-        , Shift(shift)
-        , X(x)
-        , Y(y)
-    {}
+	MouseMotionEventArgs(bool leftButton, bool middleButton, bool rightButton, bool ctrl, bool shift, int x, int y)
+		:LeftButton(leftButton)
+		, MiddleButton(middleButton)
+		, RightButton(rightButton)
+		, Ctrl(ctrl)
+		, Shift(shift)
+		, X(x)
+		, Y(y)
+	{
 
-    bool LeftButton;    // Is the left mouse button down?
-    bool MiddleButton;  // Is the middle mouse button down?
-    bool RightButton;   // Is the right mouse button down?
-    bool Control;       // Is the CTRL key down?
-    bool Shift;         // Is the Shift key down?
+	}
+public:
+	bool LeftButton;
+	bool MiddleButton;
+	bool RightButton;
 
-    int X;              // The X-position of the cursor relative to the upper-left corner of the client area.
-    int Y;              // The Y-position of the cursor relative to the upper-left corner of the client area.
-    int RelX;           // How far the mouse moved since the last event.
-    int RelY;           // How far the mouse moved since the last event.
+	bool Ctrl;
+	bool Shift;
 
+	int X;
+	int Y;
+
+	int DeltaX;//相对于上一次的x坐标的变化量
+	int DeltaY;//相对于上一次的y坐标的变化量
 };
 
-class MouseButtonEventArgs : public EventArgs
-{
+class MouseButtonEventArgs :public EventArgs {
 public:
-    enum MouseButton
-    {
-        None = 0,
-        Left = 1,
-        Right = 2,
-        Middel = 3
-    };
-    enum ButtonState
-    {
-        Released = 0,
-        Pressed = 1
-    };
+	enum MouseButton {
+		None = 0,
+		Left = 1,
+		Right = 2,
+		Middle = 3
+	};
+	enum ButtonState {
+		Released = 0,
+		Pressed = 1
+	};
+public:
+	MouseButtonEventArgs(MouseButton button, ButtonState state, bool leftButton, bool middleButton, bool rightButton, bool ctrl, bool shift, int x, int y)
+		:Button(button)
+		, State(state)
+		, LeftButton(leftButton)
+		, MiddleButton(middleButton)
+		, RightButton(rightButton)
+		, Ctrl(ctrl)
+		, Shift(shift)
+		, X(x)
+		, Y(y)
+	{
 
-    typedef EventArgs base;
-    MouseButtonEventArgs(MouseButton buttonID, ButtonState state, bool leftButton, bool middleButton, bool rightButton, bool control, bool shift, int x, int y)
-        : Button(buttonID)
-        , State(state)
-        , LeftButton(leftButton)
-        , MiddleButton(middleButton)
-        , RightButton(rightButton)
-        , Control(control)
-        , Shift(shift)
-        , X(x)
-        , Y(y)
-    {}
+	}
+public:
+	MouseButton Button;
+	ButtonState State;
 
-    MouseButton Button; // The mouse button that was pressed or released.
-    ButtonState State;  // Was the button pressed or released?
-    bool LeftButton;    // Is the left mouse button down?
-    bool MiddleButton;  // Is the middle mouse button down?
-    bool RightButton;   // Is the right mouse button down?
-    bool Control;       // Is the CTRL key down?
-    bool Shift;         // Is the Shift key down?
+	bool LeftButton;
+	bool MiddleButton;
+	bool RightButton;
 
-    int X;              // The X-position of the cursor relative to the upper-left corner of the client area.
-    int Y;              // The Y-position of the cursor relative to the upper-left corner of the client area.
+	bool Ctrl;
+	bool Shift;
+
+	int X;
+	int Y;
 };
 
-class MouseWheelEventArgs : public EventArgs
-{
+class MouseWheelEventArgs :public EventArgs {
 public:
-    typedef EventArgs base;
-    MouseWheelEventArgs(float wheelDelta, bool leftButton, bool middleButton, bool rightButton, bool control, bool shift, int x, int y)
-        : WheelDelta(wheelDelta)
-        , LeftButton(leftButton)
-        , MiddleButton(middleButton)
-        , RightButton(rightButton)
-        , Control(control)
-        , Shift(shift)
-        , X(x)
-        , Y(y)
-    {}
+	MouseWheelEventArgs::MouseWheelEventArgs(float wheelDelta, bool leftButton, bool middleButton, bool rightButton, bool ctrl, bool shift, int x, int y)
+		:WheelDelta(wheelDelta)
+		, LeftButton(leftButton)
+		, MiddleButton(middleButton)
+		, RightButton(rightButton)
+		, Ctrl(ctrl)
+		, Shift(shift)
+		, X(x)
+		, Y(y)
+	{
 
-    float WheelDelta;   // How much the mouse wheel has moved. A positive value indicates that the wheel was moved to the right. A negative value indicates the wheel was moved to the left.
-    bool LeftButton;    // Is the left mouse button down?
-    bool MiddleButton;  // Is the middle mouse button down?
-    bool RightButton;   // Is the right mouse button down?
-    bool Control;       // Is the CTRL key down?
-    bool Shift;         // Is the Shift key down?
+	}
+	float WheelDelta;//鼠标滚轮的滚动量，正值为向上滚动，负值为向下滚动
 
-    int X;              // The X-position of the cursor relative to the upper-left corner of the client area.
-    int Y;              // The Y-position of the cursor relative to the upper-left corner of the client area.
+	bool LeftButton;
+	bool MiddleButton;
+	bool RightButton;
 
+	bool Ctrl;
+	bool Shift;
+
+	int X;//光标的x坐标
+	int Y;//光标的y坐标
 };
 
-class ResizeEventArgs : public EventArgs
-{
+class ResizeEventArgs :public EventArgs {
 public:
-    typedef EventArgs base;
-    ResizeEventArgs(int width, int height)
-        : Width(width)
-        , Height(height)
-    {}
-
-    // The new width of the window
-    int Width;
-    // The new height of the window.
-    int Height;
-
+	ResizeEventArgs(int width, int height) :Width(width), Height(height) {}
+public:
+	int Width;
+	int Height;
 };
 
-class UpdateEventArgs : public EventArgs
-{
+class UpdateEventArgs :public EventArgs {
 public:
-    typedef EventArgs base;
-    UpdateEventArgs(double fDeltaTime, double fTotalTime)
-        : ElapsedTime(fDeltaTime)
-        , TotalTime(fTotalTime)
-    {}
-
-    double ElapsedTime;
-    double TotalTime;
+	UpdateEventArgs(double elapsedTime, double totalTime) :ElapsedTime(elapsedTime), TotalTime(totalTime) {}
+public:
+	double ElapsedTime;
+	double TotalTime;
 };
 
-class RenderEventArgs : public EventArgs
-{
+class RenderEventArgs :public EventArgs {
 public:
-    typedef EventArgs base;
-    RenderEventArgs(double fDeltaTime, double fTotalTime)
-        : ElapsedTime(fDeltaTime)
-        , TotalTime(fTotalTime)
-    {}
-
-    double ElapsedTime;
-    double TotalTime;
+	RenderEventArgs(double elapsedTime, double totalTime) :ElapsedTime(elapsedTime), TotalTime(totalTime) {}
+public:
+	double ElapsedTime;
+	double TotalTime;
 };
 
-class UserEventArgs : public EventArgs
-{
+class UserEventArgs :public EventArgs {
 public:
-    typedef EventArgs base;
-    UserEventArgs(int code, void* data1, void* data2)
-        : Code(code)
-        , Data1(data1)
-        , Data2(data2)
-    {}
-
-    int     Code;
-    void* Data1;
-    void* Data2;
+	UserEventArgs(int code, void* data1, void* data2) :Code(code), Data1(data1), Data2(data2) {}
+public:
+	int Code;
+	void* Data1;
+	void* Data2;
 };

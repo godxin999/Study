@@ -4,7 +4,7 @@
 #include "Game.h"
 #include "CommandQueue.h"
 
-constexpr wchar_t WINDOW_CLASS_NAME[] = L"DX12RenderwndClass";
+constexpr wchar_t WINDOW_CLASS_NAME[] = L"DX12RenderWindowClass";
 
 using WindowPtr = std::shared_ptr<Window>;
 using WindowMap = std::map<HWND, WindowPtr>;
@@ -14,7 +14,7 @@ static Application* gs_pSingelton = nullptr;
 static WindowMap gs_Windows;
 static WindowNameMap gs_WindowByName;
 
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) { return 0; }
+static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 struct MakeWindow :public Window {
 	MakeWindow(HWND hWnd, const std::wstring& windowName, int clientWidth, int clientHeight, bool vSync) :
@@ -74,7 +74,7 @@ Application& Application::Get() {
 	return *gs_pSingelton;
 }
 
-void Application::Destory() {
+void Application::Destroy() {
 	if (gs_pSingelton) {
 		assert(gs_Windows.empty() && gs_WindowByName.empty() && "All windows should be destroyed before destroying the application instance.");
 		delete gs_pSingelton;
@@ -175,7 +175,6 @@ bool Application::IsTearingSupported()const {
 	return m_TearingSupported;
 }
 
-
 std::shared_ptr<Window> Application::CreateRenderWindow(const std::wstring& windowName, int clientWidth, int clientHeight, bool vSync) {
 	auto windowIter = gs_WindowByName.find(windowName);
 	if (windowIter != gs_WindowByName.end()) {
@@ -206,7 +205,7 @@ std::shared_ptr<Window> Application::CreateRenderWindow(const std::wstring& wind
 
 void Application::DestroyWindow(std::shared_ptr<Window> window) {
 	if (window) {
-		window->Destory();
+		window->Destroy();
 	}
 }
 
@@ -297,3 +296,226 @@ UINT Application::GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE ty
 	return m_d3d12Device->GetDescriptorHandleIncrementSize(type);
 }
 
+static void RemoveWindow(HWND hWnd) {
+	auto windowIter = gs_Windows.find(hWnd);
+	if (windowIter != gs_Windows.end()) {
+		auto pWindow = windowIter->second;
+		gs_WindowByName.erase(pWindow->GetWindowName());
+		gs_Windows.erase(windowIter);
+	}
+}
+
+MouseButtonEventArgs::MouseButton DecodeMouseButton(UINT messageID){
+	//根据消息值返回对应的鼠标按键
+	MouseButtonEventArgs::MouseButton mouseButton = MouseButtonEventArgs::None;
+	switch (messageID)
+	{
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_LBUTTONDBLCLK:
+	{
+		mouseButton = MouseButtonEventArgs::Left;
+	}
+	break;
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_RBUTTONDBLCLK:
+	{
+		mouseButton = MouseButtonEventArgs::Right;
+	}
+	break;
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_MBUTTONDBLCLK:
+	{
+		mouseButton = MouseButtonEventArgs::Middle;
+	}
+	break;
+	}
+
+	return mouseButton;
+}
+
+static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
+	WindowPtr pWindow;
+	{
+		WindowMap::iterator iter = gs_Windows.find(hwnd);
+		if (iter != gs_Windows.end()){
+			pWindow = iter->second;
+		}
+	}
+
+	if (pWindow){
+		switch (message)
+		{
+		case WM_PAINT:
+		{
+			UpdateEventArgs updateEventArgs(0.0f, 0.0f);
+			pWindow->OnUpdate(updateEventArgs);
+			RenderEventArgs renderEventArgs(0.0f, 0.0f);
+			pWindow->OnRender(renderEventArgs);
+		}
+		break;
+		case WM_SYSKEYDOWN:
+		case WM_KEYDOWN:
+		{
+			MSG charMsg;
+			unsigned int c = 0;
+			//对于可打印字符，下一条消息为WM_CHAR，这条消息包含要发送给KeyPressedEvent的字符编码
+			//PeekMessage检查消息队列，如果队列中有消息，则将该消息复制到指定的结构中，但不将其从队列中删除，该函数检查后立刻返回不会阻塞线程
+			//PM_NOREMOVE指示在检查消息队列后，不将消息从队列中删除
+			if (PeekMessage(&charMsg, hwnd, 0, 0, PM_NOREMOVE) && charMsg.message == WM_CHAR){
+				//从队列中获取消息并将其删除
+				GetMessage(&charMsg, hwnd, 0, 0);
+				c = static_cast<unsigned int>(charMsg.wParam);//获取字符编码
+			}
+			//GetAsyncKeyState函数通过侦测键盘硬件中断来获取物理键状态(按下或释放)
+			//字母或数字的虚拟键编码为对应的ASCII码，其他键有对应的虚拟键编码，并使用VK开头的宏表示，如VK_SHIFT表示Shift键
+			//GetAsyncKeyState函数返回值的最高位表示键是否被按下，如果被按下则最高位为1，否则为0，因为返回值是short类型，所以需要&0x8000
+			bool shift = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+			bool ctrl = (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
+			bool alt = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+
+			KeyCode::Key key = (KeyCode::Key)wParam;//获取虚拟键编码
+			unsigned int scanCode = (lParam & 0x00FF0000) >> 16;//第16-23位表示扫描码，这里通过位运算获取扫描码
+
+			KeyEventArgs keyEventArgs(key, c, KeyEventArgs::Pressed, shift, ctrl, alt);
+			pWindow->OnKeyPressed(keyEventArgs);
+		}
+		break;
+		case WM_SYSKEYUP:
+		case WM_KEYUP:
+		{
+			bool shift = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+			bool control = (GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0;
+			bool alt = (GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+
+			KeyCode::Key key = (KeyCode::Key)wParam;
+			unsigned int c = 0;
+			unsigned int scanCode = (lParam & 0x00FF0000) >> 16;
+			//获取当前键盘状态，GetKeyBoardState函数调用后，键盘状态会被填充到指定的数组中
+			//如果虚拟键被按下，则数组中对应元素的最高位被置1，否则为0
+			unsigned char keyboardState[256];
+			GetKeyboardState(keyboardState);
+			//ToUnicodeEx函数将指定的虚拟键编码和扫描码转换为Unicode字符，返回值为有效字符位数，有效字符位于缓冲区低位
+			wchar_t translatedCharacters[4];//存储转换后的字符
+			if (int result = ToUnicodeEx(static_cast<UINT>(wParam), scanCode, keyboardState, translatedCharacters, 4, 0, NULL) > 0){
+				c = translatedCharacters[0];//获取转换后的字符
+			}
+
+			KeyEventArgs keyEventArgs(key, c, KeyEventArgs::Released, shift, control, alt);
+			pWindow->OnKeyReleased(keyEventArgs);
+		}
+		break;
+		case WM_SYSCHAR:
+			//如果未处理WM_SYSCHAR消息，则默认窗口过程将处理该消息，并在窗口有键盘焦点时播放系统通知音，如按下Alt+Enter时
+			break;
+		case WM_MOUSEMOVE:
+		{
+			//在处理WM_MOUSEMOVE消息时，wParam参数包含鼠标按钮和键盘修饰键状态的信息
+			//使用wParam和对应键的宏(MK_)进行位运算，如果结果不为0，则表示该键被按下
+			bool lButton = (wParam & MK_LBUTTON) != 0;
+			bool rButton = (wParam & MK_RBUTTON) != 0;
+			bool mButton = (wParam & MK_MBUTTON) != 0;
+			bool shift = (wParam & MK_SHIFT) != 0;
+			bool control = (wParam & MK_CONTROL) != 0;
+			//使用LOWORD和HIWORD宏获取鼠标位置
+			int x = ((int)(short)LOWORD(lParam));
+			int y = ((int)(short)HIWORD(lParam));
+
+			MouseMotionEventArgs mouseMotionEventArgs(lButton, mButton, rButton, control, shift, x, y);
+			pWindow->OnMouseMoved(mouseMotionEventArgs);
+		}
+		break;
+		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+		case WM_MBUTTONDOWN:
+		{
+			bool lButton = (wParam & MK_LBUTTON) != 0;
+			bool rButton = (wParam & MK_RBUTTON) != 0;
+			bool mButton = (wParam & MK_MBUTTON) != 0;
+			bool shift = (wParam & MK_SHIFT) != 0;
+			bool control = (wParam & MK_CONTROL) != 0;
+
+			int x = ((int)(short)LOWORD(lParam));
+			int y = ((int)(short)HIWORD(lParam));
+
+			MouseButtonEventArgs mouseButtonEventArgs(DecodeMouseButton(message), MouseButtonEventArgs::Pressed, lButton, mButton, rButton, control, shift, x, y);
+			pWindow->OnMouseButtonPressed(mouseButtonEventArgs);
+		}
+		break;
+		case WM_LBUTTONUP:
+		case WM_RBUTTONUP:
+		case WM_MBUTTONUP:
+		{
+			bool lButton = (wParam & MK_LBUTTON) != 0;
+			bool rButton = (wParam & MK_RBUTTON) != 0;
+			bool mButton = (wParam & MK_MBUTTON) != 0;
+			bool shift = (wParam & MK_SHIFT) != 0;
+			bool control = (wParam & MK_CONTROL) != 0;
+
+			int x = ((int)(short)LOWORD(lParam));
+			int y = ((int)(short)HIWORD(lParam));
+
+			MouseButtonEventArgs mouseButtonEventArgs(DecodeMouseButton(message), MouseButtonEventArgs::Released, lButton, mButton, rButton, control, shift, x, y);
+			pWindow->OnMouseButtonReleased(mouseButtonEventArgs);
+		}
+		break;
+		case WM_MOUSEWHEEL:
+		{
+			//HIWORD从wParam中获取鼠标滚轮的滚动量，正数表示向上滚动，负数表示向下滚动
+			//WHEEL_DELTA宏为鼠标滚轮滚动一行的滚动量，除以该值得到滚动的行数
+			//LOWORD从wParam中获取鼠标滚轮滚动时的键盘修饰键状态
+			float zDelta = ((int)(short)HIWORD(wParam)) / (float)WHEEL_DELTA;
+			short keyStates = (short)LOWORD(wParam);
+
+			bool lButton = (keyStates & MK_LBUTTON) != 0;
+			bool rButton = (keyStates & MK_RBUTTON) != 0;
+			bool mButton = (keyStates & MK_MBUTTON) != 0;
+			bool shift = (keyStates & MK_SHIFT) != 0;
+			bool control = (keyStates & MK_CONTROL) != 0;
+
+			int x = ((int)(short)LOWORD(lParam));
+			int y = ((int)(short)HIWORD(lParam));
+
+			//将客户端坐标转换为屏幕坐标
+			POINT clientToScreenPoint;
+			clientToScreenPoint.x = x;
+			clientToScreenPoint.y = y;
+			ScreenToClient(hwnd, &clientToScreenPoint);
+
+			MouseWheelEventArgs mouseWheelEventArgs(zDelta, lButton, mButton, rButton, control, shift, (int)clientToScreenPoint.x, (int)clientToScreenPoint.y);
+			pWindow->OnMouseWheel(mouseWheelEventArgs);
+		}
+		break;
+		case WM_SIZE:
+		{
+			int width = ((int)(short)LOWORD(lParam));
+			int height = ((int)(short)HIWORD(lParam));
+
+			ResizeEventArgs resizeEventArgs(width, height);
+			pWindow->OnResize(resizeEventArgs);
+		}
+		break;
+		case WM_DESTROY:
+		{
+			//从全局窗口列表中移除窗口
+			RemoveWindow(hwnd);
+
+			if (gs_Windows.empty()){
+				//如果没有其余的窗口，就退出程序
+				PostQuitMessage(0);
+			}
+		}
+		break;
+		default:
+			//调用默认窗口过程处理其余的消息
+			return DefWindowProcW(hwnd, message, wParam, lParam);
+		}
+	}
+	else{
+		return DefWindowProcW(hwnd, message, wParam, lParam);
+	}
+
+	return 0;
+}

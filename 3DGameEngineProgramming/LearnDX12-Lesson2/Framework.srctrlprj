@@ -43,6 +43,10 @@
                 <source_path>pch.h</source_path>
                 <source_path>Window.cpp</source_path>
                 <source_path>Window.h</source_path>
+                <source_path>Events.h</source_path>
+                <source_path>HighResolutionClock.cpp</source_path>
+                <source_path>HighResolutionClock.h</source_path>
+                <source_path>KeyCodes.h</source_path>
             </source_paths>
             <status>enabled</status>
             <type>C++ Source Group</type>

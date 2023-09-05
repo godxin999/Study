@@ -5,12 +5,14 @@
 #include "Game.h"
 
 
-Window::Window(HWND hWnd, const std::wstring& windowName, uint32_t clientWidth, uint32_t clientHeight, bool vSync) :
+Window::Window(HWND hWnd, const std::wstring& windowName, int clientWidth, int clientHeight, bool vSync):
 	m_hWnd(hWnd),
 	m_WindowName(windowName),
 	m_ClientWidth(clientWidth),
 	m_ClientHeight(clientHeight),
-	m_VSync(vSync) {
+	m_VSync(vSync),
+	m_FullScreen(false),
+	m_FrameCounter(0){
 	Application& app = Application::Get();
 
 	m_IsTearingSupported = app.IsTearingSupported();
@@ -31,6 +33,83 @@ void Window::RegisterCallbacks(std::shared_ptr<Game> pGame) {
 	return;
 }
 
+void Window::OnUpdate(UpdateEventArgs&) {
+	m_UpdateClock.Tick();
+	if (auto pGame = m_pGame.lock()) {
+		++m_FrameCounter;
+		UpdateEventArgs updateEventArgs(m_UpdateClock.GetDeltaSeconds(), m_UpdateClock.GetTotalSeconds());
+		pGame->OnUpdate(updateEventArgs);
+	}
+}
+
+void Window::OnRender(RenderEventArgs&) {
+	m_RenderClock.Tick();
+	if (auto pGame = m_pGame.lock()) {
+		RenderEventArgs renderEventArgs(m_RenderClock.GetDeltaSeconds(), m_RenderClock.GetTotalSeconds());
+		pGame->OnRender(renderEventArgs);
+	}
+}
+
+void Window::OnResize(ResizeEventArgs& e) {
+	if (m_ClientWidth != e.Width || m_ClientHeight != e.Height) {
+		m_ClientWidth = std::max(1, e.Width);
+		m_ClientHeight = std::max(1, e.Height);
+
+		//在调整交换链大小时，需要释放对交换链后台缓冲区的引用，由于在GPU上可能有一个运行中的命令列表引用了交换链的后台缓冲区，所以需要先刷新GPU
+		Application::Get().Flush();
+
+		for (int i = 0; i < BufferCount; ++i) {
+			m_d3d12BackBuffers[i].Reset();//重置后台缓冲区
+		}
+		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+		ThrowIfFailed(m_dxgiSwapChain->GetDesc(&swapChainDesc));
+		ThrowIfFailed(m_dxgiSwapChain->ResizeBuffers(BufferCount, m_ClientWidth, m_ClientHeight, swapChainDesc.BufferDesc.Format, swapChainDesc.Flags));
+		//在调整交换链大小后，后台缓冲区的索引可能改变，所以重新进行获取，并创建新的RTV
+		m_CurrentBackBufferIndex = m_dxgiSwapChain->GetCurrentBackBufferIndex();
+		UpdateRenderTargetViews();
+	}
+	if (auto pGame = m_pGame.lock()) {
+		pGame->OnResize(e);
+	}
+}
+
+void Window::OnMouseWheel(MouseWheelEventArgs& e) {
+	if (auto pGame = m_pGame.lock()) {
+		pGame->OnMouseWheel(e);
+	}
+}
+
+void Window::OnKeyPressed(KeyEventArgs& e) {
+	if (auto pGame = m_pGame.lock()) {
+		pGame->OnKeyPressed(e);
+	}
+}
+
+void Window::OnKeyReleased(KeyEventArgs& e) {
+	if (auto pGame = m_pGame.lock()) {
+		pGame->OnKeyReleased(e);
+	}
+}
+
+void Window::OnMouseMoved(MouseMotionEventArgs& e) {
+	if (auto pGame = m_pGame.lock()) {
+		pGame->OnMouseMoved(e);
+	}
+}
+
+void Window::OnMouseButtonPressed(MouseButtonEventArgs& e) {
+	if (auto pGame = m_pGame.lock()) {
+		pGame->OnMouseButtonPressed(e);
+	}
+}
+
+void Window::OnMouseButtonReleased(MouseButtonEventArgs& e) {
+	if (auto pGame = m_pGame.lock()) {
+		pGame->OnMouseButtonReleased(e);
+	}
+}
+
+
 HWND Window::GetWindowHandle()const {
 	return m_hWnd;
 }
@@ -47,12 +126,12 @@ void Window::Hide() {
 	::ShowWindow(m_hWnd, SW_HIDE);
 }
 
-void Window::Destory() {
+void Window::Destroy() {
 	if (auto pGame = m_pGame.lock()) {
 		pGame->OnWindowDestroy();
 	}
-	else {
-		DestroyWindow(m_hWnd);
+	if (m_hWnd) {
+		::DestroyWindow(m_hWnd);
 		m_hWnd = nullptr;
 	}
 }
@@ -126,7 +205,6 @@ void Window::ToggleFullScreen() {
 	SetFullScreen(!m_FullScreen);
 }
 
-
 Microsoft::WRL::ComPtr<IDXGISwapChain4> Window::CreateSwapChain() {
 	Application& app = Application::Get();
 
@@ -172,7 +250,6 @@ Microsoft::WRL::ComPtr<IDXGISwapChain4> Window::CreateSwapChain() {
 	return dxgiSwapChain4;
 }
 
-
 void Window::UpdateRenderTargetViews() {
 	auto device = Application::Get().GetDevice();
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_d3d12RTVDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
@@ -184,7 +261,7 @@ void Window::UpdateRenderTargetViews() {
 
 		m_d3d12BackBuffers[i] = backBuffer;
 
-		rtvHandle.Offset(m_RTVDescriptorSize);//偏移到下一个描`述符
+		rtvHandle.Offset(m_RTVDescriptorSize);//偏移到下一个描述符
 	}
 }
 
@@ -200,11 +277,10 @@ UINT Window::GetCurrentBackBufferIndex()const {
 	return m_CurrentBackBufferIndex;
 }
 
-UINT Window::Present(){
+UINT Window::Present() {
 	UINT syncInterval = m_VSync ? 1 : 0;
 	UINT presentFlags = m_IsTearingSupported && !m_VSync ? DXGI_PRESENT_ALLOW_TEARING : 0;
 	ThrowIfFailed(m_dxgiSwapChain->Present(syncInterval, presentFlags));
-	m_CurrentBackBufferIndex= m_dxgiSwapChain->GetCurrentBackBufferIndex();
+	m_CurrentBackBufferIndex = m_dxgiSwapChain->GetCurrentBackBufferIndex();
 	return m_CurrentBackBufferIndex;
 }
-

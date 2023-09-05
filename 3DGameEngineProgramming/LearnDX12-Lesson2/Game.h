@@ -11,6 +11,10 @@ public:
 	Game(const std::wstring& name, int width, int height, bool vSync);
 	virtual ~Game();
 
+	int GetClientWidth()const;
+
+	int GetClientHeight()const;
+
 	virtual bool Initialize();
 
 	virtual bool LoadContent() = 0;

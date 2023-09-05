@@ -15,6 +15,14 @@ Game::~Game() {
 	assert(!m_pWindow && "Use Game::Destroy before destruction.");
 }
 
+int Game::GetClientWidth()const {
+	return m_Width;
+}
+
+int Game::GetClientHeight()const {
+	return m_Height;
+}
+
 bool Game::Initialize() {
 	if (!DirectX::XMVerifyCPUSupport()) {
 		MessageBoxW(nullptr, L"Failed to verify DirectX Math library support.", L"Error", MB_OK | MB_ICONERROR);
@@ -24,6 +32,8 @@ bool Game::Initialize() {
 	m_pWindow = Application::Get().CreateRenderWindow(m_Name, m_Width, m_Height, m_VSync);
 	m_pWindow->RegisterCallbacks(shared_from_this());
 	m_pWindow->Show();
+
+	return true;
 }
 
 void Game::Destroy() {
