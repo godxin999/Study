@@ -13,7 +13,7 @@
 
 template <typename T>
 using enableIfString=std::enable_if_t<std::is_convertible_v<T,std::string>>;//std::is_convertible_v<>要求类型之间可以隐式转换
-//可以使用std::is_constructible_v<>来要求使用显式转换来初始化
+//可以使用std::is_constructible_v<>来判断类型是否可以构造
 
 
 class Person{
