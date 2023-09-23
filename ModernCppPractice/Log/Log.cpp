@@ -6,25 +6,17 @@
  ************************************************************************/
 
 #include "Log.hpp"
-using namespace MyLog;
+using namespace mylog;
 
 
 int main(){
-	/*log(Level::Debug,"Hello, {}!", "Debug");
-
-	log(Level::Info,"Hello, {}!", "Info");
-
-	change_level(Level::Debug);
-
-	log(Level::Debug,"Hello, {}!", "Debug");*/
-
-	MyLog_info("Hello, {}!", "Info");
-
-	//set_level(Level::debug);
-
-	int n=100;
+	set_log_path("a.log");
+	int n = 100;
 	MYLOG_P(n);
-	MyLog_trace("Hello, {}!", "Trace");
-	MyLog_debug("Hello, {}!", "Debug");
+	MYLOG_PH(n);
+	mylog_trace("Hello, {}!", "Trace");
+	set_log_level(log_level::debug);
+	mylog_debug("Hello, {}!", "Debug");
+
 	return 0;
 }
