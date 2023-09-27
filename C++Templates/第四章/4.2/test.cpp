@@ -10,6 +10,7 @@
 template <typename... T>
 auto foldsum(T... s){
 	return(...+s);
+	//return(s+...);//展开顺序不同
 }
 
 struct Node{

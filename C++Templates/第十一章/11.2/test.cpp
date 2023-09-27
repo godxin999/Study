@@ -38,7 +38,7 @@ void test2(){
 	std::make_unsigned_t<int> a=1;
 	//std::make_signed_t<const int&> b=1;//未定义行为
 	std::add_rvalue_reference_t<const int> c=1;//const int &&c
-	std::add_lvalue_reference_t<const int&> d=1;//const int &d，引用折叠导致类型为左值引用
+	std::add_rvalue_reference_t<const int&> d=1;//const int &d，引用折叠导致类型为左值引用
 }
 void test3(){
 	auto b=std::is_copy_assignable_v<int>;//检查一个int能否赋值给另一个(左值相关操作)

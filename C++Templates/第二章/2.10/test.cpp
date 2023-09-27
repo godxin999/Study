@@ -20,10 +20,11 @@ void test1(){
 	vc.value=0;
 	vc.comment="hello";
 }
-//聚合类的推到指引
+//聚合类的推导指引
 ValueWithComment(const char*,const char*)->ValueWithComment<std::string>;
 void test2(){
 	ValueWithComment vc{"hello","world"};
+	//ValueWithComment vc("hello","world");//两种初始化方式均可
 	cout<<vc.value<<endl;
 	cout<<vc.comment<<endl;
 }

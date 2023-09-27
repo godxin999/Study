@@ -18,7 +18,7 @@ void cmpArray1(T (&a)[L1],T (&b)[L2]){
 }
 //第二种方法为使用类型萃取来检测参数是不是一个数组
 template <typename T>
-requires std::is_array_v<T>
+requires std::is_array_v<std::remove_reference_t<T>>
 void cmpArray2(T&& a,T&& b){
 	//...
 }
@@ -28,6 +28,6 @@ int main(){
 	int a[10];
 	int b[10];
 	cmpArray1(a,b);
-	//cmpArray2(a,b);//指针类型并非数组类型
+	cmpArray2(a,b);
 	return 0;
 }
