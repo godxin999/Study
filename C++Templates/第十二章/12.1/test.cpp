@@ -59,6 +59,16 @@ int X;
 //命名空间作用域中具有静态限定符的函数模板，匿名空间的直接或间接的成员的模板，它们具有内部链接
 //匿名类的成员模板，它们没有链接
 
+//模板的一般性声明声明了主模板
+//非主模板的声明会在声明类模板或变量模板的偏特化时出现
+//函数模板必须是主模板
+template <typename T>
+class Box;
+template <typename T>
+void func(T);
+template <typename T>
+constexpr T zero=T{};
+
 
 int main(){
 

@@ -76,16 +76,18 @@ void test3(){
 //按值传递可能导致悬空引用
 template <typename T>
 const T& max4(const T& a, const T& b) {
+	std::cout<<"max4(const T& a, const T& b)"<<std::endl;
   return b > a ? b : a;
 }
 
 const char* max4(const char* a, const char* b) {//按值传递
-  return std::strcmp(b, a) > 0 ? b : a;
+	std::cout<<"max4(const char* a, const char* b)"<<std::endl;
+  return std::strcmp(b, a) > 0 ? b : a;//返回一个局部对象的指针
 }
 
 template <typename T>
 const T& max4(const T& a, const T& b, const T& c) {
-  return max4(max4(a, b), c);//会返回一个局部对象的引用，导致发生错误
+  return max4(max4(a, b), c);//调用按值传递的const char*的max4时，max4(a,b)会返回一个局部对象，其生命期仅限于max4(a,b)，因为返回类型为引用，所以会导致返回局部对象的引用
 }
 void test4(){
 	auto m1=::max4(7,42,68);
@@ -124,8 +126,8 @@ int main() {
 	//test1();
 	//test2();
 	//test3();
-	//test4();
-	test5();
+	test4();
+	//test5();
 
 	return 0;
 }
