@@ -16,7 +16,7 @@ public:
 	virtual ~User()=default;
 	User(const std::string& name,int age):name(name),age(age){}
 	void printDetail(){
-		std::cout<<"name:"<<name<<",age:"<<age<<std::endl;
+		std::cout<<std::format("name:{},age:{}\n",name,age);
 	}
 private:
 	User()=default;
