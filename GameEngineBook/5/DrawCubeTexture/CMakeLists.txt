@@ -23,7 +23,7 @@ set(DEPENDS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../depends)
 
 target_include_directories(DrawCubeTexture PUBLIC ${DEPENDS_PATH}/glm/include)
 target_include_directories(DrawCubeTexture PUBLIC ${DEPENDS_PATH}/stb/include)
-target_include_directories(DrawCubeTexture PUBLIC ${DEPENDS_PATH}/timetool/include)
+#target_include_directories(DrawCubeTexture PUBLIC ${DEPENDS_PATH}/timetool/include)
 
 set(sources main.cpp texture2d.cpp ${glfw_sources} VertexData.h ShaderSource.h texture2d.h)
 

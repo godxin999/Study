@@ -36,8 +36,8 @@ Texture2D* Texture2D::LoadFromFile(std::string& image_file_path) {
 		glGenTextures(1, &(texture2d->gl_texture_id));//通知显卡创建纹理对象，返回句柄
 
 		glBindTexture(GL_TEXTURE_2D, texture2d->gl_texture_id);//将纹理绑定到特定纹理目标
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texture2d->width, texture2d->height, 0, texture2d->gl_texture_format, GL_UNSIGNED_BYTE, data);//将图像RGB数据上传至GPU
+		//使用GL_COMPRESSED_RGB格式，压缩纹理数据，减少显存占用
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB, texture2d->width, texture2d->height, 0, texture2d->gl_texture_format, GL_UNSIGNED_BYTE, data);//将图像RGB数据上传至GPU
 		
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);//设置纹理放大过滤方式为线性插值
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);//设置纹理缩小过滤方式为线性插值
