@@ -55,10 +55,6 @@ void init_opengl() {
 	glfwSwapInterval(1);
 }
 
-void CreateTexture(std::string image_file_path) {
-	texture2d = Texture2D::LoadFromFile(image_file_path);
-}
-
 void compile_shader() {
 	//创建顶点着色器
 	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -107,10 +103,17 @@ void compile_shader() {
 	}
 }
 
+void CreateTexture(std::string image_file_path) {
+	texture2d = Texture2D::LoadFromCptFile(image_file_path);
+}
+
 int main() {
 
 	init_opengl();
-	CreateTexture("../image/urban.jpg");
+	std::string src_image_file_path("../image/urban.jpg");
+	std::string cpt_file_path("../image/urban.cpt");
+	Texture2D::CompressImageFile(src_image_file_path, cpt_file_path);
+	CreateTexture(cpt_file_path);
 	compile_shader();
 
 	//获取shader的属性ID

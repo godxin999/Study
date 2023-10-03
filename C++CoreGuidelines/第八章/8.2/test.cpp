@@ -42,12 +42,50 @@ void f2(){
 //ES.12 不要在嵌套作用域中复用名字，这样会隐藏父作用域中的名字
 
 
+//ES.20 始终初始化对象(使用auto，因为auto必须初始化)
+//ES.21 不要在确实需要使用变量(常量)前就将其引入
+//ES.22 在获得可用来初始化变量的值之前不要声明变量
+//ES.23 优先使用{}初始化语法
+void test1(){
+	auto init1{1};//int
+	auto init2={1};//std::initializer_list<int>
+	//auto init3{1,2};//error，不是单个元素
+	auto init4={1,2};//std::initializer_list<int>
+}
+struct MyInt{
+	MyInt(int arg=0):i{arg}{}
+	int i;
+};
+//{}可以避免解析问题
+void test2(){
+	MyInt m1(2023);
+	//MyInt m2();//错误，被解析为函数声明
+	MyInt m2{};
+	std::cout<<m1.i<<std::endl;
+	std::cout<<m2.i<<std::endl;
+}
+//{}初始化语法不允许窄化变换，()只会警告，而{}会报错
+void test3(){
+	//int i(3.14);//warning
+	//int i2{3.14};//error
+	//char c1(999);warning
+	//char{999};//error
+}
+
+//ES.26 不要将同一个变量用于两个不想关的目的
+//ES.28 使用lambda表达式进行复杂的初始化(尤其是const变量)
+struct widget{};
+const widget x=[&](){//通过引用捕获环境变量
+	widget val;
+	//do_somthing();
+	return val;
+}();//lambda表达式进行就地调用初始化const变量
 
 
 int main(){
-
-
-
+	//test1();
+	//test2();
+	test3();
 
 	return 0;
 }
