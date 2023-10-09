@@ -110,7 +110,7 @@ void CreateTexture(std::string image_file_path) {
 int main() {
 
 	init_opengl();
-	std::string cpt_file_path("../image/urban.cpt");
+	std::string cpt_file_path("../../../assets/urban.cpt");
 	CreateTexture(cpt_file_path);
 	compile_shader();
 
