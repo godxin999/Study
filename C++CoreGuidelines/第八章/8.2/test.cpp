@@ -30,7 +30,7 @@ void f(){
 //ES.7 常用的和局部的名字要短，不常用的和非局部的名字要长
 //ES.8 避免看起来相似的名字
 //ES.9 避免ALL_CAPS的名字(全大写加下划线常常用于宏)
-//ES.10 每条声明进声明一个名字
+//ES.10 每条声明仅声明一个名字
 //ES.11 使用auto来避免类型名字的多余重复(让编译器自动推导类型)
 void f2(){
 	auto a=5;
@@ -69,18 +69,20 @@ void test3(){
 	//int i(3.14);//warning
 	//int i2{3.14};//error
 	//char c1(999);warning
-	//char{999};//error
+	//char c2{999};//error
+	//char c3={999};//error
 }
 
-//ES.26 不要将同一个变量用于两个不想关的目的
+//ES.26 不要将同一个变量用于两个不相关的目的
 //ES.28 使用lambda表达式进行复杂的初始化(尤其是const变量)
 struct widget{};
-const widget x=[&](){//通过引用捕获环境变量
-	widget val;
-	//do_somthing();
-	return val;
-}();//lambda表达式进行就地调用初始化const变量
-
+void test4(){
+	const widget x=[&](){//通过引用捕获环境变量
+		widget val;
+		//do_somthing();
+		return val;
+	}();//lambda表达式进行就地调用初始化const变量
+}
 
 int main(){
 	//test1();
