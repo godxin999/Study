@@ -21,7 +21,7 @@ void Shader::Prase(std::string shader_name) {
 	std::string vertex_shader_file_path = shader_name + ".vs";
 	std::string fragment_shader_file_path = shader_name + ".fs";
 
-
+	//使用istreambuf_iterator<char>读取文件内容，默认构造的istreambuf_iterator<char>标志文件结束符，所以以下代码的作用是读取文件中全部字符
 	std::ifstream vertex_shader_input_file_stream(vertex_shader_file_path);
 	std::string vertex_shader_source((std::istreambuf_iterator<char>(vertex_shader_input_file_stream)), std::istreambuf_iterator<char>());
 

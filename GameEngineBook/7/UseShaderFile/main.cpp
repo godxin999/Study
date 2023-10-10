@@ -19,7 +19,6 @@
 #include <stdio.h>
 #include "renderer/MeshFilter.h"
 #include "renderer/Shader.h"
-#include "ShaderSource.h"
 #include "texture2d.h"
 
 
@@ -113,11 +112,11 @@ int main() {
 	init_opengl();
 	
 	mesh_filter = new MeshFilter();
-	mesh_filter->LoadMesh("../../../assets/cube.mesh");
+	mesh_filter->LoadMesh("../../../assets/model/cube.mesh");
 
-	CreateTexture("../../../assets/urban.cpt");
+	CreateTexture("../../../assets/image/urban.cpt");
 
-	Shader* shader = Shader::Find("../../../data/shader/unlit");
+	Shader* shader = Shader::Find("../../../assets/shader/unlit");
 
 	//获取shader的属性ID
 	mvp_location = glGetUniformLocation(shader->gl_program_id(), "u_mvp");

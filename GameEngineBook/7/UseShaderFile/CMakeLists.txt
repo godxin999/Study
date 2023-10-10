@@ -25,7 +25,7 @@ target_include_directories(UseShaderFile PUBLIC ${DEPENDS_PATH}/glm/include)
 target_include_directories(UseShaderFile PUBLIC ${DEPENDS_PATH}/stb/include)
 #target_include_directories(UseShaderFile PUBLIC ${DEPENDS_PATH}/timetool/include)
 
-set(sources main.cpp texture2d.cpp renderer/MeshFilter.cpp renderer/Shader.cpp ${glfw_sources} ShaderSource.h texture2d.h renderer/MeshFilter.h renderer/Shader.h)
+set(sources main.cpp texture2d.cpp renderer/MeshFilter.cpp renderer/Shader.cpp ${glfw_sources} texture2d.h renderer/MeshFilter.h renderer/Shader.h)
 
 target_sources(UseShaderFile PUBLIC ${sources})
 
