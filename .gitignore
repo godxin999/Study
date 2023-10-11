@@ -193,6 +193,9 @@ tmp/
 # ignore both a directory as well as a symlink
 /share/qtcreator/QtProject
 
+
+*.html
+
 # Binaries
 # --------
 *.dll
