@@ -195,6 +195,7 @@ tmp/
 
 
 *.html
+/docs/
 
 # Binaries
 # --------
