@@ -196,6 +196,8 @@ tmp/
 
 *.html
 docs/
+examples/
+tests/
 
 # Binaries
 # --------
