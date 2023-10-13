@@ -1,0 +1,11 @@
+{
+  "blend_method": "OPAQUE",
+  "diffuse_color": "0.800000011920929,0.800000011920929,0.800000011920929,1.0",
+  "metallic": 0.0,
+  "roughness": 0.5,
+  "specular_color": "1.0,1.0,1.0",
+  "specular_intensity": 0.5,
+  "image_paths": [
+    "Diffuse_FishSoup_Pot_1.jpg"
+  ]
+}
