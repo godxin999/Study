@@ -24,7 +24,7 @@
 
 static void error_callback(int error, const char* description) {
 	//fprintf(stderr, "Error:%s\n", description);
-	std::cerr << "Error:" << description << std::endl;
+	std::cerr << "Error:" << description << '\n';
 }
 
 GLFWwindow* window;

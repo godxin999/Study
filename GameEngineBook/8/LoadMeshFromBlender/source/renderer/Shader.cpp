@@ -2,6 +2,7 @@
 #include "../utils/Application.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <glad/gl.h>
 
 Shader* Shader::Find(std::string shader_name) {
@@ -21,15 +22,14 @@ void Shader::Prase(std::string shader_name) {
 
 	std::string vertex_shader_file_path = Application::assets_path() + shader_name + ".vs";
 	std::string fragment_shader_file_path = Application::assets_path() + shader_name + ".fs";
-
+	
 	//使用istreambuf_iterator<char>读取文件内容，默认构造的istreambuf_iterator<char>标志文件结束符，所以以下代码的作用是读取文件中全部字符
 	std::ifstream vertex_shader_input_file_stream(vertex_shader_file_path);
 	std::string vertex_shader_source((std::istreambuf_iterator<char>(vertex_shader_input_file_stream)), std::istreambuf_iterator<char>());
 
 	std::ifstream fragment_shader_input_file_stream(fragment_shader_file_path);
 	std::string fragment_shader_source((std::istreambuf_iterator<char>(fragment_shader_input_file_stream)), std::istreambuf_iterator<char>());
-
-	//std::cout << vertex_shader_source << std::endl << fragment_shader_source << std::endl;
+	
 
 	CreateGPUProgram(vertex_shader_source.c_str(), fragment_shader_source.c_str());
 }
@@ -47,7 +47,7 @@ void Shader::CreateGPUProgram(const char* vertex_shader_text, const char* fragme
 	if (compile_status == GL_FALSE) {
 		GLchar message[256];
 		glGetShaderInfoLog(vertex_shader, sizeof(message), 0, message);
-		std::cout << "compile vs error:" << message << std::endl;
+		std::cout << "compile vs error:" << message << '\n';
 	}
 
 	//创建片段着色器
@@ -62,7 +62,7 @@ void Shader::CreateGPUProgram(const char* vertex_shader_text, const char* fragme
 	if (compile_status == GL_FALSE) {
 		GLchar message[256];
 		glGetShaderInfoLog(fragment_shader, sizeof(message), 0, message);
-		std::cout << "compile fs error:" << message << std::endl;
+		std::cout << "compile fs error:" << message << '\n';
 	}
 
 	//创建GPU程序
@@ -78,6 +78,6 @@ void Shader::CreateGPUProgram(const char* vertex_shader_text, const char* fragme
 	if (link_status == GL_FALSE) {
 		GLchar message[256];
 		glGetProgramInfoLog(gl_program_id_, sizeof(message), 0, message);
-		std::cout << "link error:" << message << std::endl;
+		std::cout << "link error:" << message << '\n';
 	}
 }
