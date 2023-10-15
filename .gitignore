@@ -198,6 +198,9 @@ tmp/
 docs/
 examples/
 tests/
+doc/
+benchmarks/
+unit_tests/
 
 # Binaries
 # --------
