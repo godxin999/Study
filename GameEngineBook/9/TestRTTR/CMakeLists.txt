@@ -15,12 +15,17 @@ if (WIN32)
     add_compile_options(/wd4819)#忽略保存为unicode警告
 endif ()
 
-add_executable(TestRTTR)
+add_executable(TestRTTR main.cpp)
 
 set(DEPENDS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../depends)
+set(RTTR_DIR ${DEPENDS_PATH}/rttr/cmake)
 
-target_include_directories(TestRTTR PUBLIC ${DEPENDS_PATH}/rttr/src)
+target_include_directories(TestRTTR PUBLIC ${DEPENDS_PATH}/rttr/include)
 
-file(GLOB_RECURSE rttr_source CONFIGURE_DEPENDS ${DEPENDS_PATH}/rttr/src/rttr/*.cpp ${DEPENDS_PATH}/rttr/src/rttr/*.h)
+find_package(RTTR CONFIG REQUIRED COMPONENTS Core)
+target_link_libraries(TestRTTR PUBLIC RTTR::Core)
 
-target_sources(TestRTTR PUBLIC main.cpp ${rttr_source})
+add_custom_command(TARGET TestRTTR POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		$<TARGET_FILE:RTTR::Core>
+		$<TARGET_FILE_DIR:TestRTTR>)
