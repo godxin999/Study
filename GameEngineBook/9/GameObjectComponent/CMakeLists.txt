@@ -20,6 +20,7 @@ include(glfw)
 add_executable(GameObjectComponent)
 
 set(DEPENDS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../depends)
+set(RTTR_DIR ${DEPENDS_PATH}/rttr/cmake)
 
 target_include_directories(GameObjectComponent PUBLIC ${DEPENDS_PATH}/glm/include)
 target_include_directories(GameObjectComponent PUBLIC ${DEPENDS_PATH}/stb/include)
