@@ -75,7 +75,7 @@ void Application::Update() {
 }
 
 void Application::Render() {
-	Camera::Foreach([&]() {
+	Camera::Foreach([]() {
 		GameObject::Foreach([](GameObject* game_object) {
 			auto component = game_object->GetComponent("MeshRenderer");
 			if (!component)return;

@@ -19,7 +19,7 @@ public:
 	}
 private:
 	std::string shader_name_;
-	unsigned gl_program_id_;
+	unsigned gl_program_id_{ 0 };
 public:
 	static Shader* Find(std::string shader_name);
 private:
