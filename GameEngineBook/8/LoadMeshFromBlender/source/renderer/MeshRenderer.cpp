@@ -47,7 +47,7 @@ void MeshRenderer::Render() {
 		glBindVertexArray(vertex_array_object_);
 		{
 			//指定当前使用的VBO
-			glBindBuffer(GL_ARRAY_BUFFER, vertex_array_object_);
+			glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_object_);
 			//将位置数据与顶点着色器属性(a_pos)进行关联
 			glVertexAttribPointer(vpos_location, 3, GL_FLOAT, false, sizeof(MeshFilter::Vertex), 0);
 			//将颜色数据与顶点着色器属性(a_color)进行关联
