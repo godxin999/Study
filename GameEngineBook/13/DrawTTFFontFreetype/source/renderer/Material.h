@@ -11,6 +11,7 @@ class Shader;
 class Texture2D;
 class Material {
 public:
+ 	//解析.mat文件
 	void Parse(std::string material_path);
 
 	void SetUniformMatrix4fv(std::string shader_property_name, float* pointer);
@@ -22,8 +23,8 @@ public:
 	std::vector<std::pair<std::string, Texture2D*>>& textures() {
 		return textures_;
 	}
+	//根据属性设置纹理
 	void SetTexture(std::string property, Texture2D* texture2d);
-
 private:
 	Shader* shader_{ nullptr };
 	std::vector<std::pair<std::string, Texture2D*>> textures_;

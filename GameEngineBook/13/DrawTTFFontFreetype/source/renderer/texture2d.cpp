@@ -110,7 +110,7 @@ void Texture2D::CompressImageFile(std::string& image_file_path, std::string& sav
 	output_file_stream.close();
 	free(img);
 }
-//创建Texture(不压缩)，server_format为GPU内部存储格式，client_format为CPU内存中存储格式
+//server_format为GPU内部存储格式，client_format为CPU内存中存储格式
 Texture2D* Texture2D::Create(unsigned short width, unsigned short height, unsigned server_format, unsigned client_format, unsigned data_type, unsigned char* data) {
 	Texture2D* texture2d = new Texture2D();
 	texture2d->width_ = width;
@@ -128,7 +128,7 @@ Texture2D* Texture2D::Create(unsigned short width, unsigned short height, unsign
 
 	return texture2d;
 }
-//部分更新Texture
+
 void Texture2D::UpdateSubImage(int x, int y, int width, int height, unsigned client_format, unsigned data_type, unsigned char* data){
 	if (width <= 0 || height <= 0)return;
 	glBindTexture(GL_TEXTURE_2D, gl_texture_id_);

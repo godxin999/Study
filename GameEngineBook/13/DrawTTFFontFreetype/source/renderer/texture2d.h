@@ -20,7 +20,9 @@ class Texture2D {
 public:
 	static Texture2D* LoadFromFile(std::string& image_file_path);
 	static Texture2D* LoadFromCptFile(std::string& image_file_path);
+	//压缩图片文件
 	static void CompressImageFile(std::string& image_file_path, std::string& save_image_file_path);
+	//创建Texture(不压缩)
 	static Texture2D* Create(unsigned short width, unsigned short height, unsigned server_format, unsigned client_format, unsigned data_type, unsigned char* data);
 public:
 	struct CptFileHeader {
@@ -46,6 +48,7 @@ public:
 	GLuint gl_texture_id() {
 		return gl_texture_id_;
 	}
+	//部分更新Texture
 	void UpdateSubImage(int x, int y, int width, int height, unsigned client_format, unsigned data_type, unsigned char* data);
 private:
 	int mipmap_level_{ 0 };

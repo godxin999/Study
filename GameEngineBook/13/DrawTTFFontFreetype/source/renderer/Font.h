@@ -10,10 +10,12 @@
 class Texture2D;
 class Font {
 public:
+	//从文件中加载ttf字体
 	static Font* LoadFromFile(std::string font_file_path, unsigned short font_size);
 	static Font* GetFont(std::string font_file_path);
 public:
-	void LoadCharacter(char c);//为字符生成bitmap
+	//为字符生成bitmap
+	void LoadCharacter(char c);
 
 	Texture2D* font_texture() {
 		return font_texture_;

@@ -45,8 +45,5 @@ void MeshFilter::CreateMesh(std::vector<Vertex>& vertex_data, std::vector<unsign
 }
 
 MeshFilter::~MeshFilter() {
-	//free(mesh_->vertex_data);
-	//free(mesh_->vertex_index_data);
 	delete mesh_;
-	mesh_ = nullptr;
 }
