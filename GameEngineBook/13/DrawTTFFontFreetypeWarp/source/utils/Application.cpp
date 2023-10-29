@@ -6,6 +6,7 @@
 #include "renderer/MeshRenderer.h"
 #include "control/Input.h"
 #include "Screen.h"
+#include "Debug.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -32,11 +33,14 @@ static void mouse_scroll_callback(GLFWwindow* window, double x, double y) {
 	//std::cout << "mouse_scroll_callback:" << x << "," << y << '\n';
 }
 
-void Application::InitOpenGL() {
+void Application::Init() {
+	Debug::Init();
+	DEBUG_LOG_INFO("game start");
 	//设置错误回调函数
 	glfwSetErrorCallback(error_callback);
 
 	if (!glfwInit()) {
+		DEBUG_LOG_ERROR("glfw init failed!");
 		exit(EXIT_FAILURE);
 	}
 
@@ -51,6 +55,7 @@ void Application::InitOpenGL() {
 	//创建窗口
 	glfw_window_ = glfwCreateWindow(960, 640, "OpenGLStudy", nullptr, nullptr);
 	if (!glfw_window_) {
+		DEBUG_LOG_ERROR("glfwCreateWindow error!");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
