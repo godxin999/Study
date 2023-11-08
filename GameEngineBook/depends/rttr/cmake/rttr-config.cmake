@@ -47,7 +47,7 @@ unset(_cmake_expected_targets)
 
 
 # The installation prefix configured by this project.
-set(_IMPORT_PREFIX "C:/Users/admin/Desktop/Study/GameEngineBook/depends/rttr")
+set(_IMPORT_PREFIX "G:/Study/GameEngineBook/depends/rttr")
 
 # Create imported target RTTR::Core
 add_library(RTTR::Core SHARED IMPORTED)
