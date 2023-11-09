@@ -1,7 +1,7 @@
 #include <fstream>
 #include <rttr/registration>
 #include "MeshFilter.h"
-#include "../utils/Application.h"
+#include "utils/Application.h"
 
 RTTR_REGISTRATION
 {

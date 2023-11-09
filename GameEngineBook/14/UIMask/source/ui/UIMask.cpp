@@ -51,7 +51,7 @@ void UIMask::OnPreRender() {
 	RenderDevice::instance()->Enable(RenderDevice::RenderState::STENCIL_TEST);
 	glClearStencil(0);//设置默认模板值为0
 	glStencilFunc(GL_NEVER, 0x0, 0xFF);//设置模板测试函数，永远不通过
-	glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+	glStencilOp(GL_INCR, GL_INCR, GL_INCR);//Mask范围内的像素的模板值变为1
 }
 
 void UIMask::OnPostRender() {

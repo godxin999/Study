@@ -26,6 +26,7 @@
 
 #include "utils/Screen.h"
 #include "ui/UIImage.h"
+#include "ui/UIMask.h"
 
 #include "LoginScene.h"
 
@@ -58,6 +59,12 @@ void LoginScene::Awake() {
 void LoginScene::Update() {
 	camera_1->SetView(glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	camera_1->SetPerspective(60.f, Screen::aspect_ratio(), 1.f, 1000.f);
+
+	//按A键显示/隐藏UIMask
+	if (Input::GetKeyUp(KEY_CODE_A)) {
+		auto go_ui_mask = GameObject::Find("mask_mod_bag");
+		go_ui_mask->SetActive(!go_ui_mask->active());
+	}
 
 	//旋转物体
 	if (Input::GetKeyDown(KEY_CODE_R) || Input::GetKeyDown(KEY_CODE_RIGHT_ALT)) {
@@ -122,7 +129,7 @@ void LoginScene::CreateFont() {
 		};
 		//创建GameObject
 		GameObject* go = new GameObject("quad_draw_font_color");
-		go->set_layer(0x01);
+		go->SetLayer(0x01);
 		//挂载Transform组件
 		auto transform = dynamic_cast<Transform*>(go->AddComponent("Transform"));
 		transform->set_position({ -8.f,0.f,0.f });
@@ -151,16 +158,27 @@ void LoginScene::CreateUI() {
 	auto camera_ui = dynamic_cast<Camera*>(go_camera_ui->AddComponent("Camera"));
 	camera_ui->set_depth(1);
 	camera_ui->set_culling_mask(0x02);
-	camera_ui->set_clear_flag(GL_DEPTH_BUFFER_BIT);
+	camera_ui->set_clear_flag(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	camera_ui->SetView(glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 	camera_ui->SetOrthographic(-Screen::width() / 2.0, Screen::width() / 2.0, -Screen::height() / 2.0, Screen::height() / 2.0, -100, 100);
 
 	//创建GameObject
-	auto go = new GameObject("image_mod_bag");
-	go->set_layer(0x02);
+	auto go_ui_image = new GameObject("image_mod_bag");
+	go_ui_image->SetLayer(0x02);
 	//挂载Transform组件
-	go->AddComponent("Transform");
+	go_ui_image->AddComponent("Transform");
 	//挂载UIImage组件
-	auto ui_image_mod_bag = dynamic_cast<UIImage*>(go->AddComponent("UIImage"));
+	auto ui_image_mod_bag = dynamic_cast<UIImage*>(go_ui_image->AddComponent("UIImage"));
 	ui_image_mod_bag->SetTexture(Texture2D::LoadFromCptFile("image/mod_bag.cpt"));
+	
+	//创建GameObject
+	auto go_ui_mask = new GameObject("mask_mod_bag");
+	go_ui_mask->SetLayer(0x02);
+	go_ui_mask->SetParent(go_ui_image);
+	//挂载Transform组件
+	go_ui_mask->AddComponent("Transform");
+	//挂载UIMask组件
+	auto ui_mask_mod_bag = dynamic_cast<UIMask*>(go_ui_mask->AddComponent("UIMask"));
+	ui_mask_mod_bag->SetTexture(Texture2D::LoadFromCptFile("image/mod_bag_mask.cpt"));
+	
 }

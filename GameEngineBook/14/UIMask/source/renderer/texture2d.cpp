@@ -6,7 +6,7 @@
  ************************************************************************/
 
 #include "texture2d.h"
-#include "../utils/Application.h"
+#include "utils/Application.h"
 #include <fstream>
 #include <stb/stb_image.h>
 

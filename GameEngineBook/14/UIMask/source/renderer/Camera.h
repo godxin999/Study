@@ -8,7 +8,7 @@
 #include <functional>
 #include <glm/glm.hpp>
 #include <glad/glad.h>
-#include "../component/Component.h"
+#include "component/Component.h"
 
 class Camera :public Component {
 public:

@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
-#include "../component/Component.h"
+#include "component/Component.h"
 
 class MeshFilter :public Component {
 public:

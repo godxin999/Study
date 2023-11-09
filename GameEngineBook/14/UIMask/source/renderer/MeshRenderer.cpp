@@ -11,8 +11,8 @@
 #include "texture2d.h"
 #include "Shader.h"
 
-#include "../component/GameObject.h"
-#include "../component/Transform.h"
+#include "component/GameObject.h"
+#include "component/Transform.h"
 #include "Camera.h"
 
 #include <ranges>
@@ -101,6 +101,11 @@ void MeshRenderer::Render() {
 	//指定GPU程序
 	glUseProgram(gl_program_id);
 	{
+		//PreRender
+		game_object()->ForeachComponent([](Component* component) {
+			component->OnPreRender();
+			});
+
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);//开启背面剔除
 		glEnable(GL_BLEND);//开启混合模式
@@ -125,6 +130,11 @@ void MeshRenderer::Render() {
 			glDrawElements(GL_TRIANGLES, mesh_filter->mesh()->vertex_index_num_, GL_UNSIGNED_SHORT, 0);
 		}
 		glBindVertexArray(0);//解除顶点数组的绑定
+
+		//PostRender
+		game_object()->ForeachComponent([](Component* component) {
+			component->OnPostRender();
+			});
 	}
 
 }

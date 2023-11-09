@@ -7,6 +7,7 @@
 #include "control/Input.h"
 #include "Screen.h"
 #include "Debug.h"
+#include "render_device/RenderDeviceOpenGL.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -33,6 +34,7 @@ static void mouse_scroll_callback(GLFWwindow* window, double x, double y) {
 void Application::Init() {
 	Debug::Init();
 	DEBUG_LOG_INFO("game start");
+	RenderDevice::Init(new RenderDeviceOpenGL());
 	//设置错误回调函数
 	glfwSetErrorCallback(error_callback);
 
@@ -72,9 +74,11 @@ void Application::Update() {
 	UpdateScreenSize();
 
 	GameObject::Foreach([](GameObject* game_object) {
-		game_object->ForeachComponent([](Component* component) {
-			component->Update();
-			});
+		if (game_object->active()) {
+			game_object->ForeachComponent([](Component* component) {
+				component->Update();
+				});
+		}
 		});
 
 	Input::Update();
@@ -84,6 +88,7 @@ void Application::Render() {
 	//遍历所有相机，每个具有MeshRenderer组件的GameObject都会被渲染(根据mask)
 	Camera::Foreach([]() {
 		GameObject::Foreach([](GameObject* game_object) {
+			if(!game_object->active())return;
 			auto component = game_object->GetComponent("MeshRenderer");
 			if (!component)return;
 			auto mesh_renderer = dynamic_cast<MeshRenderer*>(component);

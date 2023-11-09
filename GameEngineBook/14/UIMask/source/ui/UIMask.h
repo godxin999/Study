@@ -8,7 +8,12 @@ class UIMask :public Component {
 public:
 	UIMask() = default;
 	~UIMask() = default;
-
+	Texture2D* texture2D() {
+		return texture2d_;
+	}
+	void SetTexture(Texture2D* texture2d) {
+		texture2d_ = texture2d;
+	}
 public:
 	void OnEnable() override;
 	void Update() override;

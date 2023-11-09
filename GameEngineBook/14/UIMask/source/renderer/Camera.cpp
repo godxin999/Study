@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <functional>
 #include <glm/gtc/matrix_transform.hpp>
-#include "../component/GameObject.h"
-#include "../component/Transform.h"
+#include "component/GameObject.h"
+#include "component/Transform.h"
 
 RTTR_REGISTRATION
 {

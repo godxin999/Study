@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <vector>
-#include "..\component\Component.h"
+#include "component\Component.h"
 
 class Texture2D;
 class UIImage :public Component {

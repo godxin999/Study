@@ -1,11 +1,12 @@
 #include "GameObject.h"
 #include "Component.h"
+#include "utils/Debug.h"
 #include <cassert>
 #include <ranges>
 #include <rttr/registration>
 
 GameObject::GameObject(std::string name) :name_(name) {
-	game_object_list_.push_back(this);
+	game_object_tree_.root_node()->AddChild(this);
 }
 
 Component* GameObject::AddComponent(std::string component_type_name) {
@@ -49,8 +50,31 @@ void GameObject::ForeachComponent(std::function<void(Component*)> func) {
 	}
 }
 
-void GameObject::Foreach(std::function<void(GameObject*)> func) {
-	for (auto& go : game_object_list_) {
-		func(go);
+bool GameObject::SetParent(GameObject* parent) {
+	if (!parent) {
+		DEBUG_LOG_ERROR("parent null");
+		return false;
 	}
+	parent->AddChild(this);
+	return true;
+}
+
+void GameObject::Foreach(std::function<void(GameObject*)> func) {
+	game_object_tree_.Post(game_object_tree_.root_node(), [&func](Tree::Node* node) {
+		auto game_object = dynamic_cast<GameObject*>(node);
+		func(game_object);
+		});
+}
+
+GameObject* GameObject::Find(std::string name) {
+	GameObject* game_object_find = nullptr;
+	game_object_tree_.Find(game_object_tree_.root_node(), [name](Tree::Node* node) {
+		auto game_object = dynamic_cast<GameObject*>(node);
+		if (game_object->name() == name) {
+			return true;
+		}
+		return false;
+		}, reinterpret_cast<Node**>(&game_object_find));
+	return game_object_find;
+
 }

@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <memory>
-#include "../component/Component.h"
+#include "component/Component.h"
 
 class Material;
 class MeshFilter;

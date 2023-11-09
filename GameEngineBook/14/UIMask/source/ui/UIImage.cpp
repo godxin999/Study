@@ -1,9 +1,9 @@
 #include "UIImage.h"
-#include "..\component\GameObject.h"
-#include "..\renderer\MeshRenderer.h"
-#include "..\renderer\Material.h"
-#include "..\renderer\texture2d.h"
-#include "..\renderer\MeshFilter.h"
+#include "component\GameObject.h"
+#include "renderer\MeshRenderer.h"
+#include "renderer\Material.h"
+#include "renderer\texture2d.h"
+#include "renderer\MeshFilter.h"
 #include "render_device/RenderDevice.h"
 #include <rttr/registration>
 

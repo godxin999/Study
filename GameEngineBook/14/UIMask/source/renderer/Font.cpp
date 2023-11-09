@@ -1,8 +1,8 @@
 #include "Font.h"
 #include <fstream>
 #include "freetype/ftbitmap.h"
-#include "../utils/Application.h"
-#include "../utils/Debug.h"
+#include "utils/Application.h"
+#include "utils/Debug.h"
 #include "texture2d.h"
 #include <spdlog/spdlog.h>
 

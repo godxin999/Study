@@ -7,7 +7,7 @@
 #include <rapidxml/rapidxml_utils.hpp>
 #include "Shader.h"
 #include "texture2d.h"
-#include "../utils/Application.h"
+#include "utils/Application.h"
 
 void Material::Parse(std::string material_path) {
 	rapidxml::file<> xml_file((Application::assets_path() + material_path).c_str());//根据文件路径加载XML文件

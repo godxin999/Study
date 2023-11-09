@@ -10,6 +10,7 @@
 
 int main() {
 	Application::set_assets_path("../../../assets/");
+	//system("pause");
 	Application::Init();
 
 	GameObject* go = new GameObject("LoginSceneGo");
