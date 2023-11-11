@@ -14,12 +14,12 @@ class User:public Singleton<User>{
 	friend class Singleton<User>;
 public:
 	virtual ~User()=default;
-	User(const std::string& name,int age):name(name),age(age){}
 	void printDetail(){
 		std::cout<<std::format("name:{},age:{}\n",name,age);
 	}
 private:
-	User()=default;
+	User(){}
+	User(const std::string& name,int age):name(name),age(age){}
 	User(const User&)=delete;
 	User& operator=(const User&)=delete;
 	std::string name="Unknown User";

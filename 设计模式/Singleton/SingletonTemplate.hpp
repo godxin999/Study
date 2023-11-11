@@ -22,10 +22,6 @@ public:
         });
         return _instance;
     }
-    /*
-    void printAddress(){
-        std::cout<<"Singleton address:"<<_instance.get()<<std::endl;
-    }*/
     template <typename... Args>
     static std::shared_ptr<T> Construct(Args&&... args){
         std::call_once(s_flag,[&](){
@@ -33,13 +29,5 @@ public:
         });
         return _instance;
     }
-
     virtual ~Singleton()=default;
 };
-/*
-template <typename T>
-std::shared_ptr<T> Singleton<T>::_instance=nullptr;
-
-template <typename T>
-std::once_flag Singleton<T>::s_flag;
-*/
