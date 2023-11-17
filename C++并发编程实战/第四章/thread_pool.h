@@ -60,7 +60,7 @@ public:
 		return thread_num_;
 	}
 private:
-	ThreadPool(unsigned num=5):stop_(false){
+	ThreadPool(unsigned num=12):stop_(false){
 		if(num<1)thread_num_=1;
 		else thread_num_=num;
 		start();
