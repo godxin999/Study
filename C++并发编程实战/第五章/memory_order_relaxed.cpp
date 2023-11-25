@@ -1,5 +1,5 @@
 /*************************************************************************
-	> File Name: memory_model.cpp
+	> File Name: memory_order_relaxed.cpp
 	> Author: godxin999
 	> Mail: A996570107@163.com
 	> Created Time: 2023/11/24 16:53:50
@@ -14,7 +14,7 @@
 //宽松内存次序(std::memory_order_relaxed)
 //1.作用于原子变量
 //2.不具有synchronizes-with(happens-before)关系(简单来说如果多线程环境下，有一个线程先修改了变量m，我们将这个操作叫做A，之后有另一个线程读取变量m，我们将这个操作叫做B，那么B一定读取A修改m之后的最新值，即A happens-before B)
-//3.对于同一个原子变量，在同一个线程中具有happens-before关系，在同一线程中的不同的原子变量不具有happens-before关系，可以乱序执行
+//3.对于同一个原子变量，在同一个线程中具有happens-before关系，在同一线程中的不同的原子变量不具有happens-before关系，可能被重排
 //4.多线程情况下不具有happens-before关系
 
 std::atomic<bool> x,y;
@@ -32,6 +32,7 @@ void read_y_then_x(){
 	if(x.load(std::memory_order_relaxed)){
 		++z;
 	}
+
 }
 
 void test_order_relaxed(){
@@ -39,10 +40,12 @@ void test_order_relaxed(){
 	y=false;
 	z=0;
 
-	std::jthread t1(write_x_then_y);
-	std::jthread t2(read_y_then_x);
+	std::thread t1(write_x_then_y);
+	std::thread t2(read_y_then_x);
 
-	assert(z.load()!=0);
+	t1.join();
+	t2.join();
+	assert(z.load()!=0);//断言可能会触发
 }
 
 void test_order_relaxed2(){
@@ -88,8 +91,8 @@ void test_order_relaxed2(){
 }
 
 int main(){
-	//test_order_relaxed();
-	test_order_relaxed2();
+	test_order_relaxed();
+	//test_order_relaxed2();
 
 
 
