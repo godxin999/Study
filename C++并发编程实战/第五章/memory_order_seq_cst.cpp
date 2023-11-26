@@ -16,7 +16,7 @@ std::atomic<bool> x,y;
 std::atomic<int> z;
 
 void write_x_then_y(){
-	//std::memory_seq_cst内存序，具有全局一致性，不会被重排
+	//std::memory_seq_cst内存序，具有全局一致性
 	x.store(true,std::memory_order_seq_cst);
 	y.store(true,std::memory_order_seq_cst);
 }

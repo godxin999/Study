@@ -1,5 +1,5 @@
 /*************************************************************************
-	> File Name: memory_order_seq_cst.cpp
+	> File Name: memory_order_acq_rel.cpp
 	> Author: godxin999
 	> Mail: A996570107@163.com
 	> Created Time: 2023/11/25 15:18:20
@@ -84,10 +84,53 @@ void release_sequence(){
 
 }
 
+std::atomic<bool> x,y;
+std::atomic<int> z;
+
+void write_x(){
+    x.store(true,std::memory_order_release);//1
+}
+
+void write_y(){
+    y.store(true,std::memory_order_release);//2
+}
+//release-acquire顺序对其他线程没有影响
+void read_x_then_y(){
+    while(!x.load(std::memory_order_acquire));//3
+    //y.load()可能看到false
+	if(y.load(std::memory_order_acquire)){//4
+        ++z;
+	}
+}
+
+void read_y_then_x(){
+    while(!y.load(std::memory_order_acquire));//5
+	//x.load()可能看到false
+    if(x.load(std::memory_order_acquire)){//6
+        ++z;
+	}
+}
+
+void release_acquire_dangerous2(){
+	x=false;
+	y=false;
+	z=0;
+	std::thread a(write_x);
+	std::thread b(write_y);
+	std::thread c(read_x_then_y);
+	std::thread d(read_y_then_x);
+	a.join();
+	b.join();
+	c.join();
+	d.join();
+	assert(z.load()!=0);//断言可能被触发
+}
+
 int main(){
 	//test_order_release_acquire();
 	//release_acquire_dangerous();
-	release_sequence();
+	//release_sequence();
+	release_acquire_dangerous2();
 
 	return 0;
 }
