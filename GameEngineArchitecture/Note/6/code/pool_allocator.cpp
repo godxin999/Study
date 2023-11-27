@@ -6,18 +6,18 @@
 template <typename T,std::uint32_t size_bytes=4096>
 class PoolAllocator{
 public:
-    struct FreeElement{
+    struct MemoryBlock{
         char data[sizeof(T)];
-        FreeElement* next{nullptr};
+        MemoryBlock* next{nullptr};
     };
     struct FreeList{
-        FreeElement* head;
-        std::uint32_t size{size_bytes/sizeof(FreeElement)};
+        MemoryBlock* head;
+        std::uint32_t size{size_bytes/sizeof(MemoryBlock)};
     };
 public:
     PoolAllocator(){
-        pool=new FreeElement[size_bytes/sizeof(FreeElement)];
-        for(int i=0;i<size_bytes/sizeof(FreeElement);++i){
+        pool=new MemoryBlock[size_bytes/sizeof(MemoryBlock)];
+        for(int i=0;i<size_bytes/sizeof(MemoryBlock);++i){
             pool[i].next=free_list.head;
             free_list.head=&pool[i];
         }
@@ -32,14 +32,14 @@ public:
         if(free_list.size==0){
             return nullptr;
         }
-        FreeElement* block=free_list.head;
+        MemoryBlock* block=free_list.head;
         free_list.head=block->next;
         --free_list.size;
         std::cout<<"allocate"<<std::endl;
         return reinterpret_cast<T*>(block);
     }
     void deallocate(T* p){
-        FreeElement* block=reinterpret_cast<FreeElement*>(p);
+        MemoryBlock* block=reinterpret_cast<MemoryBlock*>(p);
         block->next=free_list.head;
         free_list.head=block;
         ++free_list.size;
@@ -55,7 +55,7 @@ public:
         std::cout<<"destroy"<<std::endl;
     }
 private:
-    FreeElement* pool{nullptr};
+    MemoryBlock* pool{nullptr};
     FreeList free_list;
 };
 
