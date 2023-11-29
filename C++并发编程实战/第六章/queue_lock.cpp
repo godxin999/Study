@@ -21,7 +21,7 @@ public:
 	~QueueLock(){
 		std::lock_guard<std::mutex> lock(mtx);
 		while(head!=tail){
-			std::allocator<T>::destroy(data+head);
+			std::destroy_at(data+head);
 			head=(head+1)%max_size;
 		}
 		std::allocator<T>::deallocate(data,max_size);
@@ -34,7 +34,7 @@ public:
 			std::cout<<"queue is full\n";
 			return false;
 		}
-		std::allocator<T>::construct(data+tail,std::forward<Args>(args)...);
+		std::construct_at(data+tail,std::forward<Args>(args)...);
 		tail=(tail+1)%max_size;
 		return true;
 	}
