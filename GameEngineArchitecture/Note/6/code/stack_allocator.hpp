@@ -13,7 +13,7 @@ public:
 	//Marker代表栈顶的位置
 	using Marker=unsigned;
 	//构造函数
-	explicit StackAllocator(unsigned stackSize_bytes){
+	explicit StackAllocator(unsigned stackSize_bytes=4096){
 		//分配内存
 		base=new unsigned char[stackSize_bytes];
 		stack_size=stackSize_bytes;
@@ -101,6 +101,7 @@ private:
 	Marker upper_marker;
 };
 
+/*
 
 int main(){
 	StackAllocator stack(1024);
@@ -119,3 +120,5 @@ int main(){
 
 	return 0;
 }
+
+*/
