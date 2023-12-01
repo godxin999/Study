@@ -11,7 +11,9 @@
 #include <vector>
 #include <cassert>
 
-//memory_order_consume可以用于load操作，使用memory_order_consume的load称为consume操作，如果一个consume操作在同一个原子变量上读到了一个release操作写入的值，或以其为首的release sequence写入的值，则称这个release操作dependency-ordered before这个consume操作，且只针对这个原子变量有效
+//memory_order_consume可以用于load操作，使用memory_order_consume的load称为consume操作，如果一个consume操作在同一个原子变量上读到了一个release操作写入的值，或以其为首的release sequence写入的值，则称这个release操作dependency-ordered before这个consume操作
+//memory_order_consume在其影响的内存位置进行消费操作：当前线程中依赖于当前加载的值的读或写不能被重排到此加载之前。其他线程中对有数据依赖的变量进行的释放(release)同一原子变量的写入，能为当前线程所见(只有使用load加载的值的运算符和函数才能看到其他线程写入内存的内容)。
+//memory_order_acquire和memory_order_consume的区别在于，前者保证所有内存操作都不会被重排到此操作之前，后者只保证对有数据依赖的变量进行的读写不会被重排到此操作之前
 
 void test_order_consume(){
 	std::atomic<std::string*> ptr;
