@@ -788,3 +788,169 @@ Spawner* ghostSpawner = new SpawnFor<Ghost>();
 
 ### 单例模式
 
+设计模式中是这样描述单例模式的：保证一个类只有一个实例，并且提供了访问该实例的全局访问点。
+
+单例的现代实现方案如下：
+
+```cpp
+class FileSystem{
+public:
+	static FileSystem& instance(){
+		static FileSystem* instance = new FileSystem();
+		return *instance;
+	}
+private:
+	FileSystem(){}
+};
+```
+
+我们使用单例的的原因如下：
+
+- 如果没有人使用，那么就不必要创建实例
+- 它在运行时实例化
+- 可继承单例
+
+假设我们需要跨平台的文件系统封装类。为了达到这一点，我们需要它变成文件系统抽象出来的接口，而子类为每个平台实现接口。基类的定义如下：
+
+```cpp
+class FileSystem{
+public:
+	virtual ~FileSystem(){}
+	virtual char* readFile(char* path)=0;
+	virtual void writeFile(char* path, char* contents)=0;
+public:
+	static FileSystem& instance();
+protected:
+	FileSystem(){}
+};
+```
+
+然后为每个平台定义子类：
+
+```cpp
+class PS3FileSystem:public FileSystem{
+public:
+	char* readFile(char* path)override{
+		//...
+	}
+	void writeFile(char* path, char* contents)override{
+		//...
+	}
+};
+class WiiFileSystem:public FileSystem{
+public:
+	char* readFile(char* path)override{
+		//...
+	}
+	void writeFile(char* path, char* contents)override{
+		//...
+	}
+};
+```
+
+灵巧之处在于如何创建实例：
+
+```cpp
+FileSystem& FileSystem::instance(){
+#ifdef PLATFORM_PS3
+	static PS3FileSystem* instance = new PS3FileSystem();
+#elif PLATFORM_WII
+	static WiiFileSystem* instance = new WiiFileSystem();
+#endif
+	return *instance;
+}
+```
+
+这样整个代码库都可以使用FileSystem::instance()接触到文件系统，而无需和任何平台相关的代码耦合。耦合发生在为特定平台写的FileSystem类实现文件中。
+
+因为单例模式是全局状态，所以其依旧会带来一些问题。对于日志类，大部分模块都能从记录诊断日志中获益。但是日志类显然不能作为参数传入需要它的函数，明显的解决方案是让Log类成为单例。这样每个函数都能从类那里获得一个实例，这样带来的后果是不能创建多个日志实例，所有的信息都倾泻到同一个文件中。我们想将日志分散到多个文件中来解决这点，但是单例模式不允许我们这么做。
+
+对于惰性初始化的单例，其在运行时实例化。如果初始化音频系统消耗了几百个毫秒，那么我们需要控制它何时发生，因为如果在第一次声音播放时惰性初始化它自己，这可能发生在游戏的高潮部分，从而导致可见的掉帧和断续的游戏体验。同样，游戏通常需要严格管理在堆上分配的内存来避免碎片。如果音频系统在初始化时分配到了堆上，我们需要知道初始化在何时发生，这样我们可以控制内存待在堆的哪里。因为这两个原因，大多数游戏都不使用惰性初始化。相反，它们像这样实现单例模式：
+
+```cpp
+class FileSystem{
+public:
+	static FileSystem& instance(){
+		return instance_;
+	}
+private:
+	FileSystem(){}
+	static FileSystem instance_;
+};
+```
+
+这解决了惰性初始化的问题，但是损失了几个单例带来的好处，在静态实例中，我们不能使用多态，在静态初始化时，类也必须是可构建的，我们也不能在不需要这个实例的时候，释放实例所占的内存。
+
+在使用单例之前，我们需要考虑是否真的需要单例类，在游戏代码中，有很多单例类都是“管理器”，它们的存在意义就是照顾其他对象，管理器类有时是有用的，但是有时我们可以通过将单例所有的行为都移动到单例管理(帮助)的类中。这样就可以避免多余的管理器类(单例)的产生。
+
+便利的访问是我们使用单例的一个主要原因，这让我们在不同地方获取需要的对象更加容易。通用原则是在能完成工作的同时，将变量写得尽可能局部，对象影响的范围越小，所以在我们使用具有全局状态的单例之前，首先应考虑代码中其他获取对象的方式：
+
+- 从参数中传入
+- 从基类中获得
+
+对于GameObject基类，游戏中的对象都继承它，我们可以利用这一点，将Log对象放在基类中，这样所有的派生类都能访问到它(子类沙箱)。
+
+```cpp
+class GameObject{
+protected:
+	Log& getLog(){
+		return log;
+	}
+private:
+	static Log& log;
+};
+
+class Enemy : public GameObject{
+	void doSomething(){
+	    getLog().write("I can log!");
+	}
+};
+```
+
+这保证任何GameObject之外的代码都不能接触Log对象，但是每个派生的实体都确实能使用getLog()，但是这也引出了一个新问题，GameObject是怎样获得Log实例的？一个简单的方案是，让基类创建并拥有静态实例。如果你不想要基类承担这些，你可以提供一个初始化函数传入Log实例，或使用服务定位器模式找到它。
+
+- 从已经是全局的东西中获取
+
+移除所有全局状态并不实际，大多数代码库仍有一些全局可用对象，比如一个代表了整个游戏状态的Game或World对象，我们可以让现有的全局对象捎带需要的东西，来减少全局变量类的数目，从而不让Log、FileSystem和AudioPlayer都变成单例。
+
+```cpp
+class Game{
+public:
+	static Game& instance(){
+		return instance;
+	}
+	Log& getLog(){
+		return *log;
+	}
+	FileSystem& getFileSystem(){
+		return *fileSystem;
+	}
+	AudioPlayer& getAudioPlayer(){
+		return *audioPlayer;
+	}
+private:
+	static Game instance;
+  	Log         *log;
+	FileSystem  *fileSystem;
+	AudioPlayer *audioPlayer;
+};
+
+```
+
+这样只有Game是全局可见的，函数可以通过它访问其他系统。
+
+```cpp
+Game::instance().getAudioPlayer().play(VERY_LOUD_BANG);
+```
+
+如果未来架构被改为支持多个Game实例，Log、FileSystem和AudioPlayer都不会被影响到。这种方式的缺陷是更多的代码耦合到了Game中，如果一个类简单地需要播放声音，为了访问音频播放器，需要通过游戏对象来访问。我们可以通过混合方案解决这个问题，知道Game的代码可以直接从它那里访问AudioPlayer，而不知道Game的代码，我们用上面描述的其他选项来提供AudioPlayer。
+
+- 从服务定位器中获得
+
+目前为止，我们假设全局类是具体的类，比如Game。另一种方式是定义一个类，这个类存在的唯一目标就是为对象提供全局访问，这种常见的模式被称为服务定位器模式。
+
+### 状态模式
+
+
+
+
