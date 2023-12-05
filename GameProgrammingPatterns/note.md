@@ -951,6 +951,336 @@ Game::instance().getAudioPlayer().play(VERY_LOUD_BANG);
 
 ### 状态模式
 
+假设我们在实现一个游戏，玩家控制游戏内的女英雄进行操作，按B键时她应该跳跃，简单的实现如下：
+
+```cpp
+void Heroine::handleInput(Input input){
+	if(input == PRESS_B){
+		yVelocity_ = JUMP_VELOCITY;
+		setGraphics(IMAGE_JUMP);
+	}
+}
+```
+
+但是这存在漏洞，没有东西能够阻止空中跳跃，如果玩家在空中按B键，女英雄就会浮空。简单的解决方案是添加`isJumping_`字段。
+
+```cpp
+void Heroine::handleInput(Input input){
+	if(input == PRESS_B){
+		if(!isJumping_){
+			yVelocity_ = JUMP_VELOCITY;
+			setGraphics(IMAGE_JUMP);
+			isJumping_ = true;
+		}
+	}
+}
+```
+
+当支持的动作行为增多时，会导致需要增添许多控制字段的问题，每次我们改动代码时，就会破坏一些东西。
+
+在解决这个问题之前，我们首先需要将所有的状态都放在一个有限状态机中，这里的要点是：
+
+- 你拥有状态机所有可能状态的集合
+- 状态机通知只能存在一个状态
+- 一连串的输入或事件被发送给状态机
+- 每个状态机都有一系列的转移，每个转移与输入和另一状态相关
+
+状态模式可以用来实现状态机(流程图)，但是在那之前先介绍简单的方式。
+
+Heroine类的问题在于它不合法地捆绑了许多布尔变量，控制动作地布尔变量显然不会同时为真，所以我们可以将它们合并为一个枚举：
+
+```cpp
+enum State{
+	STATE_STANDING,
+	STATE_JUMPING,
+	STATE_DUCKING,
+	STATE_DIVING
+};
+```
+
+在处理状态时，我们需要对状态做分支。
+
+```cpp
+void Heroine::handleInput(Input input){
+	switch(state_){
+		case STATE_STANDING:
+			if(input == PRESS_B){
+				yVelocity_ = JUMP_VELOCITY;
+				setGraphics(IMAGE_JUMP);
+				state_ = STATE_JUMPING;
+			}
+			else if(input == PRESS_DOWN){
+				setGraphics(IMAGE_DUCK);
+				state_ = STATE_DUCKING;
+			}
+			break;
+		case STATE_JUMPING:
+			if(input == PRESS_DOWN){
+				setGraphics(IMAGE_DIVE);
+				state_ = STATE_DIVING;
+			}
+			break;
+		case STATE_DUCKING:
+			if(input == RELEASE_DOWN){
+				setGraphics(IMAGE_STAND);
+				state_ = STATE_STANDING;
+			}
+			break;
+	}
+}
+```
+
+但是如果我们想增加一个动作动作，女英雄在可以俯卧一段时间充能，然后释放一次特殊攻击，在她俯卧时，我们需要追踪充能的时间，我们可以为Heoine类增加一个`chargeTime_`字段，并在每帧调用的`update`函数中添加如下代码：
+
+```cpp
+void Heroine::update(){
+	if(state_ == STATE_DUCKING){
+		chargeTime_++;
+		if(chargeTime_ > MAX_CHARGE){
+			superBomb();
+		}
+	}
+}
+```
+
+同时我们需要修改handleInput函数，让她在开始俯卧时重置充能时间：
+
+```cpp
+void Heroine::handleInput(Input input){
+	switch(state_){
+		case STATE_STANDING:
+			if(input == PRESS_DOWN){
+				setGraphics(IMAGE_DUCK);
+				state_ = STATE_DUCKING;
+				chargeTime_ = 0;
+			}
+			break;
+			//...
+	}
+}
+```
+
+显然这是不合理的，我们需要修改两个函数，并且添加`chargeTime_`字段，哪怕这个字段只在俯卧时有用。我们可以使用状态模式来解决这个问题，状态模式的定义为：允许一个对象在其内部状态发生变化时改变自己的行为，该对象看起来好像修改了它的类型。
+
+我们可以将Heroine类的状态抽象为一个接口：
+
+```cpp
+class HeroineState{
+public:
+	virtual ~HeroineState(){}
+	virtual void handleInput(Heroine& heroine, Input input){}
+	virtual void update(Heroine& heroine){}
+};
+```
+
+然后对于每个状态，我们定义一个类实现接口：
+
+```cpp
+class DuckingState:public HeroineState{
+public:
+	virtual void handleInput(Heroine& heroine, Input input)override{
+		if(input == RELEASE_DOWN){
+			//改回站立姿态
+			heroine.setGraphics(IMAGE_STAND);
+		}
+	}
+	virtual void update(Heroine& heroine)override{
+		heroine.chargeTime_++;
+		if(heroine.chargeTime_ > MAX_CHARGE){
+			heroine.superBomb();
+		}
+	}
+private:
+	int chargeTime_{0};//只在俯卧状态有用，所以放在俯卧状态中
+};
+```
+
+接下来向Heroine添加指向当前状态的指针(状态委托)。
+
+```cpp
+class Heroine{
+public:
+	virtual void handleInput(Input input){
+		state_->handleInput(*this, input);
+	}
+	virtual void update(){
+		state_->update(*this);
+	}
+private:
+	HeroineState* state_;
+};
+```
+
+为了改变状态，沃恩只需要将`state_`指向新的状态对象。因为此时我们的状态是类，所以我们需要指向实例，第一种方式是使用静态实例。
+
+```cpp
+class Heroine{
+public:
+	static DuckingState duckingState;
+	static StandingState standingState;
+	static JumpingState jumpingState;
+	static DivingState divingState;
+	//...
+};
+```
+
+每个静态字段都是游戏状态类的一个实例，为了让英雄跳跃，站立状态会这样做：
+
+```cpp
+void StandingState::handleInput(Heroine& heroine, Input input){
+	if(input == PRESS_B){
+		heroine.yVelocity_ = JUMP_VELOCITY;
+		heroine.setGraphics(IMAGE_JUMP);
+		heroine.state_ = &Heroine::jumpingState;
+	}
+	else if(input == PRESS_DOWN){
+		heroine.setGraphics(IMAGE_DUCK);
+		heroine.state_ = &Heroine::duckingState;
+	}
+}
+```
+
+另一种方式为使用实例化状态，静态状态对俯卧状态不起作用，它有一个`chargeTime_`字段，对应每个英雄的俯卧时间，所以在拥有多个英雄的情况下，我们就需要在转换时创建状态对象，因为每个有限状态机都拥有自己的状态实例，如果我们分配新状态，那么我们需要释放当前的状态`(delete this)`。相反我们允许HeroineState的handleInput()返回一个新状态，如果返回的不是空指针，那么就删除当前状态，并将新状态赋值给`state_`。
+
+```cpp
+void Heroine::handleInput(Heroine& heroine, Input input){
+	HeroineState* state = state_->handleInput(*this, input);
+	if(state != nullptr){
+		delete state_;
+		state_ = state;
+	}
+}
+```
+
+这样，知道从之前的状态返回，我们才需要删除它。现在站立模式可以通过创建实例来转换为俯卧模式：
+
+```cpp
+HeroineState* StandingState::handleInput(Heroine& heroine, Input input){
+	if(input == PRESS_DOWN){
+		//...
+		return new DuckingState();
+	}
+	//保持当前状态
+	return nullptr;
+}
+```
+
+当英雄改变状态时，我们需要改变她的贴图，改变贴图的代码在转换前的状态中，当她从俯卧转为站立，俯卧状态修改了她的贴图：
+
+```cpp
+HeroineState* DuckingState::handleInput(Heroine& heroine, Input input){
+	if(input == RELEASE_DOWN){
+		heroine.setGraphics(IMAGE_STAND);
+		return new StandingState();
+	}
+}
+```
+
+我们想让每个状态控制自己的贴图，这可以通过给状态一个入口行为来实现：
+
+```cpp
+class StandingState:public HeroineState{
+public:
+	void enter(Heroine& heroine)override{
+		heroine.setGraphics(IMAGE_STAND);
+	}
+	//...
+};
+```
+
+在Heroine中，我们将处理状态改变的代码移动到新状态上调用：
+
+```cpp
+void Heroine::handleInput(Heroine& heroine, Input input){
+	HeroineState* state = state_->handleInput(*this, input);
+	if(state != nullptr){
+		//state_->exit(*this);
+		delete state_;
+		state_ = state;
+		//调用新状态的入口行为
+		state_->enter(*this);
+	}
+}
+```
+
+这样我们俯卧状态的代码就可以简化为：
+
+```cpp
+HeroineState* DuckingState::handleInput(Heroine& heroine, Input input){
+	if(input == RELEASE_DOWN){
+		return new StandingState();
+	}
+	//...
+}
+```
+
+它所作的事情就是装换到站立状态，站立状态控制贴图，现在我们的状态真正的封装起来了。入口行为带来的好处是，当进入状态时，我们不必关心状态是从哪个状态转换来的。
+
+大多数的状态图都有转为同一状态的多个转移，例如英雄在跳跃或跳斩后进入站立状态，这意味着我们在转换发生的最后重复相同的代码，入口行为很好地解决了这一点，同样我们可以扩展并支持出口行为，这是我们在离开现有状态，转换到新状态之前调用的函数。
+
+如果你想在游戏AI上实现状态机，那么可能会受到一些限制，我们可以使用下面的方法来避免这些限制。
+
+首先是并发状态机，我们为英雄加上拿武器的能力，她在进行之前的动作时也要能够开火，如果我们要在有限状态机中实现，我们需要翻倍现有的状态，每个状态都有一个武器版本，当武器的种类增多时，状态数量就会爆炸，问题在于我们把两种状态绑定到一个状态机上——她做的和她携带的，为了处理可能的组合，我们需要为每个组合实现一种状态，修改的方式很简单：使用两个单独的状态机。
+
+```cpp
+class Heroine{
+private:
+	//将n*m个状态优化为n+m个状态
+	HeroineState* actionState_;
+	HeroineState* weaponState_;
+};
+```
+
+但是在实践中，有些状态需要交互，例如跳跃时不能开火，持枪时不能跳斩，可以使用if测试其他状态来协同，不优雅但是有用。功能更完备的系统也许能让状态机销毁输入，这样其它状态机就不会收到了，可以阻止两个状态机响应同一输入。
+
+然后是分层状态机，英雄的行为可能有很多相似的状态，例如站立、行走、奔跑和滑铲状态，如果使用简单的状态机实现，那么每个状态中都重复了代码，我们可以只实现一次，然后在状态间重用，重用的方式就是通过继承。我们可以为在地面上定义一个类来处理跳跃和速降，站立、行走、奔跑和滑铲都可以从它继承，然后增加各自的附加行为。
+
+在这个曾为分层状态机的结构中，状态可以有父状态，当一个事件进来时，如果子状态没有处理，就会上交给链上的父状态。
+
+```cpp
+class OnGroundState:public HeroineState{
+public:
+	//void返回值表示使用静态实例
+	void handleInput(Heroine& heroine, Input input)override{
+		if(input == PRESS_B){
+			//跳跃
+		}
+		else if(input == PRESS_DOWN){
+			//俯卧
+		}
+	}
+};
+class DuckingState:public OnGroundState{
+public:
+	void handleInput(Heroine& heroine, Input input)override{
+		if(input == RELEASE_DOWN){
+			//站立
+		}
+		else{
+			OnGroundState::handleInput(heroine, input);
+		}
+	}
+};
+```
+
+如果不使用状态模式，我们可以显式使用一个状态栈，栈顶的状态为当前状态，在它下面的是他的直接父状态，然后是父状态的父状态，当你需要状态的某种行为，可以从栈顶向下寻找，直到某一个状态处理了这个行为，如果到栈底也没有找到，那么就无视这个行为。
+
+最后是下推自动机，因为有限状态机没有任何历史的概念，状态机知道正在什么状态中，但是不记得曾在什么状态，没有简单的办法重回上一状态。为了解决这一问题，我们可以使用下推自动机，它是有限状态机的扩展，有限状态机有一个指向状态的指针，下推自动机有一栈指针。在有限状态机中，新状态代替了之前的那个状态。下推自动机不仅能替代之前的状态，还支持如下操作：
+
+- 可以将新状态压入栈中。当前的状态总是在栈顶，但它将之前的状态压在栈中而不是销毁它。
+- 你可以弹出最上面的状态。这个状态会被销毁，它下面的状态会成为新的状态。
+
+下推自动机的栈起初只包含了一个站立状态，然后一个开火状态被压入栈顶。当射击结束，开火状态被弹出。当开火按钮在其他状态按下时，我们压入开火状态。当开火动画结束，我们弹出开火状态，然后下推自动机会自动转回之前的状态。
 
 
+即使状态机有这些常见的扩展，它们还是很受限制。对于如今的游戏AI，我们可以考虑使用行为树和规划系统。但是这不意味着有限状态机，下推自动机，和其他简单的系统没有用。 它们是特定问题的好工具。有限状态机在以下情况有用：
+
+- 你拥有一个实体，它的行为基于一些内在状态。
+- 状态可以被严格地分割为相对较少的不相干项目。
+- 实体响应一系列输入或事件。
+
+
+## 序列模式
+
+### 双缓冲模式
 
