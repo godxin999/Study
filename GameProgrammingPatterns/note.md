@@ -1284,3 +1284,208 @@ public:
 
 ### 双缓冲模式
 
+假设我们要在屏幕上渲染一张笑脸。程序在帧缓冲上开始循环，为像素点涂色，但是在写入的同时，视频驱动正在读取它，当它扫描过已写的像素时，笑脸开始浮现，但是之后它进入了未写的部分，就将没有写的像素绘制到了屏幕上，带来的结果就是闪烁，双缓冲模式可以解决这个问题。
+
+当以下情况满足时，我们就需要使用双缓冲：
+
+- 我们需要维护一些被增量修改的状态
+- 在修改到一半时，状态可能被外部请求
+- 我们想要防止请求状态的外部代码知道内部的工作方式
+- 我们想要读取状态，而且不像等着修改完成
+
+以图形渲染为例，我们首先定义缓冲区：
+
+```cpp
+class FrameBuffer{
+public:
+	FrameBuffer(){
+		clear();
+	}
+	void clear(){
+		for(int i=0;i<Width*Height;i++){
+			pixels_[i] = WHITE;
+		}
+	}
+	void draw(int x, int y, Color c){
+		pixels_[y*Width+x] = c;
+	}
+	const char* getPixels(){
+		return pixels_;
+	}
+private:
+	static const int Width = 640;
+	static const int Height = 480;
+	char pixels_[Width*Height];
+};
+```
+
+然后我们将缓冲区封装在场景中：
+
+```cpp
+class Scene{
+public:
+	void draw(){
+		buffer_.clear();
+		buffer.draw(10,10,RED);
+		buffer.draw(11,10,RED);
+		buffer.draw(12,10,RED);
+		buffer.draw(13,10,RED);
+	}
+	FrameBuffer& getBuffer(){
+		return buffer_;
+	}
+private:
+	FrameBuffer buffer_;
+};
+```
+
+每一帧，游戏告诉场景去绘制，场景清空缓冲区之后开始一个接一个绘制像素，并提供了`getBuffer()`函数，这样显卡就可以读取缓冲区，但是显卡驱动可能在任何时候调用`getBuffer()`，甚至在你修改缓冲区时，这样会带来闪烁，我们使用双缓冲解决这个问题：
+
+```cpp
+class Scene{
+public:
+	Scene():current_(&buffers_[0]),next_(&buffers_[1]){}
+	void draw(){
+		next_->clear();
+		next_->draw(10,10,RED);
+		next_->draw(11,10,RED);
+		next_->draw(12,10,RED);
+		next_->draw(13,10,RED);
+		swap();
+	}
+	FrameBuffer& getBuffer(){
+		return *current_;
+	}
+private:
+	void swap(){
+		FrameBuffer* temp = current_;
+		current_ = next_;
+		next_ = temp;
+	}
+	FrameBuffer buffers_[2];
+	FrameBuffer* current_;
+	FrameBuffer* next_;
+};
+```
+
+当绘制时，我们绘制在next_指向的缓冲区上。当显卡驱动需要获得像素信息时，它总是通过current_获取另一个缓冲区。通过这种方式，显卡驱动永远看不到我们正在绘制的缓冲区。在场景完成绘制一帧的时候调用swap()来交换next_和current_指针，下一次显卡驱动调用getBuffer()的时候，它会获得我们刚刚完成渲染的新缓冲区，什么问题都不会发生。
+
+双缓冲模式不止在图形渲染中有用，假设我们正在构建一个关于趣味喜剧的游戏的行为系统，这个游戏包括一堆跑来跑去寻欢作乐的角色，我们的基础角色如下：
+
+```cpp
+class Actor{
+public:
+	virtual ~Actor(){}
+	virtual void update()=0;
+	void reset(){
+		slapped_ = false;
+	}
+	void slap(){
+		slapped_ = true;
+	}
+	bool wasSlapped(){
+		return slapped_;
+	}
+private:
+	bool slapped_{false};
+};
+```
+
+角色也可以相互交互，当更新时，角色可以在另一个角色身上调用slap()来扇它一巴掌，然后调用wasSlapped()看看自己是不是被扇了。角色所在的场景如下：
+
+```cpp
+class Stage{
+public:
+	void add(Actor* actor, int index){
+		actors_[index] = actor;
+	}
+	void update(){
+		for(int i = 0; i < NUM_ACTORS; i++){
+			actors_[i]->update();
+			actors_[i]->reset();
+		}
+	}
+private:
+	static const int NUM_ACTORS = 3;
+	Actor* actors_[NUM_ACTORS];
+};
+```
+
+Stage允许我们向其中增加角色，然后使用update()调用来更新每个角色。每个角色的被扇的状态在更新后就立刻被清除，这样才能保证一个角色对一巴掌只反应一次。我们定义一个喜剧演员子类，喜剧演员只面向一个角色，当他被扇时他的反应是扇他面前的人一巴掌。
+
+```cpp
+class Comedian : public Actor{
+public:
+	void face(Actor* actor){
+		facing_ = actor;
+	}
+	virtual void update(){
+		if(wasSlapped()) facing_->slap();
+	}
+private:
+	Actor* facing_;
+};
+```
+
+因为我们是按照顺序调用update()进行更新的，我们假设最后一个角色面向第一个角色，当最后一个角色被扇时，第一个角色会被扇，但是在这帧中，第一个角色不会被更新了，这样就不满足我们让所有角色同时反应的需求，他们应该在同一帧中更新，且更新顺寻不应该对结果有影响。
+
+这时我们可以对Actor类使用双缓冲模式，我们缓冲每个角色的被扇的状态：
+
+```cpp
+class Actor{
+public:
+	virtual ~Actor(){}
+	virtual void update()=0;
+	void swap(){
+		currentSlapped_ = nextSlapped_;
+	}
+	void slap(){
+		nextSlapped_ = true;
+	}
+	bool wasSlapped(){
+		return currentSlapped_;
+	}
+private:
+	bool currentSlapped_{false};
+	bool nextSlapped_{false};
+};
+```
+
+同样Stage中的update也需要进行修改。
+
+```cpp
+void Stage::update(){
+	for(int i=0;i<NUM_ACTORS;i++){
+		actors_[i]->update();
+	}
+	for(int i=0;i<NUM_ACTORS;i++){
+		actors_[i]->swap();
+	}
+}
+```
+
+这样无论角色的在舞台数组中如何排序，每个角色都能在同一帧中更新，且更新顺序不会影响结果。
+
+如果缓冲区是一对数据块，那么我们只需要交换指针就可以了，但是如果很多对象都持有一块数据，为了交换，我们需要遍历整个对象集合，并通知每个对象交换，如果不需要接触叫旧的帧，我们可以通过在多个对象间分散状态来优化，从而获得和使用整块缓存相同的性能。思路为将current和next转换为对象相关的偏移量：
+
+```cpp
+class Actor{
+public:
+	static void init(){
+		current_ = 0;
+	}
+	static void swap(){
+		current_ = next_();
+	}
+private:
+	static int current_;
+	static int next_(){
+		return current_ ^ 1;
+	}
+	bool slapped_[2];
+};
+```
+
+现在swap()是一个静态函数，我们只需要调用一次，每个角色的状态都会被交换。
+
+### 游戏循环
