@@ -164,7 +164,7 @@ void test8(){
     int n=3;
     double b=power(10.,n);
 }
-//如果普安段是否为明显常量求值时存在多个条件，std::is_constant_evaluated()会试探两种情况求值
+//如果判断是否为明显常量求值时存在多个条件，std::is_constant_evaluated()会试探两种情况求值
 void test9(){
     int y;
     //当返回true时，y会改变a的值，那么其返回false，在运行时初始化
