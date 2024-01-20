@@ -10,8 +10,8 @@
 
 class Model{
 private:
-    std::vector<Vec3f> verts_;
     std::vector<std::vector<Vec3i>> faces_;
+    std::vector<Vec3f> verts_;
     std::vector<Vec3f> norms_;
     std::vector<Vec2f> uv_;
 public:
@@ -35,7 +35,7 @@ public:
             //读取面数据
             else if(!line.compare(0,2,"f ")){
                 std::vector<Vec3i> f;
-                int itemp,idx,uv_idx,norm_idx;
+                int idx,uv_idx,norm_idx;
                 iss>>temp;
                 while(iss>>idx>>temp>>uv_idx>>temp>>norm_idx){
                     //obj文件的索引从1开始，所以需要减一
@@ -43,6 +43,7 @@ public:
                 }
                 faces_.push_back(f);
             }
+            //读取纹理坐标
             else if(!line.compare(0,3,"vt ")){
                 iss>>temp>>temp;
                 Vec2f vt;
@@ -51,8 +52,9 @@ public:
                 }
                 uv_.push_back(vt);
             }
+            //读取法向量
             else if(!line.compare(0,3,"vn ")){
-                iss>>temp;
+                iss>>temp>>temp;
                 Vec3f vn;
                 for(int i=0;i<3;++i){
                     iss>>vn[i];
@@ -68,11 +70,17 @@ public:
     [[nodiscard]]int nfaces()const{
         return static_cast<int>(faces_.size());
     }
-    int nuvs()const{
+    [[nodiscard]]int nuvs()const{
         return static_cast<int>(uv_.size());
+    }
+    [[nodiscard]]int nnorms()const{
+        return static_cast<int>(norms_.size());
     }
     Vec2f& uv(int i){
         return uv_[i];
+    }
+    Vec3f& norm(int i){
+        return norms_[i];
     }
     Vec3f& vert(int i){
         return verts_[i];
