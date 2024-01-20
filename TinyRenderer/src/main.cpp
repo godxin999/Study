@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include <random>
 #include <algorithm>
 
 #include "tgaimage.h"
@@ -7,13 +8,13 @@
 #include "geometry.hpp"
 #include "model.hpp"
 
-
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red   = TGAColor(255, 0,   0,   255);
 const TGAColor green = TGAColor(0,   255, 0,   255);
 Model* model = nullptr;
 const int width=2000;
 const int height=2000;
+Vec3f light_dir{0,0,-1};
 
 //Bresenham's line algorithm
 void line(Vec2i p0,Vec2i p1,TGAImage& image,const TGAColor& color){
@@ -48,86 +49,83 @@ void line(Vec2i p0,Vec2i p1,TGAImage& image,const TGAColor& color){
         }
     }
 }
-/*
-void get_model(){
+//barycentric coordinates calculation
+Vec3f barycentric(Vec2i *pts,Vec2i p){
+    //P=(1-u-v)A+uB+vC
+    //PA+uAB+vAC=0
+    //(v,u,1)(AC,AB,PA)^T=0
+    //(v,u,1)(AC_x,AB_x,PA_x)^T=0
+    //(v,u,1)(AC_y,AB_y,PA_y)^T=0
+    //(v,u,1)=(AC_x,AB_x,PA_x)×(AC_y,AB_y,PA_y)
+    //以x分量和y分量的外积来计算重心坐标
+    auto u=Vec3f(pts[2].x-pts[0].x,pts[1].x-pts[0].x,pts[0].x-p.x)^Vec3f(pts[2].y-pts[0].y,pts[1].y-pts[0].y,pts[0].y-p.y);
+    //因为pts和p的坐标都是整数，所以u的坐标也是整数，所以u的坐标的绝对值小于1时表示三角形退化为线段或点
+    if(std::abs(u.z)<1)return {-1,1,1};
+    return {1.f-(u.x+u.y)/u.z,u.y/u.z,u.x/u.z};
+}
+void triangle(Vec2i *pts,TGAImage &image,const TGAColor &color){
+    Vec2i bboxmin(image.get_width()-1,image.get_height()-1);
+    Vec2i bboxmax(0,0);
+    Vec2i clamp(image.get_width()-1,image.get_height()-1);
+    //求出三角形的包围盒
+    for(int i=0;i<3;++i){
+        bboxmin.x=std::clamp(pts[i].x,0,bboxmin.x);
+        bboxmin.y=std::clamp(pts[i].y,0,bboxmin.y);
+        bboxmax.x=std::clamp(pts[i].x,bboxmax.x,clamp.x);
+        bboxmax.y=std::clamp(pts[i].y,bboxmax.y,clamp.y);
+    }
+    Vec2i p;
+    for(p.x=bboxmin.x;p.x<=bboxmax.x;++p.x){
+        for(p.y=bboxmin.y;p.y<=bboxmax.y;++p.y){
+            //对包围盒中的每个点，求其重心坐标
+            auto bc=barycentric(pts, p);
+            //如果重心坐标中有负数，说明点在三角形外
+            if(bc.x<0||bc.y<0||bc.z<0)continue;
+            image.set(p.x,p.y,color);
+        }
+    }
+}
+
+void get_model(TGAImage &image){
     model=new Model("../../../../assets/african_head.obj");
-	TGAImage image(width, height, TGAImage::RGB);
+    //std::random_device rd;
+	//std::mt19937 rng(rd());
+	//std::uniform_int_distribution<int> uni(0,255);
     for(int i=0;i<model->nfaces();++i){
         const auto &face=model->face(i);
-        //每两个顶点间画一条线
+        Vec2i screen_coords[3];
+        Vec3f world_coords[3];
         for(int j=0;j<3;++j){
-            const auto &v0=model->vert(face[j]);
-            const auto &v1=model->vert(face[(j+1)%3]);
+            const auto &v=model->vert(face[j]);
             //将[-1,1]的坐标转换为[0,width]和[0,height]的坐标
-            int x0=(v0.x+1.)*width/2.;
-            int y0=(v0.y+1.)*height/2.;
-            int x1=(v1.x+1.)*width/2.;
-            int y1=(v1.y+1.)*height/2.;
-            line(x0,y0,x1,y1,image,white);
+            screen_coords[j]=Vec2i((v.x+1.)*width/2.,(v.y+1.)*height/2.);
+            world_coords[j]=v;
         }
-    }
-	image.flip_vertically(); // i want to have the origin at the left bottom corner of the image
-	image.write_tga_file("head.tga");
-}
-*/
-/*
-void my_triangle(Vec2i t0,Vec2i t1,Vec2i t2,TGAImage &image,const TGAColor &color){
-    line(t0,t1,image,color);
-    line(t1,t2,image,color);
-    line(t2,t0,image,color);
-    if(t2.y>t1.y)std::swap(t2,t1);
-    if(t1.y>t0.y)std::swap(t1,t0);
-    if(t2.y>t1.y)std::swap(t2,t1);
-    int total_height=t0.y-t2.y;
-    int seg_height=t1.y-t2.y;
-    for(int i=t2.y;i<=t0.y;++i){
-        float alpha=(i-t2.y)/static_cast<float>(total_height);
-        Vec2i A(std::lerp(t2.x,t0.x,alpha),i);
-        Vec2i B;
-        float beta;
-        if(i<=t1.y){
-            beta=1+(i-t1.y)/static_cast<float>(seg_height);
-            B.x=std::lerp(t2.x,t1.x,beta);
-            B.y=i;
-        }
-        else{
-            float beta=(i-t1.y)/static_cast<float>(total_height-seg_height);
-            B.x=std::lerp(t1.x,t0.x,beta);
-            B.y=i;
-        }
-        line(A,B,image,color);
-    }
-}
-*/
-void triangle(Vec2i t0,Vec2i t1,Vec2i t2,TGAImage &image,const TGAColor &color){
-    if(t2.y>t1.y)std::swap(t2,t1);
-    if(t1.y>t0.y)std::swap(t1,t0);
-    if(t2.y>t1.y)std::swap(t2,t1);
-    int total_height=t0.y-t2.y;
-    for(int i=t2.y;i<=t0.y;++i){
-        bool second_half=(i>=t1.y||t1.y==t2.y);
-        int seg_height=second_half?t0.y-t1.y:t1.y-t2.y;
-        float alpha=(i-t2.y)/static_cast<float>(total_height);
-        float beta=(second_half?i-t1.y:i-t2.y)/static_cast<float>(seg_height);
-        Vec2i A(std::lerp(t2.x,t0.x,alpha),i);
-        Vec2i B(second_half?std::lerp(t1.x,t0.x,beta):std::lerp(t2.x,t1.x,beta),i);
-        if(A.x>B.x)std::swap(A,B);
-        for(int j=A.x;j<=B.x;++j){
-            image.set(j,i,color);
+        //获取三角形的法向量
+        Vec3f n=(world_coords[2]-world_coords[0])^(world_coords[1]-world_coords[0]);
+        //将法向量转换为单位向量
+        n.normalize();
+        //计算光强
+        float intensity=n*light_dir;
+        //对光强小于0的三角形进行剔除
+        if(intensity>0){
+            triangle(screen_coords,image,TGAColor(intensity*255,intensity*255,intensity*255,255));
         }
     }
 }
+
 int main() {
     TGAImage image(width, height, TGAImage::RGB);
-
+    /*
     Vec2i t0[3] = {Vec2i(100, 700),   Vec2i(500, 1600),  Vec2i(700, 800)};
     Vec2i t1[3] = {Vec2i(1800, 500),  Vec2i(1500, 10),   Vec2i(700, 1800)};
     Vec2i t2[3] = {Vec2i(1800, 1500), Vec2i(1200, 1600), Vec2i(1300, 1800)};
-    triangle(t0[0], t0[1], t0[2], image, red);
-    triangle(t1[0], t1[1], t1[2], image, white);
-    triangle(t2[0], t2[1], t2[2], image, green);
-
+    triangle(t0, image, red);
+    triangle(t1, image, white);
+    triangle(t2, image, green);
+    */
+    get_model(image);
     image.flip_vertically(); // i want to have the origin at the left bottom corner of the image
-	image.write_tga_file("output.tga");
+	image.write_tga_file("head.tga");
 	return 0;
 }
