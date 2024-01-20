@@ -11,7 +11,9 @@
 class Model{
 private:
     std::vector<Vec3f> verts_;
-    std::vector<std::vector<int>> faces_;
+    std::vector<std::vector<Vec3i>> faces_;
+    std::vector<Vec3f> norms_;
+    std::vector<Vec2f> uv_;
 public:
     explicit Model(const char* filename){
         std::ifstream in(filename,std::ios::in);
@@ -25,36 +27,57 @@ public:
             if(!line.compare(0,2,"v ")){
                 iss>>temp;
                 Vec3f v;
-                for(float & i : v.raw){
-                    iss>>i;
+                for(int i=0;i<3;++i){
+                    iss>>v[i];
                 }
                 verts_.push_back(v);
             }
             //读取面数据
             else if(!line.compare(0,2,"f ")){
-                std::vector<int> f;
-                int itemp,idx;
+                std::vector<Vec3i> f;
+                int itemp,idx,uv_idx,norm_idx;
                 iss>>temp;
-                while(iss>>idx>>temp>>itemp>>temp>>itemp){
+                while(iss>>idx>>temp>>uv_idx>>temp>>norm_idx){
                     //obj文件的索引从1开始，所以需要减一
-                    --idx;
-                    f.push_back(idx);
+                    f.emplace_back(idx-1,uv_idx-1,norm_idx-1);
                 }
                 faces_.push_back(f);
+            }
+            else if(!line.compare(0,3,"vt ")){
+                iss>>temp>>temp;
+                Vec2f vt;
+                for(int i=0;i<2;++i){
+                    iss>>vt[i];
+                }
+                uv_.push_back(vt);
+            }
+            else if(!line.compare(0,3,"vn ")){
+                iss>>temp;
+                Vec3f vn;
+                for(int i=0;i<3;++i){
+                    iss>>vn[i];
+                }
+                norms_.push_back(vn);
             }
         }
     }
     ~Model()=default;
-    int nverts(){
+    [[nodiscard]]int nverts()const{
         return static_cast<int>(verts_.size());
     }
-    int nfaces(){
+    [[nodiscard]]int nfaces()const{
         return static_cast<int>(faces_.size());
+    }
+    int nuvs()const{
+        return static_cast<int>(uv_.size());
+    }
+    Vec2f& uv(int i){
+        return uv_[i];
     }
     Vec3f& vert(int i){
         return verts_[i];
     }
-    std::vector<int>& face(int idx){
+    std::vector<Vec3i>& face(int idx){
         return faces_[idx];
     }
 };
