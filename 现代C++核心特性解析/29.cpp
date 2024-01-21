@@ -6,6 +6,7 @@
  ************************************************************************/
 
 #include <iostream>
+#include <string>
 //16进制字面量
 void test1(){
     //0x1.7p+2表示(0x1.7)*2^2，p后面的数字表示指数，指数使用十进制表示，前面的是尾数，尾数使用十六进制表示
@@ -61,15 +62,36 @@ void test4(){
     std::cout<<hello_world_html<<std::endl;
 }
 //用户自定义字面量
+unsigned long long operator"" _kib(unsigned long long kib){
+    return kib*1024;
+}
+unsigned long long operator"" _mib(unsigned long long mib){
+    return mib*1024*1024;
+}
+void test5(){
+    auto x=4_kib+2_mib;
+    std::cout<<x<<std::endl;
+}
+//可变参数模板自定义字面量
+template <char... c>
+std::string operator"" _s(){
+    std::string str;
+    (str.push_back(c),...);
+    return str;
+}
+void test6(){
+    auto str=123_s;
+    std::cout<<str<<std::endl;
 
-
+}
 
 int main(){
     //test1();
     //test2();
     //test3();
-    test4();
-
+    //test4();
+    //test5();
+    test6();
 
     return 0;
 }
