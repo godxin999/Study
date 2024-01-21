@@ -4,11 +4,12 @@
 #include "geometry.hpp"
 #include <algorithm>
 
-const TGAColor white = TGAColor(255, 255, 255, 255);
-const TGAColor red   = TGAColor(255, 0,   0,   255);
-const TGAColor green = TGAColor(0,   255, 0,   255);
-constexpr int height=2000;
-constexpr int width=2000;
+inline const TGAColor white = TGAColor(255, 255, 255, 255);
+inline const TGAColor red   = TGAColor(255, 0,   0,   255);
+inline const TGAColor green = TGAColor(0,   255, 0,   255);
+inline constexpr int height=2000;
+inline constexpr int width=2000;
+inline constexpr int depth=255;
 
 //Bresenham's line algorithm
 void line(Vec2i p0,Vec2i p1,TGAImage& image,const TGAColor& color){
@@ -52,7 +53,7 @@ Vec3f barycentric(Vec3f A,Vec3f B,Vec3f C,Vec3f P){
     //(v,u,1)(AC,AB,PA)^T=0
     //(v,u,1)(AC_x,AB_x,PA_x)^T=0
     //(v,u,1)(AC_y,AB_y,PA_y)^T=0
-    //(v,u,1)=(AC_x,AB_x,PA_x)×(AC_y,AB_y,PA_y)
+    //k(v,u,1)=(AC_x,AB_x,PA_x)×(AC_y,AB_y,PA_y)
     //以x分量和y分量的外积来计算重心坐标
     Vec3f s[2];
     for(int i=2;i>=0;--i){
@@ -65,9 +66,4 @@ Vec3f barycentric(Vec3f A,Vec3f B,Vec3f C,Vec3f P){
     if(std::abs(u[2])>1e-2)return {1.f-(u.x+u.y)/u.z,u.y/u.z,u.x/u.z};
     return {-1,1,1};
 }
-
-Vec3f world2screen(Vec3f v) {
-    return Vec3f(static_cast<int>((v.x+1.)*width/2.+.5), static_cast<int>((v.y+1.)*height/2.+.5), v.z);
-}
-
 

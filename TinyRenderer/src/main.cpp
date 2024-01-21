@@ -1,8 +1,3 @@
-#include <iostream>
-#include <limits>
-#include <random>
-
-
 #include "model.hpp"
 #include "common.hpp"
 
@@ -10,8 +5,37 @@ Model* model = nullptr;
 float *zbuffer = nullptr;
 
 Vec3f light_dir{0,0,-1};
+Vec3f camera{0,0,3};
 
-void triangle(Vec3f *pts,Vec2f *uvs,float* zbuffer,TGAImage &image,TGAImage &texture,float intensity){
+Vec3f m2v(mat<4,1,float> m){
+    Vec3f v;
+    v.x=m[0][0]/m[3][0];
+    v.y=m[1][0]/m[3][0];
+    v.z=m[2][0]/m[3][0];
+    return v;
+}
+
+mat<4,1,float> v2m(Vec3f v){
+    mat<4,1,float> m;
+    m[0][0]=v.x;
+    m[1][0]=v.y;
+    m[2][0]=v.z;
+    m[3][0]=1.;
+    return m;
+}
+
+Mat44f viewport(int x,int y,int w,int h){
+    Mat44f m=Mat44f::identity();
+    m[0][3]=x+w/2.f;
+    m[1][3]=y+h/2.f;
+    m[2][3]=depth/2.f;
+    m[0][0]=w/2.f;
+    m[1][1]=h/2.f;
+    m[2][2]=depth/2.f;
+    return m;
+}
+
+void triangle(Vec3f *pts,Vec2i *uvs,TGAImage &image,float* zbuffer,float intensity){
     Vec2i bboxmin(image.get_width()-1,image.get_height()-1);
     Vec2i bboxmax(0,0);
     Vec2i clamp(image.get_width()-1,image.get_height()-1);
@@ -38,31 +62,26 @@ void triangle(Vec3f *pts,Vec2f *uvs,float* zbuffer,TGAImage &image,TGAImage &tex
             if(zbuffer[static_cast<int>(p.x+p.y*width)]<p.z){
                 zbuffer[static_cast<int>(p.x+p.y*width)]=p.z;
                 //计算纹理坐标
-                Vec2f uv=uvs[0]*bc.x+uvs[1]*bc.y+uvs[2]*bc.z;
+                Vec2i uv=uvs[0]*bc.x+uvs[1]*bc.y+uvs[2]*bc.z;
                 //计算纹理颜色
-                TGAColor color=texture.get(static_cast<int>(uv.x*texture.get_width()),static_cast<int>(uv.y*texture.get_height()));
-                color.r*=intensity;
-                color.g*=intensity;
-                color.b*=intensity;
-                image.set(p.x,p.y,color);
+                TGAColor color=model->diffuse(uv);
+                image.set(p.x,p.y,TGAColor(color.r*intensity,color.g*intensity,color.b*intensity));
             }
         }
     }
 }
 
-void render(TGAImage &image,TGAImage &texture){
-    for(int i=0;i<width*height;++i){
-        zbuffer[i]=-std::numeric_limits<float>::max();
-    }
+void render(TGAImage &image){
+    Mat44f Projection=Mat44f::identity();
+    Mat44f Viewport=viewport(width/8,height/8,width*3/4,height*3/4);
+    Projection[3][2]=-1.f/camera.z;
     for(int i=0;i<model->nfaces();++i){
-        const auto &face=model->face(i);
+        const auto face=model->face(i);
         Vec3f screen[3];
         Vec3f world[3];
-        Vec2f uv[3];
         for(int j=0;j<3;++j){
-            screen[j]=world2screen(model->vert(face[j].x));
+            screen[j]=m2v(Viewport*Projection*v2m(model->vert(face[j].x)));
             world[j]=model->vert(face[j].x);
-            uv[j]=model->uv(face[j].y);
         }
         //计算三角形的法向量
         Vec3f n=cross((world[2]-world[0]),(world[1]-world[0]));
@@ -72,7 +91,11 @@ void render(TGAImage &image,TGAImage &texture){
         float intensity=n*light_dir;
         //如果光照强度大于0，说明三角形面朝向光源，需要绘制
         if(intensity>0){
-            triangle(screen,uv,zbuffer,image,texture,intensity);
+            Vec2i uvs[3];
+            for(int j=0;j<3;++j){
+                uvs[j]=model->uv_diffuse(i, j);
+            }
+            triangle(screen,uvs,image,zbuffer,intensity);
         }
     }
 }
@@ -80,18 +103,13 @@ void render(TGAImage &image,TGAImage &texture){
 int main() {
     model=new Model("../../../../assets/african_head.obj");
     zbuffer=new float[width*height];
+    std::fill_n(zbuffer,width*height,min_float);
 
     TGAImage image(width, height, TGAImage::RGB);
-    TGAImage texture;
-    texture.read_tga_file("../../../../assets/african_head_diffuse.tga");
-    texture.flip_vertically();
-    
-    render(image,texture);
-
+    render(image);
     image.flip_vertically(); // i want to have the origin at the left bottom corner of the image
-	image.write_tga_file("head_diffuse.tga");
-    
+	image.write_tga_file("head_diffuse_proj.tga");
     delete model;
     delete[] zbuffer;
-	return 0;
+    return 0;
 }

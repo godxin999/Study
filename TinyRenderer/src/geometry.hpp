@@ -1,20 +1,43 @@
 #pragma once
 #include <cassert>
-
 #include <cmath>
-
 #include <cstddef>
-
+#include <cstring>
 #include <iostream>
-
-
 
 template <size_t Dim,typename T>
 struct vec{
-    vec(){
+    vec()=default;
+    vec(const vec& v)=default;
+    vec& operator=(const vec& v)=default;
+    vec(vec&& v)=default;
+    vec& operator=(vec&& v)=default;
+    ~vec()=default;
+    explicit vec(T fill){
         for(size_t i=0;i<Dim;++i){
-            data[i]=T();
+            data[i]=fill;
         }
+    }
+    vec& operator=(T fill){
+        for(size_t i=0;i<Dim;++i){
+            data[i]=fill;
+        }
+        return *this;
+    }
+    vec(const std::initializer_list<T> &lst){
+        assert(lst.size()==Dim&&"incorrect initializer list size");
+        size_t i=0;
+        for(const auto &it:lst){
+            data[i++]=it;
+        }
+    }
+    vec& operator=(const std::initializer_list<T> &lst){
+        assert(lst.size()==Dim&&"incorrect initializer list size");
+        size_t i=0;
+        for(const auto &it:lst){
+            data[i++]=it;
+        }
+        return *this;
     }
     T& operator[](const size_t i){
         assert(i<Dim&&"index out of range");
@@ -34,13 +57,25 @@ struct vec{
         *this=*this/norm();
         return *this;
     }
-    T data[Dim];    
+    T data[Dim]{};    
 };
 
 template <typename T>
 struct vec<2,T>{
-    vec():x(T()),y(T()){}
+    vec()=default;
     vec(T X,T Y):x(X),y(Y){}
+    explicit vec(T fill){
+        x=y=fill;
+    }
+    vec& operator=(T fill){
+        x=y=fill;
+        return *this;
+    }
+    vec(const vec& v)=default;
+    vec& operator=(const vec& v)=default;
+    vec(vec&& v)=default;
+    vec& operator=(vec&& v)=default;
+    ~vec()=default;
     T& operator[](const size_t i){
         assert(i<2&&"index out of range");
         return i==0?x:y;
@@ -48,6 +83,17 @@ struct vec<2,T>{
     const T& operator[](const size_t i)const{
         assert(i<2&&"index out of range");
         return i==0?x:y;
+    }
+    vec(const std::initializer_list<T> &lst){
+        assert(lst.size()==2&&"incorrect initializer list size");
+        x=*lst.begin();
+        y=*(lst.begin()+1);
+    }
+    vec& operator=(const std::initializer_list<T> &lst){
+        assert(lst.size()==2&&"incorrect initializer list size");
+        x=*lst.begin();
+        y=*(lst.begin()+1);
+        return *this;
     }
     T norm2()const{
         return x*x+y*y;
@@ -59,13 +105,38 @@ struct vec<2,T>{
         *this=*this/norm();
         return *this;
     }
-    T x,y;
+    T x{},y{};
 };
 
 template <typename T>
 struct vec<3,T>{
-    vec():x(T()),y(T()),z(T()){}
+    vec()=default;
     vec(T X,T Y,T Z):x(X),y(Y),z(Z){}
+    explicit vec(T fill){
+        x=y=z=fill;
+    }
+    vec& operator=(T fill){
+        x=y=z=fill;
+        return *this;
+    }
+    vec(const vec& v)=default;
+    vec& operator=(const vec& v)=default;
+    vec(vec&& v)=default;
+    vec& operator=(vec&& v)=default;
+    ~vec()=default;
+    vec(const std::initializer_list<T> &lst){
+        assert(lst.size()==3&&"incorrect initializer list size");
+        x=*lst.begin();
+        y=*(lst.begin()+1);
+        z=*(lst.begin()+2);
+    }
+    vec& operator=(const std::initializer_list<T> &lst){
+        assert(lst.size()==3&&"incorrect initializer list size");
+        x=*lst.begin();
+        y=*(lst.begin()+1);
+        z=*(lst.begin()+2);
+        return *this;
+    }
     T& operator[](const size_t i){
         assert(i<3&&"index out of range");
         return i==0?x:(i==1?y:z);
@@ -84,7 +155,7 @@ struct vec<3,T>{
         *this=*this/norm();
         return *this;
     }
-    T x,y,z;
+    T x{},y{},z{};
 };
 
 //-----------------------------------------------------------------------------
@@ -199,9 +270,37 @@ struct dt<1,T>{
 template <size_t DimRows,size_t DimCols,typename T>
 class mat{
 private:
-    vec<DimCols,T> rows[DimRows];
+    vec<DimCols,T> rows[DimRows]{};
 public:
     mat()=default;
+    mat(const mat& m)=default;
+    mat& operator=(const mat& m)=default;
+    mat(mat&& m)=default;
+    mat& operator=(mat&& m)=default;
+    explicit mat(T fill){
+        for(size_t i=0;i<DimRows;++i){
+            rows[i]=fill;
+        }
+    }
+    mat(const std::initializer_list<std::initializer_list<T>> &lst){
+        assert(lst.size()==DimRows&&"incorrect initializer list size");
+        size_t i=0;
+        for(const auto &it:lst){
+            assert(it.size()==DimCols&&"incorrect initializer list size");
+            rows[i++]=it;
+        }
+    }
+    mat& operator=(const std::initializer_list<std::initializer_list<T>> &lst){
+        assert(lst.size()==DimRows&&"incorrect initializer list size");
+        size_t i=0;
+        for(const auto &it:lst){
+            assert(it.size()==DimCols&&"incorrect initializer list size");
+            rows[i++]=it;
+        }
+        return *this;
+    }
+    ~mat()=default;
+public:
     vec<DimCols,T>& operator[](const size_t i){
         assert(i<DimRows&&"index out of range");
         return rows[i];
@@ -231,14 +330,48 @@ public:
         }
         return ret;
     }
+    [[nodiscard]]int ncols()const{
+        return DimCols;
+    }
+    [[nodiscard]]int nrows()const{
+        return DimRows;
+    }
 };
 
 template <size_t Dim,typename T>
 class mat<Dim,Dim,T>{
 private:
-    vec<Dim,T> rows[Dim];
+    vec<Dim,T> rows[Dim]{};
 public:
     mat()=default;
+    mat(const mat& m)=default;
+    mat& operator=(const mat& m)=default;
+    mat(mat&& m)=default;
+    mat& operator=(mat&& m)=default;
+    ~mat()=default;
+    explicit mat(T fill){
+        for(size_t i=0;i<Dim;++i){
+            rows[i]=fill;
+        }
+    }
+    mat(const std::initializer_list<std::initializer_list<T>> &lst){
+        assert(lst.size()==Dim&&"incorrect initializer list size");
+        size_t i=0;
+        for(const auto &it:lst){
+            assert(it.size()==Dim&&"incorrect initializer list size");
+            rows[i++]=it;
+        }
+    }
+    mat& operator=(const std::initializer_list<std::initializer_list<T>> &lst){
+        assert(lst.size()==Dim&&"incorrect initializer list size");
+        size_t i=0;
+        for(const auto &it:lst){
+            assert(it.size()==Dim&&"incorrect initializer list size");
+            rows[i++]=it;
+        }
+        return *this;
+    }
+public:
     vec<Dim,T>& operator[](const size_t i){
         assert(i<Dim&&"index out of range");
         return rows[i];
@@ -313,6 +446,12 @@ public:
         }
         return ret;
     }
+    [[nodiscard]]int ncols()const{
+        return Dim;
+    }
+    [[nodiscard]]int nrows()const{
+        return Dim;
+    } 
 };
 
 //----------------------------------------------------------------------
@@ -384,4 +523,12 @@ using Vec3f=vec<3,float>;
 using Vec4f=vec<4,float>;
 using Vec2i=vec<2,int>;
 using Vec3i=vec<3,int>;
-using Matrix=mat<4,4,float>;
+using Mat44f=mat<4,4,float>;
+using Mat33f=mat<3,3,float>;
+using Mat44i=mat<4,4,int>;
+using Mat33i=mat<3,3,int>;
+
+//------------------------------------------------------------------------------------
+inline constexpr float max_float=std::numeric_limits<float>::max();
+inline constexpr float min_float=std::numeric_limits<float>::lowest();
+inline constexpr float pi=3.14159265358979323846F;
