@@ -67,3 +67,69 @@ Vec3f barycentric(Vec3f A,Vec3f B,Vec3f C,Vec3f P){
     return {-1,1,1};
 }
 
+//获取视口变换矩阵
+Mat44f viewport_matrix(int x,int y,int w,int h){
+    //将[-1,1]*[-1,1]*[-1,1]映射到[x,x+w]*[y,y+h]*[0,depth]
+    Mat44f m=Mat44f::identity();
+    m[0][3]=x+w/2.f;
+    m[1][3]=y+h/2.f;
+    m[2][3]=depth/2.f;
+    m[0][0]=w/2.f;
+    m[1][1]=h/2.f;
+    m[2][2]=depth/2.f;
+    return m;
+}
+
+//获取透视投影矩阵
+//dist为视点到投影平面的距离
+Mat44f projection_matrix(float dist){
+    //以标准坐标轴为例，相机位于(0,0,c)，被投影点坐标为(x,y,z)，投影平面为z=0，投影后点坐标为(x',y',0)
+    //根据相似三角形，x/x'=(c-z)/c，y/y'=(c-z)/c，故x'=x/(1-z/c)，y'=y/(1-z/c)
+    //1 0 0 0  * (x,y,z,1)^T=(x,y,z,rz+1)^T
+    //0 1 0 0
+    //0 0 1 0
+    //0 0 r 1
+    //(x,y,z,rz+1)->(x/(rz+1),y/(rz+1),z,rz+1)
+    //所以退出r=-1/c，即-1/dist
+    Mat44f m=Mat44f::identity();
+    m[3][2]=-1.f/dist;
+    return m;
+}
+
+//获取视图变换矩阵
+Mat44f view_matrix(Vec3f eye,Vec3f center,Vec3f up){
+    //首先使用lookat方式计算出相机坐标系的基
+    //右手系所以是eye-center，左手系是center-eye，根据z轴的正方向来判断
+    auto f=(eye-center).normalize();
+    auto r=cross(up,f).normalize();
+    //因为u不一定和up正交，所以需要重新计算
+    auto u=cross(f,r).normalize();
+    //根据相机坐标系的基计算出变换矩阵
+    Mat44f v=Mat44f::identity();
+    //从世界坐标系变换到相机坐标系需要一个旋转变换(基变换)和一个平移变换
+    //视图矩阵表示的是上述变换的逆变换，即
+    //V=(TR)^(-1)=R^(-1)T^(-1)
+    //R为基变换矩阵即(r,u,f,1)
+    //T为平移变换矩阵即
+    //1,0,0,eye.x
+    //0,1,0,eye.y
+    //0,0,1,eye.z
+    //0,0,0,1
+    //因为旋转矩阵是正交矩阵，所以R^(-1)=R^T
+    //T^(-1)即将平移向量取反
+    //所以V=R^(-1)T^(-1)=
+    //r.x,r.y,r.z,-r·eye
+    //u.x,u.y,u.z,-u·eye
+    //f.x,f.y,f.z,-f·eye
+    //0,0,0,1
+    v[0]=embed<4>(r,-r*eye);
+    v[1]=embed<4>(u,-u*eye);
+    v[2]=embed<4>(f,-f*eye);
+    return v;
+}
+
+//获取模型变换矩阵
+Mat44f model_matrix(){
+    Mat44f m=Mat44f::identity();
+    return m;
+}

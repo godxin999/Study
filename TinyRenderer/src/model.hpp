@@ -88,19 +88,18 @@ public:
     [[nodiscard]]int nnorms()const{
         return static_cast<int>(norms_.size());
     }
-    Vec2f uv(int i){
-        return uv_[i];
-    }
-    Vec3f norm(int i){
-        return norms_[i];
-    }
     Vec3f vert(int i){
         return verts_[i];
     }
     std::vector<Vec3i> face(int idx){
         return faces_[idx];
     }
-    Vec2i uv_diffuse(int iface,int nvert){
+    Vec3f norm(int iface,int nvert){
+        auto idx=faces_[iface][nvert][2];
+        Vec3f norm=normalize(norms_[idx]);
+        return norm;
+    }
+    Vec2i uv(int iface,int nvert){
         auto idx=faces_[iface][nvert][1];
         Vec2i uv;
         uv.x=static_cast<int>(uv_[idx].x*diffuse_map_.get_width());

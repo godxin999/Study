@@ -161,6 +161,15 @@ struct vec<3,T>{
 //-----------------------------------------------------------------------------
 
 template <size_t Dim,typename T>
+vec<Dim,T> operator-(const vec<Dim,T> &v){
+    vec<Dim,T> ret;
+    for(size_t i=0;i<Dim;++i){
+        ret[i]=-v[i];
+    }
+    return ret;
+}
+
+template <size_t Dim,typename T>
 T operator*(const vec<Dim,T> &lhs,const vec<Dim,T> &rhs){
     T ret=T();
     for(size_t i=0;i<Dim;++i){
@@ -205,6 +214,7 @@ vec<Dim,T> operator/(vec<Dim,T> lhs,U rhs){
 
 template <size_t Len,size_t Dim,typename T>
 vec<Len,T> embed(const vec<Dim,T> &v,T fill=1){
+    assert(Len>Dim&&"invalid embedding");
     vec<Len,T> ret;
     for(size_t i=0;i<Len;++i){
         ret[i]=i<Dim?v[i]:fill;
@@ -455,6 +465,15 @@ public:
 };
 
 //----------------------------------------------------------------------
+
+template <size_t DimRows,size_t DimCols,typename T>
+mat<DimRows,DimCols,T> operator-(const mat<DimRows,DimCols,T> &m){
+    mat<DimRows,DimCols,T> ret;
+    for(size_t i=0;i<DimRows;++i){
+        ret[i]=-m[i];
+    }
+    return ret;
+}
 
 template <size_t DimRows,size_t DimCols,typename T>
 vec<DimRows,T> operator*(const mat<DimRows,DimCols,T> & lhs,const vec<DimCols,T> &rhs){
