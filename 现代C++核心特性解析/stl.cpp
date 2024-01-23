@@ -10,9 +10,11 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include <memory>
 #include <numeric>
 #include <random>
 #include <vector>
+#include <set>
 
 template <typename Cont>
 void print(const Cont& c){
@@ -246,7 +248,165 @@ void test13(){
     const auto& [it1,it2]=std::minmax_element(v.begin(),v.end());//返回区间中最小和最大的元素的迭代器
     std::cout<<*it1<<" "<<*it2<<std::endl;
 }
+//std::set_union、std::set_intersection、std::set_difference、std::set_symmetric_difference、std::merge、std::includes
+void test14(){
+    std::set<int> s1{0,1,2,3,4,5,6};
+    std::set<int> s2{3,4,5,6,7,8,9};
+    
+    std::set<int> s3;
+    std::set_union(s1.begin(),s1.end(),s2.begin(),s2.end(),std::inserter(s3,s3.begin()));//求两个集合的并集
+    print(s3);
 
+    s3.clear();
+    std::set_intersection(s1.begin(),s1.end(),s2.begin(),s2.end(),std::inserter(s3,s3.begin()));//求两个集合的交集
+    print(s3);
+
+    s3.clear();
+    std::set_difference(s1.begin(),s1.end(),s2.begin(),s2.end(),std::inserter(s3,s3.begin()));//求两个集合的差集
+    print(s3);
+
+    s3.clear();
+    std::set_symmetric_difference(s1.begin(),s1.end(),s2.begin(),s2.end(),std::inserter(s3,s3.begin()));//求两个集合的对称差集
+    print(s3);
+
+    s3.clear();
+    std::merge(s1.begin(),s1.end(),s2.begin(),s2.end(),std::inserter(s3,s3.begin()));//求两个集合的并集，前提是两个集合都是有序的
+    print(s3);
+
+    std::cout<<std::boolalpha;
+    std::cout<<std::includes(s1.begin(),s1.end(),s2.begin(),s2.end())<<std::endl;//判断第一个集合是否包含第二个集合
+}
+//std::copy、std::copy_backward、std::move、std::move_backward、std::swap_ranges
+void test15(){
+    std::vector<int> v1{0,1,2,3,4,5,6,7,8,9};
+    std::vector<int> v2{10,11,12,13,14,15,16,17,18,19};
+    std::vector<int> temp1{v1},temp2{v2};
+
+    std::copy(v1.begin(),v1.end(),v2.begin());//将第一个区间中的元素复制到第二个区间中，前提是第二个区间的大小大于等于第一个区间的大小
+    print(v2);
+
+    v2=temp2;
+    std::copy_backward(v1.begin(),v1.end(),v2.end());//从后往前复制，防止覆盖还未复制的元素
+    print(v2);
+
+    v2=temp2;
+    std::move(v1.begin(),v1.end(),v2.begin());//将第一个区间中的元素移动到第二个区间中，前提是第二个区间的大小大于等于第一个区间的大小
+    print(v2);
+
+    v1=temp1;
+    v2=temp2;
+    std::move_backward(v1.begin(),v1.end(),v2.end());//从后往前移动
+    print(v2);
+
+    v1=temp1;
+    v2=temp2;
+    std::swap_ranges(v1.begin(),v1.end(),v2.begin());//将两个区间中的元素交换，前提是两个区间的大小相等
+    print(v1);
+    print(v2);
+}
+//std::fill、std::generate、std::replace、std::iota
+void test16(){
+    std::vector<int> v{0,1,2,3,4,5,6,7,8,9};
+
+    std::fill(v.begin(),v.end(),0);//将区间中的元素全部赋值为0
+    print(v);
+
+    std::replace(v.begin(),v.end(),0,1);//将区间中的0全部替换为1
+    print(v);
+
+    std::generate(v.begin(),v.end(),std::default_random_engine());//将区间中的元素全部赋值为随机数
+    print(v);
+
+    std::iota(v.begin(),v.end(),0);//将区间中的元素赋值为0,1,2,3,4,5,6,7,8,9
+    print(v);
+}
+//std::remove、std::unique
+void test17(){
+    std::vector<int> v{0,9,9,1,2,9,4,4,5,4,4,9,9,6,6,6,9};
+
+    v.erase(std::remove(v.begin(),v.end(),9),v.end());
+    print(v);
+
+    v.erase(std::unique(v.begin(),v.end()),v.end());//删除相邻元素中的重复元素
+    print(v);
+}
+//*_copy(std::reverse_copy、std::replace_copy)、*_if(std::find_if_not、std::replace_if)
+void test18(){
+    std::vector<int> v{0,1,2,3,4,5,6,7,8,9};
+    std::vector<int> v2(v.size());
+
+    std::reverse_copy(v.begin(),v.end(),v2.begin());//将区间中的元素反转后复制到第三个参数为起始位置的区间中
+    print(v2);
+
+    std::replace_copy(v.begin(),v.end(),v2.begin(),0,1);//将区间中的元素复制到第三个参数为起始位置的区间中，并将0替换为1
+    print(v2);
+
+    std::cout<<std::distance(v.begin(),std::find_if_not(v.begin(),v.end(),[](int i){return i<5;}))<<std::endl;//返回第一个不满足谓词的元素的迭代器
+
+    std::replace_if(v.begin(),v.end(),[](int i){return i<5;},0);//将区间中满足谓词的元素替换为0
+    print(v);
+}
+//std::transform、std::for_each
+void test19(){
+    std::vector<int> v{0,1,2,3,4,5,6,7,8,9};
+    std::vector<int> v2;
+    //transform主要用于需要结果的函数
+    std::transform(v.begin(),v.end(),std::back_inserter(v2),[](int i){return i*2;});
+    print(v2);
+
+    //for_each主要用于不需要结果的函数
+    std::for_each(v.begin(),v.end(),[](int i){std::cout<<i<<" ";});
+    std::cout<<std::endl;
+
+}
+//std::uninitialized_copy、std::uninitialized_fill、std::uninitialized_move、std::uninitialized_default_construct、std::uninitialized_default_construct、std::destroy
+void test20(){
+    //uninitialized系列函数只对原始内存使用
+    unsigned char* mem=(unsigned char*)malloc(10*sizeof(int));
+    std::uninitialized_fill((int*)mem,(int*)mem+10,0);//将内存中的元素全部赋值为0
+    for(int i=0;i<10;i++){
+        std::cout<<*((int*)mem+i)<<" ";
+    }
+    std::cout<<std::endl;
+    std::destroy((int*)mem,(int*)mem+10);
+    int a[10]={0,1,2,3,4,5,6,7,8,9};
+    std::uninitialized_copy(a,a+10,(int*)mem);//将内存中的元素全部复制到另一个内存中
+    for(int i=0;i<10;i++){
+        std::cout<<*((int*)mem+i)<<" ";
+    }
+    std::cout<<std::endl;
+    std::destroy((int*)mem,(int*)mem+10);
+    std::uninitialized_move(a,a+10,(int*)mem);//将内存中的元素全部移动到另一个内存中
+    for(int i=0;i<10;i++){
+        std::cout<<*((int*)mem+i)<<" ";
+    }
+    std::cout<<std::endl;
+    std::destroy((int*)mem,(int*)mem+10);
+    std::uninitialized_default_construct((int*)mem,(int*)mem+10);//将内存中的元素全部默认构造
+    for(int i=0;i<10;i++){
+        std::cout<<*((int*)mem+i)<<" ";
+    }
+    std::cout<<std::endl;
+    std::destroy((int*)mem,(int*)mem+10);
+    std::uninitialized_value_construct((int*)mem,(int*)mem+10);//将内存中的元素全部值构造
+    for(int i=0;i<10;i++){
+        std::cout<<*((int*)mem+i)<<" ";
+    }
+    std::cout<<std::endl;
+}
+//*_n(std::fill_n，std::search_n、std::for_each_n)
+void test21(){
+    std::vector<int> v{0,1,2,3,4,5,6,7,8,9};
+    std::vector<int> v2(5);
+
+    std::fill_n(v2.begin(),5,0);//将区间中的前5个元素赋值为0
+    print(v2);
+
+    std::cout<<std::distance(v.begin(),std::search_n(v.begin(),v.end(),3,3))<<std::endl;//返回区间中第一个连续出现3次的子序列，可以重载规则，如查找第一个连续出现3次的偶数子序列
+
+    std::for_each_n(v.begin(),5,[](int i){std::cout<<i<<" ";});//对区间中的前5个元素执行函数
+    std::cout<<std::endl;
+}
 
 
 int main(){
@@ -263,6 +423,17 @@ int main(){
     //test11();
     //test12();
     //test13();
+    //test14();
+    //test15();
+    //test16();
+    //test17();
+    //test18();
+    //test19();
+    //test20();
+    test21();
 
+
+
+     
     return 0;
 }
