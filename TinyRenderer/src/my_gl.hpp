@@ -4,12 +4,10 @@
 #include "geometry.hpp"
 #include <algorithm>
 
-inline const TGAColor white = TGAColor(255, 255, 255, 255);
-inline const TGAColor red   = TGAColor(255, 0,   0,   255);
-inline const TGAColor green = TGAColor(0,   255, 0,   255);
-inline constexpr int height=2000;
-inline constexpr int width=2000;
-inline constexpr int depth=255;
+Mat44f Model_;
+Mat44f View;
+Mat44f Projection;
+Mat44f Viewport;
 
 //Bresenham's line algorithm
 void line(Vec2i p0,Vec2i p1,TGAImage& image,const TGAColor& color){
@@ -45,9 +43,8 @@ void line(Vec2i p0,Vec2i p1,TGAImage& image,const TGAColor& color){
     }
 }
 
-
 //barycentric coordinates calculation
-Vec3f barycentric(Vec3f A,Vec3f B,Vec3f C,Vec3f P){
+Vec3f barycentric(Vec2f A,Vec2f B,Vec2f C,Vec2f P){
     //P=(1-u-v)A+uB+vC
     //PA+uAB+vAC=0
     //(v,u,1)(AC,AB,PA)^T=0
@@ -73,10 +70,10 @@ Mat44f viewport_matrix(int x,int y,int w,int h){
     Mat44f m=Mat44f::identity();
     m[0][3]=x+w/2.f;
     m[1][3]=y+h/2.f;
-    m[2][3]=depth/2.f;
+    m[2][3]=255.f/2.f;
     m[0][0]=w/2.f;
     m[1][1]=h/2.f;
-    m[2][2]=depth/2.f;
+    m[2][2]=255.f/2.f;
     return m;
 }
 
@@ -89,7 +86,7 @@ Mat44f projection_matrix(float dist){
     //0 1 0 0
     //0 0 1 0
     //0 0 r 1
-    //(x,y,z,rz+1)->(x/(rz+1),y/(rz+1),z,rz+1)
+    //(x,y,z,rz+1)->(x/(rz+1),y/(rz+1),z/(rz+1))
     //所以退出r=-1/c，即-1/dist
     Mat44f m=Mat44f::identity();
     m[3][2]=-1.f/dist;
@@ -122,9 +119,13 @@ Mat44f view_matrix(Vec3f eye,Vec3f center,Vec3f up){
     //u.x,u.y,u.z,-u·eye
     //f.x,f.y,f.z,-f·eye
     //0,0,0,1
-    v[0]=embed<4>(r,-r*eye);
-    v[1]=embed<4>(u,-u*eye);
-    v[2]=embed<4>(f,-f*eye);
+
+    //v[0]=embed<4>(r,-r*eye);
+    //v[1]=embed<4>(u,-u*eye);
+    //v[2]=embed<4>(f,-f*eye);
+    v[0]=embed<4>(r,-center[0]);
+    v[1]=embed<4>(u,-center[1]);
+    v[2]=embed<4>(f,-center[2]);
     return v;
 }
 
@@ -133,3 +134,46 @@ Mat44f model_matrix(){
     Mat44f m=Mat44f::identity();
     return m;
 }
+
+struct IShader{
+    virtual ~IShader()=default;
+    virtual Vec4f vertex(int iface,int nvert)=0;
+    virtual bool fragment(Vec3f bar,TGAColor& color)=0;
+};
+
+//三角形光栅化
+void triangle(Vec4f *pts,IShader& shader,TGAImage &image,float* zbuffer){
+    Vec2f bboxmin(max_float,max_float);
+    Vec2f bboxmax(min_float,min_float);
+    //求出三角形的包围盒
+    for(int i=0;i<3;++i){
+        for(int j=0;j<2;++j){
+            bboxmin[j]=std::min(bboxmin[j],pts[i][j]/pts[i][3]);
+            bboxmax[j]=std::max(bboxmax[j],pts[i][j]/pts[i][3]);
+        }
+    }
+    Vec2i p;
+    TGAColor color;
+    for(p.x=bboxmin.x;p.x<=bboxmax.x;++p.x){
+        for(p.y=bboxmin.y;p.y<=bboxmax.y;++p.y){
+            //对包围盒中的每个点，求其重心坐标
+            auto bc=barycentric(proj<2>(pts[0]/pts[0][3]),proj<2>(pts[1]/pts[1][3]),proj<2>(pts[2]/pts[2][3]),p);
+            //如果重心坐标中有负数，说明点在三角形外
+            if(bc.x<0||bc.y<0||bc.z<0)continue;
+            //如果点在三角形内，计算其深度值
+            float z=pts[0][2]*bc.x+pts[1][2]*bc.y+pts[2][2]*bc.z;
+            float w=pts[0][3]*bc.x+pts[1][3]*bc.y+pts[2][3]*bc.z;
+            int frag_depth=std::clamp(static_cast<int>(z/w+.5f),0,255);
+            //如果深度值大于zbuffer中的值，说明该点在三角形前面，需要绘制
+            if(zbuffer[p.x+p.y*image.get_width()]<=frag_depth){
+                bool discard=shader.fragment(bc,color);
+                if(!discard){
+                    zbuffer[p.x+p.y*image.get_width()]=frag_depth;
+                    image.set(p.x,p.y,color);
+                }
+            }
+        }
+    }
+}
+
+

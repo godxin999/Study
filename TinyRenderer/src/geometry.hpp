@@ -76,6 +76,8 @@ struct vec<2,T>{
     vec(vec&& v)=default;
     vec& operator=(vec&& v)=default;
     ~vec()=default;
+    template <typename U>
+    vec(const vec<2,U> &v);
     T& operator[](const size_t i){
         assert(i<2&&"index out of range");
         return i==0?x:y;
@@ -124,6 +126,8 @@ struct vec<3,T>{
     vec(vec&& v)=default;
     vec& operator=(vec&& v)=default;
     ~vec()=default;
+    template <typename U>
+    vec(const vec<3,U> &v);
     vec(const std::initializer_list<T> &lst){
         assert(lst.size()==3&&"incorrect initializer list size");
         x=*lst.begin();
@@ -157,6 +161,20 @@ struct vec<3,T>{
     }
     T x{},y{},z{};
 };
+
+template<>
+template<>
+vec<2,float>::vec(const vec<2,int> &v):x(v.x),y(v.y){}
+template<>
+template<>
+vec<2,int>::vec(const vec<2,float> &v):x(v.x+.5f),y(v.y+.5f){}
+template<>
+template<>
+vec<3,float>::vec(const vec<3,int> &v):x(v.x),y(v.y),z(v.z){}
+template<>
+template<>
+vec<3,int>::vec(const vec<3,float> &v):x(v.x+.5f),y(v.y+.5f),z(v.z+.5f){}
+
 
 //-----------------------------------------------------------------------------
 

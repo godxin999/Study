@@ -16,6 +16,8 @@ private:
     std::vector<Vec3f> norms_;
     std::vector<Vec2f> uv_;
     TGAImage diffuse_map_;
+    TGAImage normal_map_;
+    TGAImage specular_map_;
     void load_texture(const char* filename,const char* suffix,TGAImage& img){
         std::string texfile(filename);
         auto dot=texfile.find_last_of(".");
@@ -74,6 +76,8 @@ public:
             }
         }
         load_texture(filename,"_diffuse.tga",diffuse_map_);
+        load_texture(filename,"_nm.tga",normal_map_);
+        load_texture(filename,"_spec.tga",specular_map_);
     }
     ~Model()=default;
     [[nodiscard]]int nverts()const{
@@ -94,19 +98,28 @@ public:
     std::vector<Vec3i> face(int idx){
         return faces_[idx];
     }
+    Vec3f vert(int iface,int nvert){
+        return verts_[faces_[iface][nvert][0]];
+    }
+    Vec2f uv(int iface,int nvert){
+        return uv_[faces_[iface][nvert][1]];
+    }
     Vec3f norm(int iface,int nvert){
-        auto idx=faces_[iface][nvert][2];
-        Vec3f norm=normalize(norms_[idx]);
-        return norm;
+        return normalize(norms_[faces_[iface][nvert][2]]);
     }
-    Vec2i uv(int iface,int nvert){
-        auto idx=faces_[iface][nvert][1];
-        Vec2i uv;
-        uv.x=static_cast<int>(uv_[idx].x*diffuse_map_.get_width());
-        uv.y=static_cast<int>(uv_[idx].y*diffuse_map_.get_height());
-        return uv;
-    }
-    TGAColor diffuse(Vec2i uv){
+    TGAColor diffuse(Vec2f uvf){
+        Vec2i uv(uvf[0]*diffuse_map_.get_width(),uvf[1]*diffuse_map_.get_height());
         return diffuse_map_.get(uv.x,uv.y);
+    }
+    Vec3f normal(Vec2f uvf){
+        Vec2i uv(uvf[0]*normal_map_.get_width(),uvf[1]*normal_map_.get_height());
+        TGAColor c=normal_map_.get(uv.x,uv.y);
+        Vec3f res;
+        for(int i=0;i<3;++i){
+            //将法向量的范围从[0,255]映射到[-1,1]
+            //RGB对应xyz，TGAColor存储的是BGR
+            res[2-i]=static_cast<float>(c[i])/255.f*2.f-1.f;
+        }
+        return res;
     }
 };
