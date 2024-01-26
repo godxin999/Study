@@ -122,4 +122,8 @@ public:
         }
         return res;
     }
+    float specular(Vec2f uvf){
+        Vec2i uv(uvf[0]*specular_map_.get_width(),uvf[1]*specular_map_.get_height());
+        return specular_map_.get(uv[0], uv[1])[0]/1.f;
+    }
 };
