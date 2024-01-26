@@ -5,7 +5,7 @@
 #include <cstring>
 #include <iostream>
 
-template <size_t Dim,typename T>
+template <size_t Dim,typename T = float>
 struct vec{
     vec()=default;
     vec(const vec& v)=default;
@@ -97,10 +97,10 @@ struct vec<2,T>{
         y=*(lst.begin()+1);
         return *this;
     }
-    T norm2()const{
+    [[nodiscard]]T norm2()const{
         return x*x+y*y;
     }
-    T norm()const{
+    [[nodiscard]]T norm()const{
         return std::sqrt(norm2());
     }
     vec<2,T>& normalize(){
@@ -149,10 +149,10 @@ struct vec<3,T>{
         assert(i<3&&"index out of range");
         return i==0?x:(i==1?y:z);
     }
-    T norm2()const{
+    [[nodiscard]]T norm2()const{
         return x*x+y*y+z*z;
     }
-    T norm()const{
+    [[nodiscard]]T norm()const{
         return std::sqrt(norm2());
     }
     vec<3,T>& normalize(){
@@ -178,7 +178,7 @@ vec<3,int>::vec(const vec<3,float> &v):x(v.x+.5f),y(v.y+.5f),z(v.z+.5f){}
 
 //-----------------------------------------------------------------------------
 
-template <size_t Dim,typename T>
+template <size_t Dim,typename T = float>
 vec<Dim,T> operator-(const vec<Dim,T> &v){
     vec<Dim,T> ret;
     for(size_t i=0;i<Dim;++i){
@@ -187,7 +187,7 @@ vec<Dim,T> operator-(const vec<Dim,T> &v){
     return ret;
 }
 
-template <size_t Dim,typename T>
+template <size_t Dim,typename T = float>
 T operator*(const vec<Dim,T> &lhs,const vec<Dim,T> &rhs){
     T ret=T();
     for(size_t i=0;i<Dim;++i){
@@ -196,7 +196,7 @@ T operator*(const vec<Dim,T> &lhs,const vec<Dim,T> &rhs){
     return ret;
 }
 
-template <size_t Dim,typename T>
+template <size_t Dim,typename T = float>
 vec<Dim,T> operator+(vec<Dim,T> lhs,const vec<Dim,T> &rhs){
     for(size_t i=0;i<Dim;++i){
         lhs[i]+=rhs[i];
@@ -204,7 +204,7 @@ vec<Dim,T> operator+(vec<Dim,T> lhs,const vec<Dim,T> &rhs){
     return lhs;
 }
 
-template <size_t Dim,typename T>
+template <size_t Dim,typename T = float>
 vec<Dim,T> operator-(vec<Dim,T> lhs,const vec<Dim,T> &rhs){
     for(size_t i=0;i<Dim;++i){
         lhs[i]-=rhs[i];
@@ -212,7 +212,7 @@ vec<Dim,T> operator-(vec<Dim,T> lhs,const vec<Dim,T> &rhs){
     return lhs;
 }
 
-template <size_t Dim,typename T,typename U>
+template <size_t Dim,typename T = float,typename U>
 requires std::is_arithmetic_v<U>
 vec<Dim,T> operator*(vec<Dim,T> lhs,U rhs){
     for(size_t i=0;i<Dim;++i){
@@ -221,7 +221,7 @@ vec<Dim,T> operator*(vec<Dim,T> lhs,U rhs){
     return lhs;
 }
 
-template <size_t Dim,typename T,typename U>
+template <size_t Dim,typename T = float,typename U>
 requires std::is_arithmetic_v<U>
 vec<Dim,T> operator/(vec<Dim,T> lhs,U rhs){
     for(size_t i=0;i<Dim;++i){
@@ -230,7 +230,7 @@ vec<Dim,T> operator/(vec<Dim,T> lhs,U rhs){
     return lhs;
 }
 
-template <size_t Len,size_t Dim,typename T>
+template <size_t Len,size_t Dim,typename T = float>
 vec<Len,T> embed(const vec<Dim,T> &v,T fill=1){
     assert(Len>Dim&&"invalid embedding");
     vec<Len,T> ret;
@@ -240,7 +240,7 @@ vec<Len,T> embed(const vec<Dim,T> &v,T fill=1){
     return ret;
 }
 
-template <size_t Len,size_t Dim,typename T>
+template <size_t Len,size_t Dim,typename T = float>
 vec<Len,T> proj(const vec<Dim,T>& v){
     assert(Len<Dim&&"invalid projection");
     vec<Len,T> ret;
@@ -250,7 +250,7 @@ vec<Len,T> proj(const vec<Dim,T>& v){
     return ret;
 }
 
-template <typename T>
+template <typename T = float>
 vec<3,T> cross(const vec<3,T> &v1,const vec<3,T> &v2){
     return {
         v1.y*v2.z-v1.z*v2.y,
@@ -259,12 +259,12 @@ vec<3,T> cross(const vec<3,T> &v1,const vec<3,T> &v2){
     };
 }
 
-template <size_t Dim,typename T>
+template <size_t Dim,typename T = float>
 vec<Dim,T> normalize(const vec<Dim,T> &v){
     return v/std::sqrt(v*v);
 }
 
-template <size_t Dim,typename T>
+template <size_t Dim,typename T = float>
 std::ostream& operator<<(std::ostream &out,const vec<Dim,T> &v){
     for(size_t i=0;i<Dim;++i){
         out<<v[i]<<" ";
@@ -274,10 +274,10 @@ std::ostream& operator<<(std::ostream &out,const vec<Dim,T> &v){
 
 //-------------------------------------------------------------------------------------
 
-template <size_t DimRows,size_t DimCols,typename T>
+template <size_t DimRows,size_t DimCols,typename T = float>
 class mat;
 
-template <size_t Dim,typename T>
+template <size_t Dim,typename T = float>
 struct dt{
     static T det(const mat<Dim,Dim,T> &m){
         T ret=0;
@@ -484,7 +484,7 @@ public:
 
 //----------------------------------------------------------------------
 
-template <size_t DimRows,size_t DimCols,typename T>
+template <size_t DimRows,size_t DimCols,typename T = float>
 mat<DimRows,DimCols,T> operator-(const mat<DimRows,DimCols,T> &m){
     mat<DimRows,DimCols,T> ret;
     for(size_t i=0;i<DimRows;++i){
@@ -493,7 +493,7 @@ mat<DimRows,DimCols,T> operator-(const mat<DimRows,DimCols,T> &m){
     return ret;
 }
 
-template <size_t DimRows,size_t DimCols,typename T>
+template <size_t DimRows,size_t DimCols,typename T = float>
 vec<DimRows,T> operator*(const mat<DimRows,DimCols,T> & lhs,const vec<DimCols,T> &rhs){
     vec<DimRows,T> ret;
     for(size_t i=0;i<DimRows;++i){
@@ -502,7 +502,7 @@ vec<DimRows,T> operator*(const mat<DimRows,DimCols,T> & lhs,const vec<DimCols,T>
     return ret;
 }
 
-template <size_t R1,size_t C1,size_t C2,typename T>
+template <size_t R1,size_t C1,size_t C2,typename T = float>
 mat<R1,C2,T> operator*(const mat<R1,C1,T> &lhs,const mat<C1,C2,T> &rhs){
     mat<R1,C2,T> ret;
     for(size_t i=0;i<R1;++i){
@@ -513,7 +513,7 @@ mat<R1,C2,T> operator*(const mat<R1,C1,T> &lhs,const mat<C1,C2,T> &rhs){
     return ret;
 }
 
-template <size_t DimRows,size_t DimCols,typename T>
+template <size_t DimRows,size_t DimCols,typename T = float>
 mat<DimRows,DimCols,T> operator*(mat<DimRows,DimCols,T> lhs,T rhs){
     for(size_t i=0;i<DimRows;++i){
         lhs[i]=lhs[i]*rhs;
@@ -521,7 +521,7 @@ mat<DimRows,DimCols,T> operator*(mat<DimRows,DimCols,T> lhs,T rhs){
     return lhs;
 }
 
-template <size_t DimRows,size_t DimCols,typename T>
+template <size_t DimRows,size_t DimCols,typename T = float>
 requires std::is_arithmetic_v<T>
 mat<DimRows,DimCols,T> operator/(mat<DimRows,DimCols,T> lhs,T rhs){
     for(size_t i=0;i<DimRows;++i){
@@ -530,7 +530,7 @@ mat<DimRows,DimCols,T> operator/(mat<DimRows,DimCols,T> lhs,T rhs){
     return lhs;
 }
 
-template <size_t DimRows,size_t DimCols,typename T>
+template <size_t DimRows,size_t DimCols,typename T = float>
 mat<DimRows,DimCols,T> operator+(mat<DimRows,DimCols,T> lhs,const mat<DimRows,DimCols,T> &rhs){
     for(size_t i=0;i<DimRows;++i){
         lhs[i]=lhs[i]+rhs[i];
@@ -538,7 +538,7 @@ mat<DimRows,DimCols,T> operator+(mat<DimRows,DimCols,T> lhs,const mat<DimRows,Di
     return lhs;
 }
 
-template <size_t DimRows,size_t DimCols,typename T>
+template <size_t DimRows,size_t DimCols,typename T = float>
 mat<DimRows,DimCols,T> operator-(mat<DimRows,DimCols,T> lhs,const mat<DimRows,DimCols,T> &rhs){
     for(size_t i=0;i<DimRows;++i){
         lhs[i]=lhs[i]-rhs[i];
@@ -546,7 +546,7 @@ mat<DimRows,DimCols,T> operator-(mat<DimRows,DimCols,T> lhs,const mat<DimRows,Di
     return lhs;
 }
 
-template <size_t DimRows,size_t DimCols,typename T>
+template <size_t DimRows,size_t DimCols,typename T = float>
 std::ostream& operator<<(std::ostream &out,const mat<DimRows,DimCols,T> &m){
     for(size_t i=0;i<DimRows;++i){
         out<<m[i]<<"\n";
