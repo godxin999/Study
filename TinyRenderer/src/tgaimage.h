@@ -84,14 +84,14 @@ public:
     bool flip_horizontally();
     bool flip_vertically();
     bool scale(int w, int h);
-    TGAColor get(int x, int y);
+    [[nodiscard]]TGAColor get(int x, int y)const;
     bool set(int x, int y, TGAColor &c);
     bool set(int x, int y, const TGAColor &c);
     ~TGAImage();
     TGAImage & operator =(const TGAImage &img);
-    int get_width();
-    int get_height();
-    int get_bytespp();
+    [[nodiscard]]int get_width()const;
+    [[nodiscard]]int get_height()const;
+    [[nodiscard]]int get_bytespp()const;
     unsigned char *buffer();
     void clear();
 };

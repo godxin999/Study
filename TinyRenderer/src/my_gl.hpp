@@ -3,11 +3,13 @@
 #include "tgaimage.h"
 #include "geometry.hpp"
 #include <algorithm>
+#include <vector>
 
 Mat44f Model_;
 Mat44f View;
 Mat44f Projection;
 Mat44f Viewport;
+
 
 //Bresenham's line algorithm
 void line(Vec2i p0,Vec2i p1,TGAImage& image,const TGAColor& color){
@@ -64,21 +66,30 @@ Vec3f barycentric(Vec2f A,Vec2f B,Vec2f C,Vec2f P){
     return {-1,1,1};
 }
 
+Vec3f barycentric(const Vec2f tri[3],const Vec2f p){
+    //P=aA+bB+cC(a+b+c=1)
+    //(P_x,P_y,1)^(T)=
+    //A_x,B_x,C_x     
+    //A_y,B_y,C_y  *  (a,b,c)^(T)
+    //1  ,1  ,1 
+    //所以(a,b,c)^(T) = M^(-1)*(P_x,P_y,1)^(T)，其中M为上述矩阵
+    mat<3,3> ABC={{embed<3>(tri[0]),embed<3>(tri[1]),embed<3>(tri[2])}};
+    //如果行列式小于1e-3，说明三角形退化为线段或点(存在线性相关的向量)，直接返回{-1,1,1}，表示在三角形外
+    if(std::abs(ABC.det())<1e-3f)return {-1,1,1};
+    return ABC.invert_transpose()*embed<3>(p);
+}
+
 //获取视口变换矩阵
 Mat44f viewport_matrix(int x,int y,int w,int h){
     //将[-1,1]*[-1,1]*[-1,1]映射到[x,x+w]*[y,y+h]*[0,depth]
-    Mat44f m=Mat44f::identity();
-    m[0][3]=x+w/2.f;
-    m[1][3]=y+h/2.f;
-    m[2][3]=255.f/2.f;
-    m[0][0]=w/2.f;
-    m[1][1]=h/2.f;
-    m[2][2]=255.f/2.f;
+    Mat44f m={{w/2.f,0,0,x+w/2.f},
+              {0,h/2.f,0,y+h/2.f},
+              {0,0,1,0},
+              {0,0,0,1}};
     return m;
 }
 
-//获取透视投影矩阵
-//dist为视点到投影平面的距离
+//获取透视投影矩阵，dist为视点到投影平面的距离
 Mat44f projection_matrix(float dist){
     //以标准坐标轴为例，相机位于(0,0,c)，被投影点坐标为(x,y,z)，投影平面为z=0，投影后点坐标为(x',y',0)
     //根据相似三角形，x/x'=(c-z)/c，y/y'=(c-z)/c，故x'=x/(1-z/c)，y'=y/(1-z/c)
@@ -89,7 +100,7 @@ Mat44f projection_matrix(float dist){
     //(x,y,z,rz+1)->(x/(rz+1),y/(rz+1),z/(rz+1))
     //所以退出r=-1/c，即-1/dist
     Mat44f m=Mat44f::identity();
-    m[3][2]=-1.f/dist;
+    if(dist)m[3][2]=-1.f/dist;
     return m;
 }
 
@@ -102,7 +113,6 @@ Mat44f view_matrix(Vec3f eye,Vec3f center,Vec3f up){
     //因为u不一定和up正交，所以需要重新计算
     auto u=cross(f,r).normalize();
     //根据相机坐标系的基计算出变换矩阵
-    Mat44f v=Mat44f::identity();
     //从世界坐标系变换到相机坐标系需要一个旋转变换(基变换)和一个平移变换
     //视图矩阵表示的是上述变换的逆变换，即
     //V=(TR)^(-1)=R^(-1)T^(-1)
@@ -119,13 +129,10 @@ Mat44f view_matrix(Vec3f eye,Vec3f center,Vec3f up){
     //u.x,u.y,u.z,-u·eye
     //f.x,f.y,f.z,-f·eye
     //0,0,0,1
-
-    //v[0]=embed<4>(r,-r*eye);
-    //v[1]=embed<4>(u,-u*eye);
-    //v[2]=embed<4>(f,-f*eye);
-    v[0]=embed<4>(r,-center[0]);
-    v[1]=embed<4>(u,-center[1]);
-    v[2]=embed<4>(f,-center[2]);
+    Mat44f v={{r.x,r.y,r.z,-r*eye},
+              {u.x,u.y,u.z,-u*eye},
+              {f.x,f.y,f.z,-f*eye},
+              {0,0,0,1}};
     return v;
 }
 
@@ -136,40 +143,51 @@ Mat44f model_matrix(){
 }
 
 struct IShader{
+    static TGAColor sample2D(const TGAImage& image,const Vec2f uvf){
+        return image.get(static_cast<int>(uvf[0]*image.get_width()),static_cast<int>(uvf[1]*image.get_height()));
+    }
     virtual ~IShader()=default;
-    virtual Vec4f vertex(int iface,int nvert)=0;
-    virtual bool fragment(Vec3f bar,TGAColor& color)=0;
+    virtual void vertex(const int iface,const int nvert,Vec4f& gl_Postion)=0;
+    virtual bool fragment(const Vec3f bar,TGAColor& color)=0;
 };
 
 //三角形光栅化
-void triangle(Vec4f *pts,IShader& shader,TGAImage &image,float* zbuffer){
-    Vec2f bboxmin(max_float,max_float);
-    Vec2f bboxmax(min_float,min_float);
+void triangle(const Vec4f clip_verts[3] ,IShader& shader,TGAImage &image,std::vector<float>& zbuffer){
+    //std::cout<<clip_verts[0]<<std::endl;
+    //std::cout<<clip_verts[1]<<std::endl;
+    //std::cout<<clip_verts[2]<<std::endl;
+    //将三角形的顶点坐标从齐次坐标转换到屏幕坐标
+    Vec4f pts[3]={Viewport*clip_verts[0],Viewport*clip_verts[1],Viewport*clip_verts[2]};
+    //对三角形坐标进行透视除法
+    Vec2f pts_div[3]={proj<2>(pts[0]/pts[0][3]),proj<2>(pts[1]/pts[1][3]),proj<2>(pts[2]/pts[2][3])};
+    Vec2i bboxmin(image.get_width()-1,image.get_height()-1);
+    Vec2i bboxmax(0,0);
     //求出三角形的包围盒
     for(int i=0;i<3;++i){
         for(int j=0;j<2;++j){
-            bboxmin[j]=std::min(bboxmin[j],pts[i][j]/pts[i][3]);
-            bboxmax[j]=std::max(bboxmax[j],pts[i][j]/pts[i][3]);
+            bboxmin[j]=std::min(bboxmin[j],static_cast<int>(pts_div[i][j]));
+            bboxmax[j]=std::max(bboxmax[j],static_cast<int>(pts_div[i][j]));
         }
     }
-    Vec2i p;
     TGAColor color;
-    for(p.x=bboxmin.x;p.x<=bboxmax.x;++p.x){
-        for(p.y=bboxmin.y;p.y<=bboxmax.y;++p.y){
+    for(int x=bboxmin.x;x<=bboxmax.x;++x){
+        for(int y=bboxmin.y;y<=bboxmax.y;++y){
             //对包围盒中的每个点，求其重心坐标
-            auto bc=barycentric(proj<2>(pts[0]/pts[0][3]),proj<2>(pts[1]/pts[1][3]),proj<2>(pts[2]/pts[2][3]),p);
+            auto bc_screen=barycentric(pts_div,{static_cast<float>(x),static_cast<float>(y)});
             //如果重心坐标中有负数，说明点在三角形外
-            if(bc.x<0||bc.y<0||bc.z<0)continue;
+            if(bc_screen.x<0||bc_screen.y<0||bc_screen.z<0)continue;
+            //透视矫正插值
+            Vec3f bc_clip={bc_screen.x/pts[0][3],bc_screen.y/pts[1][3],bc_screen.z/pts[2][3]};
+            bc_clip=bc_clip/(bc_clip.x+bc_clip.y+bc_clip.z);
             //如果点在三角形内，计算其深度值
-            float z=pts[0][2]*bc.x+pts[1][2]*bc.y+pts[2][2]*bc.z;
-            float w=pts[0][3]*bc.x+pts[1][3]*bc.y+pts[2][3]*bc.z;
-            int frag_depth=std::clamp(static_cast<int>(z/w+.5f),0,255);
+            Vec3f z={clip_verts[0][2],clip_verts[1][2],clip_verts[2][2]};
+            float frag_depth=z*bc_clip;
             //如果深度值大于zbuffer中的值，说明该点在三角形前面，需要绘制
-            if(zbuffer[p.x+p.y*image.get_width()]<=frag_depth){
-                bool discard=shader.fragment(bc,color);
+            if(zbuffer[x+y*image.get_width()]<=frag_depth){
+                bool discard=shader.fragment(bc_clip,color);
                 if(!discard){
-                    zbuffer[p.x+p.y*image.get_width()]=frag_depth;
-                    image.set(p.x,p.y,color);
+                    zbuffer[x+y*image.get_width()]=frag_depth;
+                    image.set(x,y,color);
                 }
             }
         }

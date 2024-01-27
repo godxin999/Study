@@ -11,13 +11,15 @@
 
 class Model{
 private:
-    std::vector<std::vector<Vec3i>> faces_;
-    std::vector<Vec3f> verts_;
-    std::vector<Vec3f> norms_;
-    std::vector<Vec2f> uv_;
-    TGAImage diffuse_map_;
-    TGAImage normal_map_;
-    TGAImage specular_map_;
+    std::vector<Vec3f> verts;
+    std::vector<Vec2f> tex_coord;
+    std::vector<Vec3f> norms;
+    TGAImage diffuse_map;
+    TGAImage normal_map;
+    TGAImage specular_map;
+    std::vector<int> vert_idx;
+    std::vector<int> tex_idx;
+    std::vector<int> norm_idx;
     void load_texture(const char* filename,const char* suffix,TGAImage& img){
         std::string texfile(filename);
         auto dot=texfile.find_last_of(".");
@@ -43,18 +45,21 @@ public:
                 for(int i=0;i<3;++i){
                     iss>>v[i];
                 }
-                verts_.push_back(v);
+                verts.push_back(v);
             }
             //读取面数据
             else if(!line.compare(0,2,"f ")){
-                std::vector<Vec3i> f;
-                int idx,uv_idx,norm_idx;
-                iss>>trash;
-                while(iss>>idx>>trash>>uv_idx>>trash>>norm_idx){
+                int v, t, n;
+                iss >> trash;
+                int cnt = 0;
+                while(iss >> v >> trash >> t >> trash >> n){
                     //obj文件的索引从1开始，所以需要减一
-                    f.emplace_back(idx-1,uv_idx-1,norm_idx-1);
+                    vert_idx.push_back(v-1);
+                    tex_idx.push_back(t-1);
+                    norm_idx.push_back(n-1);                    
+                    ++cnt;
                 }
-                faces_.push_back(f);
+                assert(cnt == 3 && "Model file must be triangulated");
             }
             //读取纹理坐标
             else if(!line.compare(0,3,"vt ")){
@@ -63,7 +68,7 @@ public:
                 for(int i=0;i<2;++i){
                     iss>>vt[i];
                 }
-                uv_.push_back(vt);
+                tex_coord.emplace_back(vt[0],vt[1]);
             }
             //读取法向量
             else if(!line.compare(0,3,"vn ")){
@@ -72,48 +77,39 @@ public:
                 for(int i=0;i<3;++i){
                     iss>>vn[i];
                 }
-                norms_.push_back(vn);
+                norms.push_back(vn.normalize());
             }
         }
-        load_texture(filename,"_diffuse.tga",diffuse_map_);
-        load_texture(filename,"_nm.tga",normal_map_);
-        load_texture(filename,"_spec.tga",specular_map_);
+
+        load_texture(filename,"_diffuse.tga",diffuse_map);
+        //load_texture("../../../../assets/grid.obj",".tga",diffuse_map);
+        //load_texture(filename,"_nm.tga",normal_map);
+        load_texture(filename,"_nm_tangent.tga",normal_map);
+        load_texture(filename,"_spec.tga",specular_map);
     }
     ~Model()=default;
     [[nodiscard]]int nverts()const{
-        return static_cast<int>(verts_.size());
+        return static_cast<int>(verts.size());
     }
     [[nodiscard]]int nfaces()const{
-        return static_cast<int>(faces_.size());
+        return static_cast<int>(vert_idx.size()/3);
     }
-    [[nodiscard]]int nuvs()const{
-        return static_cast<int>(uv_.size());
+    [[nodiscard]]Vec3f vert(const int i)const{
+        return verts[i];
     }
-    [[nodiscard]]int nnorms()const{
-        return static_cast<int>(norms_.size());
+    [[nodiscard]]Vec3f vert(const int iface,const int nvert)const{
+        return verts[vert_idx[iface*3+nvert]];
     }
-    Vec3f vert(int i){
-        return verts_[i];
+    [[nodiscard]]Vec2f uv(const int iface,const int nvert)const{
+        return tex_coord[tex_idx[iface*3+nvert]];
     }
-    std::vector<Vec3i> face(int idx){
-        return faces_[idx];
+    [[nodiscard]]Vec3f normal(const int iface,const int nvert)const{
+        return normalize(norms[norm_idx[iface*3+nvert]]);
     }
-    Vec3f vert(int iface,int nvert){
-        return verts_[faces_[iface][nvert][0]];
-    }
-    Vec2f uv(int iface,int nvert){
-        return uv_[faces_[iface][nvert][1]];
-    }
-    Vec3f norm(int iface,int nvert){
-        return normalize(norms_[faces_[iface][nvert][2]]);
-    }
-    TGAColor diffuse(Vec2f uvf){
-        Vec2i uv(uvf[0]*diffuse_map_.get_width(),uvf[1]*diffuse_map_.get_height());
-        return diffuse_map_.get(uv.x,uv.y);
-    }
+
     Vec3f normal(Vec2f uvf){
-        Vec2i uv(uvf[0]*normal_map_.get_width(),uvf[1]*normal_map_.get_height());
-        TGAColor c=normal_map_.get(uv.x,uv.y);
+        Vec2i uv(uvf[0]*normal_map.get_width(),uvf[1]*normal_map.get_height());
+        TGAColor c=normal_map.get(uv.x,uv.y);
         Vec3f res;
         for(int i=0;i<3;++i){
             //将法向量的范围从[0,255]映射到[-1,1]
@@ -122,8 +118,10 @@ public:
         }
         return res;
     }
-    float specular(Vec2f uvf){
-        Vec2i uv(uvf[0]*specular_map_.get_width(),uvf[1]*specular_map_.get_height());
-        return specular_map_.get(uv[0], uv[1])[0]/1.f;
+    [[nodiscard]]const TGAImage& diffuse()const{
+        return diffuse_map;
+    }
+    [[nodiscard]]const TGAImage& specular()const{
+        return specular_map;
     }
 };

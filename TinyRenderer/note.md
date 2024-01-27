@@ -26,7 +26,7 @@ $$
 
 因为计算光照需要法向量和光源在同一空间内，所以我们需要将法向量从切线空间转换到世界空间。首先设纹理坐标分别为 $(u_0,v_0)$、$(u_1,v_1)$、$(u_2,v_2)$ ，其对应的顶点 $\boldsymbol{v_0}$ 、 $\boldsymbol{v_1}$ 、 $\boldsymbol{v_2}$ 在相对于纹理坐标系坐标轴(即 $\boldsymbol{T}$ 和 $\boldsymbol{B}$ )构成的平面内定义了一个三角形，设 $\boldsymbol{e_0}=\boldsymbol{v_1}-\boldsymbol{v_0}$ 、 $\boldsymbol{e_1}=\boldsymbol{v_2}-\boldsymbol{v_0}$ 为三角形的两条边向量，它们对应的纹理三角形的边向量分别为：$(\Delta u_0,\Delta v_0)=(u_1-u_0,v_1-v_0)$ 和 $(\Delta u_1,\Delta v_1)=(u_2-u_0,v_2-v_0)$，如下图所示。
 
-![TBN](TBN.png)
+![TBN](assets/note/TBN.png)
 
 所以我们可以得到如下方程组：
 
@@ -55,9 +55,9 @@ $$
 
 在实际应用时，需要计算共用顶点v的每个三角形的切向量平均值(没有切向量则使用上述方式计算出 $\boldsymbol{T}$ 和 $\boldsymbol{B}$ )，同理法线也需要计算平均值，一般选择规范法向量作为第一个基向量，然后使用施密特正交化规范切向量，最后通过叉乘计算副切线。
 
-![TBN正交基](%E6%AD%A3%E4%BA%A4%E5%9F%BA.png)
+![TBN正交基](assets/note/%E6%AD%A3%E4%BA%A4%E5%9F%BA.png)
 
-![施密特正交化](%E6%96%BD%E5%AF%86%E7%89%B9%E6%AD%A3%E4%BA%A4%E5%8C%96.png)
+![施密特正交化](assets/note/%E6%96%BD%E5%AF%86%E7%89%B9%E6%AD%A3%E4%BA%A4%E5%8C%96.png)
 
 ### 切线空间和物体空间的转换
 
