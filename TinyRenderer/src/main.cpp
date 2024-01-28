@@ -56,7 +56,6 @@ struct PhongShader:IShader{
         return (TBN*model->normal(uv)).normalize();
     }
 
-
     void vertex(const int iface,const int nvert,Vec4f& gl_Position)override{
         varying_uv.set_col(nvert,model->uv(iface,nvert));
         //使用逆转置矩阵变换法线
@@ -68,14 +67,16 @@ struct PhongShader:IShader{
 
     bool fragment(const Vec3f bar,TGAColor& gl_FragColor)override{
         auto uv=varying_uv*bar;
+        //从切线空间法线贴图中获取法线
         auto n=get_normal(bar);
+        //从法线贴图中获取法线
         //auto n=model->normal(uv);
         float diff=std::max(0.f,n*uniform_lightV);
         auto r=(n*(n*uniform_lightV*2.f)-uniform_lightV).normalize();
-        float spec=std::pow(std::max(r.z,0.0f),sample2D(model->specular(),uv)[0]);
+        float spec=std::pow(std::max(r.z,0.0f),5+sample2D(model->specular(),uv)[0]);
         TGAColor c=sample2D(model->diffuse(),uv);
         for(int i=0;i<3;++i){
-            gl_FragColor[i]=std::min(10.f+c[i]*(diff+.6f*spec),255.f);
+            gl_FragColor[i]=std::min(10.f+c[i]*(diff+.5f*spec),255.f);
         }
         return false;
     }
@@ -99,8 +100,8 @@ void render(TGAImage &image){
 }
 
 int main() {
-    model=new Model("../../../../assets/african_head.obj");
-    //model=new Model("../../../../assets/diablo3_pose/diablo3_pose.obj");
+    //model=new Model("../../../../assets/african_head/african_head.obj");
+    model=new Model("../../../../assets/diablo3_pose/diablo3_pose.obj");
     TGAImage image(width, height, TGAImage::RGB);
 
     render(image);
