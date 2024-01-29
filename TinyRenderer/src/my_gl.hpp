@@ -1,15 +1,8 @@
 #pragma once
 
-#include "tgaimage.h"
-#include "geometry.hpp"
+#include "shader.hpp"
 #include <algorithm>
 #include <vector>
-
-Mat44f Model_;
-Mat44f View;
-Mat44f Projection;
-Mat44f Viewport;
-
 
 //Bresenham's line algorithm
 void line(Vec2i p0,Vec2i p1,TGAImage& image,const TGAColor& color){
@@ -141,15 +134,6 @@ Mat44f model_matrix(){
     Mat44f m=Mat44f::identity();
     return m;
 }
-
-struct IShader{
-    static TGAColor sample2D(const TGAImage& image,const Vec2f uvf){
-        return image.get(static_cast<int>(uvf[0]*image.get_width()),static_cast<int>(uvf[1]*image.get_height()));
-    }
-    virtual ~IShader()=default;
-    virtual void vertex(const int iface,const int nvert,Vec4f& gl_Postion)=0;
-    virtual bool fragment(const Vec3f bar,TGAColor& color)=0;
-};
 
 //三角形光栅化
 void triangle(const Vec4f clip_verts[3] ,IShader& shader,TGAImage &image,std::vector<float>& zbuffer){
