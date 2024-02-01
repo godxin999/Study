@@ -1,25 +1,16 @@
 #include "application.h"
+#include "shader.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdexcept>
 
-const char* vertex_buffer_source=R"(#version 330 core
-layout (location=0) in vec3 aPos;
-void main(){
-    gl_Position=vec4(aPos.x,aPos.y,aPos.z,1.0);
-})";
 
-const char* fragment_buffer_source=R"(#version 330 core
-out vec4 FragColor;
-void main(){
-    FragColor=vec4(1.0f,0.5f,0.2f,1.0f);
-})";
 
 float vertices[]={
-    .5f,.5f,.0f,//右上角
-    .5f,-.5f,.0f,//右下角
-    -.5f,-.5f,.0f,//左下角
-    -.5f,.5f,.0f//左上角
+    .5f,.5f,0.f,0.f,0.f,0.f,//右上角
+    .5f,-.5f,0.f,1.f,0.f,0.f,//右下角
+    -.5f,-.5f,0.f,0.f,1.f,0.f,//左下角
+    -.5f,.5f,0.f,0.f,0.f,1.f//左上角
 };
 
 unsigned indices[]={
@@ -28,7 +19,7 @@ unsigned indices[]={
 };
 
 unsigned VAO,VBO,EBO;
-unsigned shader_program;
+Shader shader;
 
 //窗口大小改变时的回调函数
 void framebuffer_size_callback(GLFWwindow* window,int width,int height){
@@ -57,48 +48,7 @@ void Application::Init(){
         throw std::runtime_error("Failed to initialize GLAD");
     }
 
-    //创建 vertex shader
-    unsigned vertex_shader=glCreateShader(GL_VERTEX_SHADER);
-    //将源码附加到shader对象上
-    glShaderSource(vertex_shader,1,&vertex_buffer_source,nullptr);//第二个参数为字符串数量
-    //编译shader
-    glCompileShader(vertex_shader);
-    //检查编译是否成功
-    int success;
-    char info_log[512];
-    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&success);
-    if(!success){
-        glGetShaderInfoLog(vertex_shader,512,nullptr,info_log);
-        throw std::runtime_error("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"+std::string(info_log));
-    }
-    //创建 fragment shader
-    unsigned fragment_shader=glCreateShader(GL_FRAGMENT_SHADER);
-    //将源码附加到shader对象上
-    glShaderSource(fragment_shader,1,&fragment_buffer_source,nullptr);
-    //编译shader
-    glCompileShader(fragment_shader);
-    //检查编译是否成功
-    glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&success);
-    if(!success){
-        glGetShaderInfoLog(fragment_shader,512,nullptr,info_log);
-        throw std::runtime_error("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"+std::string(info_log));
-    }
-    //创建shader program
-    shader_program=glCreateProgram();
-    //将shader对象附加到program上
-    glAttachShader(shader_program,vertex_shader);
-    glAttachShader(shader_program,fragment_shader);
-    //链接program
-    glLinkProgram(shader_program);
-    //检查链接是否成功
-    glGetProgramiv(shader_program,GL_LINK_STATUS,&success);
-    if(!success){
-        glGetProgramInfoLog(shader_program,512,nullptr,info_log);
-        throw std::runtime_error("ERROR::SHADER::PROGRAM::LINKING_FAILED\n"+std::string(info_log));
-    }
-    //删除shader对象
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    shader=Shader("../../../../shaders/test.vs","../../../../shaders/test.fs");
 
     //创建VAO
     glGenVertexArrays(1,&VAO);
@@ -124,9 +74,14 @@ void Application::Init(){
     //第四个参数为是否希望数据被标准化(0/-1~1)
     //第五个参数为步长，即连续的顶点属性组之间的间隔
     //第六个参数为偏移量，即在缓冲区起始位置的偏移量
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(float),(void*)0);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(float),(void*)0);
     //启用顶点属性
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,6*sizeof(float),(void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+
     //解绑VBO
     glBindBuffer(GL_ARRAY_BUFFER,0);
     //解绑VAO
@@ -160,7 +115,7 @@ void Application::Destroy(){
     glDeleteVertexArrays(1,&VAO);
     glDeleteBuffers(1,&VBO);
     glDeleteBuffers(1,&EBO);
-    glDeleteProgram(shader_program);
+    glDeleteProgram(shader.get_shader_program_id());
     glfwTerminate();
 }
 
@@ -169,7 +124,8 @@ void Application::Update(){
 }
 
 void Application::Render(){
-    glUseProgram(shader_program);
+
+    shader.use();
     glBindVertexArray(VAO);
     //第一个参数为绘制模式
     //第二个参数为绘制的顶点数量
