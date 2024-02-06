@@ -1,16 +1,17 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include "application.h"
 #include "shader.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb/stb_image.h>
 #include <stdexcept>
 
 
-
 float vertices[]={
-    .5f,.5f,0.f,0.f,0.f,0.f,//右上角
-    .5f,-.5f,0.f,1.f,0.f,0.f,//右下角
-    -.5f,-.5f,0.f,0.f,1.f,0.f,//左下角
-    -.5f,.5f,0.f,0.f,0.f,1.f//左上角
+    .5f,.5f,0.f,0.f,0.f,0.f,1.f,1.f,//右上角
+    .5f,-.5f,0.f,1.f,0.f,0.f,1.f,0.f,//右下角
+    -.5f,-.5f,0.f,0.f,1.f,0.f,0.f,0.f,//左下角
+    -.5f,.5f,0.f,0.f,0.f,1.f,0.f,1.f//左上角
 };
 
 unsigned indices[]={
@@ -20,6 +21,7 @@ unsigned indices[]={
 
 unsigned VAO,VBO,EBO;
 Shader shader;
+unsigned texture1,texture2;
 
 //窗口大小改变时的回调函数
 void framebuffer_size_callback(GLFWwindow* window,int width,int height){
@@ -74,21 +76,76 @@ void Application::Init(){
     //第四个参数为是否希望数据被标准化(0/-1~1)
     //第五个参数为步长，即连续的顶点属性组之间的间隔
     //第六个参数为偏移量，即在缓冲区起始位置的偏移量
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(float),(void*)0);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)0);
     //启用顶点属性
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,6*sizeof(float),(void*)(3*sizeof(float)));
+    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)(6*sizeof(float)));
+    glEnableVertexAttribArray(2);
 
+    //创建纹理
+    glGenTextures(1,&texture1);
+    //绑定纹理
+    glBindTexture(GL_TEXTURE_2D,texture1);
+    //设置纹理环绕方式
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+    //设置纹理过滤方式
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    //加载图片，创建纹理并生成mipmap
+    int width,height,nrChannels;
+    //将图片翻转，因为OpenGL默认y坐标是从下到上的
+    stbi_set_flip_vertically_on_load(true);
+    //加载图片数据
+    unsigned char* data=stbi_load("../../../../assets/container.jpg",&width,&height,&nrChannels,0);
+    if(data){
+        //生成纹理
+        //第一个参数为纹理目标
+        //第二个参数为多级渐远纹理级别，0为基本级别
+        //第三个参数为纹理存储格式
+        //第四、五个参数为纹理宽度、高度
+        //第六个参数为历史遗留问题，应该总是为0
+        //第七、八个参数为源图格式和数据类型
+        //第九个参数为图片数据
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else{
+        throw std::runtime_error("Failed to load texture");
+    }
+    //释放图片内存
+    stbi_image_free(data);
+    glGenTextures(1,&texture2);
+    glBindTexture(GL_TEXTURE_2D,texture2);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    data=stbi_load("../../../../assets/awesomeface.png",&width,&height,&nrChannels,0);
+    if(data){
+        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else{
+        throw std::runtime_error("Failed to load texture");
+    }
+    stbi_image_free(data);
+
+    shader.use();
+    shader.set_int("texture1",0);
+    shader.set_int("texture2",1);
+    shader.unuse();
+    
     //解绑VBO
     glBindBuffer(GL_ARRAY_BUFFER,0);
     //解绑VAO
     glBindVertexArray(0);
     //使用线框模式
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-
 }
 
 void Application::Run(){
@@ -124,6 +181,12 @@ void Application::Update(){
 }
 
 void Application::Render(){
+    //激活纹理单元
+    glActiveTexture(GL_TEXTURE0);
+    //绑定纹理
+    glBindTexture(GL_TEXTURE_2D,texture1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D,texture2);
 
     shader.use();
     glBindVertexArray(VAO);
