@@ -1,23 +1,70 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "application.h"
-#include "shader.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
-#include <stdexcept>
+import <stdexcept>;
 
+import glm;
+import camera;
+import shader;
 
-float vertices[]={
-    .5f,.5f,0.f,0.f,0.f,0.f,1.f,1.f,//右上角
-    .5f,-.5f,0.f,1.f,0.f,0.f,1.f,0.f,//右下角
-    -.5f,-.5f,0.f,0.f,1.f,0.f,0.f,0.f,//左下角
-    -.5f,.5f,0.f,0.f,0.f,1.f,0.f,1.f//左上角
+float vertices[] = {
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-unsigned indices[]={
-    0,1,3,
-    1,2,3
-};
+glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
 
 unsigned VAO,VBO,EBO;
 Shader shader;
@@ -49,6 +96,8 @@ void Application::Init(){
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         throw std::runtime_error("Failed to initialize GLAD");
     }
+    //启用深度测试
+    glEnable(GL_DEPTH_TEST);
 
     shader=Shader("../../../../shaders/test.vs","../../../../shaders/test.fs");
 
@@ -57,7 +106,7 @@ void Application::Init(){
     //创建VBO
     glGenBuffers(1,&VBO);
     //创建EBO
-    glGenBuffers(1,&EBO);
+    //glGenBuffers(1,&EBO);
     //绑定VAO
     glBindVertexArray(VAO);
     //绑定VBO
@@ -66,9 +115,9 @@ void Application::Init(){
     //GL_STATIC_DRAW表示数据不会或几乎不会改变
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
     //绑定EBO
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
     //将索引数据复制到EBO中
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
     //设置顶点属性指针(如何解析顶点数据)
     //第一个参数为顶点属性的位置值，与顶点着色器中的layout(location=0)对应
     //第二个参数为顶点属性的大小，顶点属性是vec3类型，由3个值组成，所以大小为3
@@ -76,15 +125,20 @@ void Application::Init(){
     //第四个参数为是否希望数据被标准化(0/-1~1)
     //第五个参数为步长，即连续的顶点属性组之间的间隔
     //第六个参数为偏移量，即在缓冲区起始位置的偏移量
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)0);
+    //glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)0);
     //启用顶点属性
+    //glEnableVertexAttribArray(0);
+
+    //glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)(3*sizeof(float)));
+    //glEnableVertexAttribArray(1);
+
+    //glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)(6*sizeof(float)));
+    //glEnableVertexAttribArray(2);
+
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,5*sizeof(float),(void*)0);
     glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)(3*sizeof(float)));
+    glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,5*sizeof(float),(void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)(6*sizeof(float)));
-    glEnableVertexAttribArray(2);
 
     //创建纹理
     glGenTextures(1,&texture1);
@@ -155,7 +209,7 @@ void Application::Run(){
         Update();
 
         glClearColor(.2f,.3f,.3f,.0f);
-        glClear(GL_COLOR_BUFFER_BIT);//清除颜色缓冲
+        glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);//清除颜色缓冲和深度缓冲
         
         Render();
 
@@ -189,12 +243,28 @@ void Application::Render(){
     glBindTexture(GL_TEXTURE_2D,texture2);
 
     shader.use();
+
+    glm::mat4 view=glm::mat4(1.f);
+    view=glm::translate(view,glm::vec3(0.f,0.f,-3.f));
+    shader.set_mat4("view",glm::value_ptr(view));
+    glm::mat4 projection=glm::mat4(1.f);
+    projection=glm::perspective(glm::radians(45.f),800.f/600.f,.1f,100.f);
+    shader.set_mat4("projection",glm::value_ptr(projection));
+
     glBindVertexArray(VAO);
     //第一个参数为绘制模式
     //第二个参数为绘制的顶点数量
     //第三个参数为索引的类型
     //第四个参数为EBO中的偏移量
-    glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+    //glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+    for(int i=0;i<10;++i){
+        glm::mat4 model=glm::mat4(1.f);
+        model=glm::translate(model,cubePositions[i]);
+        float angle=20.f*i;
+        model=glm::rotate(model,glm::radians(angle),glm::vec3(1.f,.3f,.5f));
+        shader.set_mat4("model",glm::value_ptr(model));
+        glDrawArrays(GL_TRIANGLES,0,36);
+    }
 }
 
 void Application::ProcessInput(){

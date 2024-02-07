@@ -1,8 +1,8 @@
-#pragma once
-#include <string>
+export module shader;
 
+import <string>;
 
-class Shader{
+export class Shader{
 public:
     Shader()=default;
     Shader(const std::string& vertex_shader_path,const std::string& fragment_shader_path);
@@ -12,6 +12,7 @@ public:
     void set_bool(const std::string& name,bool value) const;
     void set_int(const std::string& name,int value) const;
     void set_float(const std::string& name,float value) const;
+    void set_mat4(const std::string& name,const float* value)const;
     ~Shader()=default;
 private:
     unsigned shader_program_id{0};

@@ -1,10 +1,13 @@
 add_rules("mode.debug", "mode.release")
 add_languages("c++20")
-add_requires("glfw 3.3.9","glad","stb")
-
+add_requires("glfw 3.3.9")
+add_requires("glad")
+add_requires("stb")
+add_requires("glm 1.0.0")
 
 target("learnOpenGL")
     set_kind("binary")
     add_headerfiles("src/*.h")
-    add_files("src/*.cpp")
-    add_packages("glfw","glad","stb")
+    add_files("src/common/*.cppm")
+    add_files("src/*.cpp","src/*.cppm")
+    add_packages("glfw","glad","stb","glm")

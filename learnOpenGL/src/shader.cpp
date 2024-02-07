@@ -1,11 +1,13 @@
-#include "shader.h"
-#include <fstream>
-#include <ostream>
-#include <sstream>
-#include <iostream>
-#include <format>
-
+module;
 #include <glad/glad.h>
+module shader;
+
+import <fstream>;
+import <ostream>;
+import <sstream>;
+import <iostream>;
+import <format>;
+
 
 void Shader::check_compile_errors(unsigned shader,const std::string& type){
     int success;
@@ -106,4 +108,8 @@ void Shader::set_int(const std::string& name,int value) const{
 
 void Shader::set_float(const std::string& name,float value) const{
     glUniform1f(glGetUniformLocation(shader_program_id,name.c_str()),value);
+}
+
+void Shader::set_mat4(const std::string& name,const float* value)const{
+    glUniformMatrix4fv(glGetUniformLocation(shader_program_id,name.c_str()),1,GL_FALSE,value);
 }
