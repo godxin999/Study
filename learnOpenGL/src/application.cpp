@@ -1,3 +1,5 @@
+#include "spdlog/spdlog.h"
+#include <memory>
 #define STB_IMAGE_IMPLEMENTATION
 #include "application.h"
 #include <glad/glad.h>
@@ -6,8 +8,8 @@
 import <stdexcept>;
 
 import glm;
-import camera;
 import shader;
+import log_system;
 
 float vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -70,12 +72,17 @@ unsigned VAO,VBO,EBO;
 Shader shader;
 unsigned texture1,texture2;
 
+std::shared_ptr<LogSystem> logger=std::make_shared<LogSystem>();
+
 //窗口大小改变时的回调函数
 void framebuffer_size_callback(GLFWwindow* window,int width,int height){
     glViewport(0,0,width,height);//前两个参数为窗口的左下角位置，后两个参数为渲染窗口的宽高
 }
 
 void Application::Init(){
+
+    logger->set_level(log_level::warn);
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);//主版本号
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);//次版本号
@@ -88,12 +95,14 @@ void Application::Init(){
     window =glfwCreateWindow(800,600,"LearnOpenGL",nullptr,nullptr);
     if(!window){
         glfwTerminate();
+        logger->log(log_level::error,"Failed to create GLFW window");
         throw std::runtime_error("Failed to create GLFW window");
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window,framebuffer_size_callback);//注册窗口大小改变的回调函数
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
+        logger->log(log_level::error,"Failed to initialize GLAD");
         throw std::runtime_error("Failed to initialize GLAD");
     }
     //启用深度测试
@@ -169,6 +178,7 @@ void Application::Init(){
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else{
+        logger->log(log_level::error,"Failed to load texture");
         throw std::runtime_error("Failed to load texture");
     }
     //释放图片内存
@@ -185,6 +195,7 @@ void Application::Init(){
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else{
+        logger->log(log_level::error,"Failed to load texture");
         throw std::runtime_error("Failed to load texture");
     }
     stbi_image_free(data);
@@ -200,6 +211,7 @@ void Application::Init(){
     glBindVertexArray(0);
     //使用线框模式
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+
 }
 
 void Application::Run(){
