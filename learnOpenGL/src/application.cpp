@@ -1,15 +1,16 @@
-#include "spdlog/spdlog.h"
-#include <memory>
 #define STB_IMAGE_IMPLEMENTATION
 #include "application.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
 import <stdexcept>;
+import <memory>;
 
 import glm;
 import shader;
+import input_system;
 import log_system;
+import global_context;
 
 float vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -72,18 +73,43 @@ unsigned VAO,VBO,EBO;
 Shader shader;
 unsigned texture1,texture2;
 
-std::shared_ptr<LogSystem> logger=std::make_shared<LogSystem>();
 
 //窗口大小改变时的回调函数
 void framebuffer_size_callback(GLFWwindow* window,int width,int height){
     glViewport(0,0,width,height);//前两个参数为窗口的左下角位置，后两个参数为渲染窗口的宽高
 }
 
+static void error_callback(int error, const char* description) {
+    g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,description);
+}
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	Input::RecordKey(key, action);
+}
+
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+	Input::RecordKey(button, action);
+}
+
+static void mouse_move_callback(GLFWwindow* window, double x, double y) {
+	Input::SetMousePosition(x, y);
+}
+
+static void mouse_scroll_callback(GLFWwindow* window, double x, double y) {
+	Input::RecordScroll(y);
+}
+
 void Application::Init(){
+    g_RuntimeGlobalContext.StartSystem();
+    g_RuntimeGlobalContext.m_LogSystem->log(log_level::info,"Application is initializing...");
 
-    logger->set_level(log_level::warn);
-
-    glfwInit();
+    glfwSetErrorCallback(error_callback);
+    
+    if(!glfwInit()){
+        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to initialize GLFW");
+        throw std::runtime_error("Failed to initialize GLFW");
+    }
+    
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);//主版本号
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);//次版本号
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);//核心模式
@@ -95,14 +121,18 @@ void Application::Init(){
     window =glfwCreateWindow(800,600,"LearnOpenGL",nullptr,nullptr);
     if(!window){
         glfwTerminate();
-        logger->log(log_level::error,"Failed to create GLFW window");
+        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to create GLFW window");
         throw std::runtime_error("Failed to create GLFW window");
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window,framebuffer_size_callback);//注册窗口大小改变的回调函数
+    glfwSetKeyCallback(window, key_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetScrollCallback(window, mouse_scroll_callback);
+	glfwSetCursorPosCallback(window, mouse_move_callback);
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-        logger->log(log_level::error,"Failed to initialize GLAD");
+        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to initialize GLAD");
         throw std::runtime_error("Failed to initialize GLAD");
     }
     //启用深度测试
@@ -178,7 +208,7 @@ void Application::Init(){
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else{
-        logger->log(log_level::error,"Failed to load texture");
+        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to load texture");
         throw std::runtime_error("Failed to load texture");
     }
     //释放图片内存
@@ -195,7 +225,7 @@ void Application::Init(){
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else{
-        logger->log(log_level::error,"Failed to load texture");
+        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to load texture");
         throw std::runtime_error("Failed to load texture");
     }
     stbi_image_free(data);
@@ -240,6 +270,7 @@ void Application::Destroy(){
     glDeleteBuffers(1,&EBO);
     glDeleteProgram(shader.get_shader_program_id());
     glfwTerminate();
+    g_RuntimeGlobalContext.ShutdowmSystem();
 }
 
 void Application::Update(){
