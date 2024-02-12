@@ -1,18 +1,17 @@
 module global_context;
 
 import <memory>;
-import log_system;
+//import global_context.log_system;
 
-RuntimeGlobalContext g_RuntimeGlobalContext;
 
 void RuntimeGlobalContext::StartSystem(){
-    m_LogSystem = std::make_shared<LogSystem>();
-    m_LogSystem->set_level(log_level::debug);
+    RG_LogSystem = std::make_shared<LogSystem>();
+    RG_LogSystem->set_level(log_level::debug);
     
     
-    m_LogSystem->log(log_level::info,"RuntimeGlobalContext::StartSystem");
+    RG_LogSystem->log(log_level::info,"RuntimeGlobalContext::StartSystem");
 }
 void RuntimeGlobalContext::ShutdowmSystem(){
-    m_LogSystem->log(log_level::info,"RuntimeGlobalContext::ShutdowmSystem");
-    m_LogSystem.reset();
+    RG_LogSystem->log(log_level::info,"RuntimeGlobalContext::ShutdowmSystem");
+    RG_LogSystem.reset();
 }

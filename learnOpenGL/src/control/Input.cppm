@@ -14,14 +14,14 @@ public:
 	static bool GetMouseButtonDown(unsigned short mouseButtonIndex);
 	static bool GetMouseButtonUp(unsigned short mouseButtonIndex);
 	static void RecordKey(int keyCode, unsigned char key_action);
-	static glm::vec2 mouse_position() {
+	static glm::vec2 GetMousePosition() {
 		return m_MousePosition;
 	}
 	static void SetMousePosition(unsigned short x, unsigned short y) {
 		m_MousePosition.x = x;
 		m_MousePosition.y = y;
 	}
-	static short getMouseScroll() {
+	static short GetMouseScroll() {
 		return m_MouseScroll;
 	}
 	static void RecordScroll(short mouseScroll) {

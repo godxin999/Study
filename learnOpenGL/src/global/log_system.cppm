@@ -1,4 +1,4 @@
-export module log_system;
+export module global_context.log_system;
 
 import spdlog;
 import <memory>;
@@ -21,3 +21,5 @@ public:
 private:
     std::shared_ptr<spdlog::logger> m_logger{nullptr};
 };
+
+export extern std::shared_ptr<LogSystem> RG_LogSystem;

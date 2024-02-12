@@ -1,12 +1,12 @@
 module;
 #include <spdlog/pattern_formatter.h>
-module log_system;
+module global_context.log_system;
 
 import spdlog;
 import <memory>;
 import <initializer_list>;
 
-
+std::shared_ptr<LogSystem> RG_LogSystem{nullptr};
 
 LogSystem::LogSystem(){
     spdlog::init_thread_pool(8192,1);
@@ -16,8 +16,6 @@ LogSystem::LogSystem(){
     auto file_sink=std::make_shared<spdlog::sinks::rotating_file_sink_mt>("log.txt",1024*1024*5,3);
 
     const std::initializer_list<spdlog::sink_ptr> sinks{console_sink,file_sink};
-
-    //m_logger=std::make_shared<spdlog::logger>("logger",sinks.begin(),sinks.end());
 
     m_logger=std::make_shared<spdlog::async_logger>("logger",sinks.begin(),sinks.end(),spdlog::thread_pool(),spdlog::async_overflow_policy::block);
 

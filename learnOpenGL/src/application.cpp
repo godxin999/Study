@@ -7,9 +7,9 @@ import <stdexcept>;
 import <memory>;
 
 import glm;
+import camera;
 import shader;
 import input_system;
-import log_system;
 import global_context;
 
 float vertices[] = {
@@ -72,7 +72,7 @@ glm::vec3 cubePositions[] = {
 unsigned VAO,VBO,EBO;
 Shader shader;
 unsigned texture1,texture2;
-
+Camera camera{45.f,800.f/600.f,.1f,100.f};
 
 //窗口大小改变时的回调函数
 void framebuffer_size_callback(GLFWwindow* window,int width,int height){
@@ -80,7 +80,7 @@ void framebuffer_size_callback(GLFWwindow* window,int width,int height){
 }
 
 static void error_callback(int error, const char* description) {
-    g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,description);
+    RG_LogSystem->log(log_level::error,description);
 }
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -100,13 +100,13 @@ static void mouse_scroll_callback(GLFWwindow* window, double x, double y) {
 }
 
 void Application::Init(){
-    g_RuntimeGlobalContext.StartSystem();
-    g_RuntimeGlobalContext.m_LogSystem->log(log_level::info,"Application is initializing...");
+    RuntimeGlobalContext::StartSystem();
+    RG_LogSystem->log(log_level::info,"Application is initializing...");
 
     glfwSetErrorCallback(error_callback);
     
     if(!glfwInit()){
-        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to initialize GLFW");
+        RG_LogSystem->log(log_level::error,"Failed to initialize GLFW");
         throw std::runtime_error("Failed to initialize GLFW");
     }
     
@@ -121,7 +121,7 @@ void Application::Init(){
     window =glfwCreateWindow(800,600,"LearnOpenGL",nullptr,nullptr);
     if(!window){
         glfwTerminate();
-        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to create GLFW window");
+        RG_LogSystem->log(log_level::error,"Failed to create GLFW window");
         throw std::runtime_error("Failed to create GLFW window");
     }
     glfwMakeContextCurrent(window);
@@ -132,7 +132,7 @@ void Application::Init(){
 	glfwSetCursorPosCallback(window, mouse_move_callback);
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to initialize GLAD");
+        RG_LogSystem->log(log_level::error,"Failed to initialize GLAD");
         throw std::runtime_error("Failed to initialize GLAD");
     }
     //启用深度测试
@@ -208,7 +208,7 @@ void Application::Init(){
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else{
-        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to load texture");
+        RG_LogSystem->log(log_level::error,"Failed to load texture");
         throw std::runtime_error("Failed to load texture");
     }
     //释放图片内存
@@ -225,7 +225,7 @@ void Application::Init(){
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else{
-        g_RuntimeGlobalContext.m_LogSystem->log(log_level::error,"Failed to load texture");
+        RG_LogSystem->log(log_level::error,"Failed to load texture");
         throw std::runtime_error("Failed to load texture");
     }
     stbi_image_free(data);
@@ -270,11 +270,12 @@ void Application::Destroy(){
     glDeleteBuffers(1,&EBO);
     glDeleteProgram(shader.get_shader_program_id());
     glfwTerminate();
-    g_RuntimeGlobalContext.ShutdowmSystem();
+    RuntimeGlobalContext::ShutdowmSystem();
 }
 
 void Application::Update(){
-    
+    camera.Update();
+    Input::Update();
 }
 
 void Application::Render(){
@@ -287,12 +288,8 @@ void Application::Render(){
 
     shader.use();
 
-    glm::mat4 view=glm::mat4(1.f);
-    view=glm::translate(view,glm::vec3(0.f,0.f,-3.f));
-    shader.set_mat4("view",glm::value_ptr(view));
-    glm::mat4 projection=glm::mat4(1.f);
-    projection=glm::perspective(glm::radians(45.f),800.f/600.f,.1f,100.f);
-    shader.set_mat4("projection",glm::value_ptr(projection));
+    shader.set_mat4("view",glm::value_ptr(camera.GetViewMatrix()));
+    shader.set_mat4("projection",glm::value_ptr(camera.GetProjMatrix()));
 
     glBindVertexArray(VAO);
     //第一个参数为绘制模式

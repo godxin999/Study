@@ -1,15 +1,10 @@
-module;
-
 export module global_context;
+export import global_context.log_system;
+
 import <memory>;
-import log_system;
 
 export class RuntimeGlobalContext{
 public:
-    void StartSystem();
-    void ShutdowmSystem();
-public:
-    std::shared_ptr<LogSystem> m_LogSystem;
+    static void StartSystem();
+    static void ShutdowmSystem();
 };
-
-export extern RuntimeGlobalContext g_RuntimeGlobalContext;
