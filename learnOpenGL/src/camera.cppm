@@ -16,14 +16,15 @@ public:
     void SetPostion(const glm::vec3& pos);
     void SetTarget(const glm::vec3& target);
     void Zoom(float delta);
-    void Rotate(float degree,const glm::vec3& axis);
+    void Rotate(const glm::vec2& lastPos,const glm::vec2& currentPos);
     glm::vec3 GetUpDirection()const;
     glm::vec3 GetForwardDirection()const;
     glm::vec3 GetRightDirection()const;
 private:
     void UpdateProjMatrix();
     void UpdateViewMatrix();
-    
+    glm::vec3 GetArcballVector(const glm::vec2& point);
+
     glm::mat4 m_ProjMatrix{1.f};
     glm::mat4 m_ViewMatrix{1.f};
 

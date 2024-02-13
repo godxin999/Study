@@ -4,22 +4,25 @@ module camera;
 
 import glm;
 import input_system;
+import screen;
 import global_context.log_system;
 import <format>;
+import <algorithm>;
 
 Camera::Camera(float fov,float aspect,float nearClip,float farClip):m_Fov(fov),m_Aspect(aspect),m_NearClip(nearClip),m_FarClip(farClip){
     UpdateViewMatrix();
     UpdateProjMatrix();
 }
 void Camera::Update(){
-    Zoom(1-((10-Input::GetMouseScroll())/10.f));
+    Zoom((10-Input::GetMouseScroll())/10.f);
     if(Input::GetKeyDown(KEY_CODE_LEFT_ALT) && Input::GetMouseButtonDown(MOUSE_BUTTON_LEFT)){
-        const auto MousePosition=Input::GetMousePosition();
-        glm::vec2 delta = (MousePosition-m_LastMousePosition)*.03f;
-        m_LastMousePosition = MousePosition;
-        Rotate(delta.x,glm::vec3(0.f,1.f,0.f));
-                RG_LogSystem->log(log_level::info,std::format("Camera position:({},{},{})",m_Position.x,m_Position.y,m_Position.z));
-        RG_LogSystem->log(log_level::info,std::format("Focus position:({},{},{})",m_FocalPoint.x,m_FocalPoint.y,m_FocalPoint.z));
+        glm::vec2 MousePosition=Input::GetMousePosition();
+        if(MousePosition!=m_LastMousePosition){
+            Rotate(m_LastMousePosition,MousePosition);
+            m_LastMousePosition = MousePosition;
+            RG_LogSystem->log(log_level::info,std::format("Camera position:({},{},{})",m_Position.x,m_Position.y,   m_Position.z));
+            RG_LogSystem->log(log_level::info,std::format("Focus position:({},{},{})",m_FocalPoint.x,m_FocalPoint.y,m_FocalPoint.z));
+        }
     }
     else{
         m_LastMousePosition=Input::GetMousePosition();
@@ -41,15 +44,20 @@ void Camera::SetTarget(const glm::vec3& target){
     m_FocalPoint=target;
 }
 void Camera::Zoom(float delta){
-    m_Position+=m_InvRotation*glm::vec3(0.f,0.f,delta);
-    m_FocalPoint=m_Position+m_InvRotation*glm::vec3(0.f,0.f,-1.f);
+    m_Fov=std::clamp(m_Fov*delta,1.f,89.f);
 }
-void Camera::Rotate(float degree,const glm::vec3& axis){
-    glm::quat rot=glm::angleAxis(glm::radians(degree),axis);
-    m_Rotation=rot*m_Rotation;
-    m_Rotation=glm::normalize(m_Rotation);
+void Camera::Rotate(const glm::vec2& lastPos,const glm::vec2& currentPos){
+    RG_LogSystem->log(log_level::info,std::format("lastPos:({},{})",lastPos.x,lastPos.y));
+    RG_LogSystem->log(log_level::info,std::format("currentPos:({},{})",currentPos.x,currentPos.y));
+    auto va=GetArcballVector(lastPos);
+    auto vb=GetArcballVector(currentPos);
+    float angle=std::acos(std::clamp(glm::dot(va,vb),-1.f,1.f));
+    RG_LogSystem->log(log_level::info,std::format("angle:{}",angle));
+    glm::vec3 axisInCameraSpace=glm::normalize(glm::cross(va,vb));
+    glm::vec3 axisInWorldSpace=glm::inverse(glm::mat3(GetViewMatrix()))*axisInCameraSpace;
+    m_Rotation=glm::angleAxis(angle,axisInWorldSpace)*m_Rotation;
     m_InvRotation=glm::inverse(m_Rotation);
-    m_FocalPoint=m_Position+m_InvRotation*glm::vec3(0.f,0.f,-1.f);
+    m_Position=glm::angleAxis(angle,axisInWorldSpace)*m_Position;
 }
 glm::vec3 Camera::GetUpDirection()const{
     return m_InvRotation*glm::vec3(0.f,1.f,0.f);
@@ -64,6 +72,19 @@ void Camera::UpdateProjMatrix(){
     m_ProjMatrix=glm::perspective(glm::radians(m_Fov),m_Aspect,m_NearClip,m_FarClip);
 }
 void Camera::UpdateViewMatrix(){
-    m_ViewMatrix=glm::lookAt(m_Position,m_Position+GetForwardDirection(),glm::vec3(0.f,1.f,0.f));
+    m_ViewMatrix=glm::translate(glm::mat4(1.f),m_Position)*glm::mat4_cast(m_Rotation);
+    m_ViewMatrix=glm::inverse(m_ViewMatrix);
 }
-    
+
+glm::vec3 Camera::GetArcballVector(const glm::vec2& point){
+    glm::vec3 P=glm::vec3(1.f*point.x/Screen::GetWidth()*2.f-1.f,1.f*point.y/Screen::GetHeight()*2.f-1.f,0.f);
+    P.y=-P.y;
+    float OP_squared=P.x*P.x+P.y*P.y;
+    if(OP_squared<=1.f){
+        P.z=std::sqrt(1.f-OP_squared);
+    }
+    else{
+        P=glm::normalize(P);
+    }
+    return P;
+}

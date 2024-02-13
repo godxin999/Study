@@ -9,6 +9,7 @@ import <memory>;
 import glm;
 import camera;
 import shader;
+import screen;
 import input_system;
 import global_context;
 
@@ -77,6 +78,7 @@ Camera camera{45.f,800.f/600.f,.1f,100.f};
 //窗口大小改变时的回调函数
 void framebuffer_size_callback(GLFWwindow* window,int width,int height){
     glViewport(0,0,width,height);//前两个参数为窗口的左下角位置，后两个参数为渲染窗口的宽高
+    Screen::SetWidthHeight(width,height);
 }
 
 static void error_callback(int error, const char* description) {
