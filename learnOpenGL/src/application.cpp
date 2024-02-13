@@ -14,47 +14,47 @@ import input_system;
 import global_context;
 
 float vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    -0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
 };
 
 glm::vec3 cubePositions[] = {
@@ -70,13 +70,14 @@ glm::vec3 cubePositions[] = {
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-unsigned VAO,VBO,EBO;
-Shader shader;
+unsigned CubeVAO,LightCubeVAO,VBO;
+Shader LightingShader,LightCubeShader;
 unsigned texture1,texture2;
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 Camera camera{45.f,800.f/600.f,.1f,1000.f};
 
 //窗口大小改变时的回调函数
-void framebuffer_size_callback(GLFWwindow* window,int width,int height){
+static void framebuffer_size_callback(GLFWwindow* window,int width,int height){
     glViewport(0,0,width,height);//前两个参数为窗口的左下角位置，后两个参数为渲染窗口的宽高
     Screen::SetWidthHeight(width,height);
 }
@@ -143,110 +144,36 @@ void Application::Init(){
     //启用深度测试
     glEnable(GL_DEPTH_TEST);
 
-    shader=Shader("../../../../shaders/test.vs","../../../../shaders/test.fs");
+    LightingShader=Shader("../../../../shaders/color.vs","../../../../shaders/color.fs");
+    LightCubeShader=Shader("../../../../shaders/light_cube.vs","../../../../shaders/light_cube.fs");
 
     //创建VAO
-    glGenVertexArrays(1,&VAO);
+    glGenVertexArrays(1,&CubeVAO);
     //创建VBO
     glGenBuffers(1,&VBO);
-    //创建EBO
-    //glGenBuffers(1,&EBO);
     //绑定VAO
-    glBindVertexArray(VAO);
+    glBindVertexArray(CubeVAO);
     //绑定VBO
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     //将顶点数据复制到VBO中
     //GL_STATIC_DRAW表示数据不会或几乎不会改变
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-    //绑定EBO
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
-    //将索引数据复制到EBO中
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
-    //设置顶点属性指针(如何解析顶点数据)
-    //第一个参数为顶点属性的位置值，与顶点着色器中的layout(location=0)对应
-    //第二个参数为顶点属性的大小，顶点属性是vec3类型，由3个值组成，所以大小为3
-    //第三个参数为顶点属性的类型
-    //第四个参数为是否希望数据被标准化(0/-1~1)
-    //第五个参数为步长，即连续的顶点属性组之间的间隔
-    //第六个参数为偏移量，即在缓冲区起始位置的偏移量
-    //glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)0);
-    //启用顶点属性
-    //glEnableVertexAttribArray(0);
 
-    //glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)(3*sizeof(float)));
-    //glEnableVertexAttribArray(1);
-
-    //glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,8*sizeof(float),(void*)(6*sizeof(float)));
-    //glEnableVertexAttribArray(2);
-
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,5*sizeof(float),(void*)0);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(float),(void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,5*sizeof(float),(void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    //创建纹理
-    glGenTextures(1,&texture1);
-    //绑定纹理
-    glBindTexture(GL_TEXTURE_2D,texture1);
-    //设置纹理环绕方式
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-    //设置纹理过滤方式
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    //加载图片，创建纹理并生成mipmap
-    int width,height,nrChannels;
-    //将图片翻转，因为OpenGL默认y坐标是从下到上的
-    stbi_set_flip_vertically_on_load(true);
-    //加载图片数据
-    unsigned char* data=stbi_load("../../../../assets/container.jpg",&width,&height,&nrChannels,0);
-    if(data){
-        //生成纹理
-        //第一个参数为纹理目标
-        //第二个参数为多级渐远纹理级别，0为基本级别
-        //第三个参数为纹理存储格式
-        //第四、五个参数为纹理宽度、高度
-        //第六个参数为历史遗留问题，应该总是为0
-        //第七、八个参数为源图格式和数据类型
-        //第九个参数为图片数据
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else{
-        RG_LogSystem->log(log_level::error,"Failed to load texture");
-        throw std::runtime_error("Failed to load texture");
-    }
-    //释放图片内存
-    stbi_image_free(data);
-    glGenTextures(1,&texture2);
-    glBindTexture(GL_TEXTURE_2D,texture2);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    data=stbi_load("../../../../assets/awesomeface.png",&width,&height,&nrChannels,0);
-    if(data){
-        glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else{
-        RG_LogSystem->log(log_level::error,"Failed to load texture");
-        throw std::runtime_error("Failed to load texture");
-    }
-    stbi_image_free(data);
-
-    shader.use();
-    shader.set_int("texture1",0);
-    shader.set_int("texture2",1);
-    shader.unuse();
     
+    glGenVertexArrays(1,&LightCubeVAO);
+    glBindVertexArray(LightCubeVAO);
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(float),(void*)0);
+    glEnableVertexAttribArray(0);
+
     //解绑VBO
     glBindBuffer(GL_ARRAY_BUFFER,0);
     //解绑VAO
     glBindVertexArray(0);
-    //使用线框模式
-    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
+    camera.SetPostion(glm::vec3(0.f,0.f,3.f));
 }
 
 void Application::Run(){
@@ -255,7 +182,7 @@ void Application::Run(){
 
         Update();
 
-        glClearColor(.2f,.3f,.3f,.0f);
+        glClearColor(.1f,.1f,.1f,1.f);
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);//清除颜色缓冲和深度缓冲
         
         Render();
@@ -270,10 +197,11 @@ void Application::Exit(){
 }
 
 void Application::Destroy(){
-    glDeleteVertexArrays(1,&VAO);
+    glDeleteVertexArrays(1,&CubeVAO);
+    glDeleteVertexArrays(1,&LightCubeVAO);
     glDeleteBuffers(1,&VBO);
-    glDeleteBuffers(1,&EBO);
-    glDeleteProgram(shader.get_shader_program_id());
+//    glDeleteBuffers(1,&EBO);
+    glDeleteProgram(LightingShader.GetShaderProgramId());
     glfwTerminate();
 }
 
@@ -283,32 +211,30 @@ void Application::Update(){
 }
 
 void Application::Render(){
-    //激活纹理单元
-    glActiveTexture(GL_TEXTURE0);
-    //绑定纹理
-    glBindTexture(GL_TEXTURE_2D,texture1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D,texture2);
+    LightingShader.Use();
 
-    shader.use();
+    LightingShader.SetVec3("objectColor",1.f,.5f,.31f);
+    LightingShader.SetVec3("lightColor",1.f,1.f,1.f);
 
-    shader.set_mat4("view",glm::value_ptr(camera.GetViewMatrix()));
-    shader.set_mat4("projection",glm::value_ptr(camera.GetProjMatrix()));
+    LightingShader.SetMat4("model",glm::mat4(1.f));
+    LightingShader.SetMat4("view",camera.GetViewMatrix());
+    LightingShader.SetMat4("projection",camera.GetProjMatrix());
 
-    glBindVertexArray(VAO);
-    //第一个参数为绘制模式
-    //第二个参数为绘制的顶点数量
-    //第三个参数为索引的类型
-    //第四个参数为EBO中的偏移量
-    //glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
-    for(int i=0;i<10;++i){
-        glm::mat4 model=glm::mat4(1.f);
-        model=glm::translate(model,cubePositions[i]);
-        float angle=20.f*i;
-        model=glm::rotate(model,glm::radians(angle),glm::vec3(1.f,.3f,.5f));
-        shader.set_mat4("model",glm::value_ptr(model));
-        glDrawArrays(GL_TRIANGLES,0,36);
-    }
+    glBindVertexArray(CubeVAO);
+    glDrawArrays(GL_TRIANGLES,0,36);
+
+    LightCubeShader.Use();
+    
+    glm::mat4 model=glm::mat4(1.f);
+    model=glm::translate(model,lightPos);
+    model=glm::scale(model,glm::vec3(.2f));
+    
+    LightCubeShader.SetMat4("model",model);
+    LightCubeShader.SetMat4("view",camera.GetViewMatrix());
+    LightCubeShader.SetMat4("projection",camera.GetProjMatrix());
+
+    glBindVertexArray(LightCubeVAO);
+    glDrawArrays(GL_TRIANGLES,0,36);
 }
 
 void Application::ProcessInput(){
