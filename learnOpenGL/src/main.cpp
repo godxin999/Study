@@ -2,8 +2,10 @@
 
 import <stdexcept>;
 import <iostream>;
+import global_context;
 
 int main(){
+    RuntimeGlobalContext::StartSystem();
     try{
         auto app=new Application;
         app->Init();
@@ -15,5 +17,6 @@ int main(){
         std::cerr<<e.what()<<std::endl;
         return 1;
     }
+    RuntimeGlobalContext::ShutdowmSystem();
     return 0;
 }

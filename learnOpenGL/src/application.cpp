@@ -73,7 +73,7 @@ glm::vec3 cubePositions[] = {
 unsigned VAO,VBO,EBO;
 Shader shader;
 unsigned texture1,texture2;
-Camera camera{45.f,800.f/600.f,.1f,100.f};
+Camera camera{45.f,800.f/600.f,.1f,1000.f};
 
 //窗口大小改变时的回调函数
 void framebuffer_size_callback(GLFWwindow* window,int width,int height){
@@ -94,7 +94,8 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action, in
 }
 
 static void mouse_move_callback(GLFWwindow* window, double x, double y) {
-	Input::SetMousePosition(x, y);
+	if(x<0||y<0||x>Screen::GetWidth() || y>Screen::GetHeight())return;
+    Input::SetMousePosition(x, y);
 }
 
 static void mouse_scroll_callback(GLFWwindow* window, double x, double y) {
@@ -102,7 +103,6 @@ static void mouse_scroll_callback(GLFWwindow* window, double x, double y) {
 }
 
 void Application::Init(){
-    RuntimeGlobalContext::StartSystem();
     RG_LogSystem->log(log_level::info,"Application is initializing...");
 
     glfwSetErrorCallback(error_callback);
@@ -137,6 +137,9 @@ void Application::Init(){
         RG_LogSystem->log(log_level::error,"Failed to initialize GLAD");
         throw std::runtime_error("Failed to initialize GLAD");
     }
+    
+    //glfwSwapInterval(1);
+
     //启用深度测试
     glEnable(GL_DEPTH_TEST);
 
@@ -272,7 +275,6 @@ void Application::Destroy(){
     glDeleteBuffers(1,&EBO);
     glDeleteProgram(shader.get_shader_program_id());
     glfwTerminate();
-    RuntimeGlobalContext::ShutdowmSystem();
 }
 
 void Application::Update(){
