@@ -8,7 +8,7 @@ public:
     void Update();
     const glm::mat4& GetProjMatrix()const{return m_ProjMatrix;}
     const glm::mat4& GetViewMatrix()const{return m_ViewMatrix;}
-    const glm::vec3& GetPostion()const{return m_Position;}
+    const glm::vec3& GetPosition()const{return m_Position;}
     float GetFov()const{return m_Fov;}
     float GetAspect()const{return m_Aspect;}
     void SetFov(float fov);
