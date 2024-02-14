@@ -1,10 +1,10 @@
 module;
-#include "control/key_code.h"
 module camera;
 
 import glm;
-import input_system;
 import screen;
+import input_state;
+import stl;
 import <algorithm>;
 
 Camera::Camera(float fov,float aspect,float nearClip,float farClip):m_Fov(fov),m_Aspect(aspect),m_NearClip(nearClip),m_FarClip(farClip){
@@ -16,7 +16,7 @@ Camera::Camera(float fov,float aspect,float nearClip,float farClip):m_Fov(fov),m
     UpdateProjMatrix();
 }
 void Camera::Update(){
-    Zoom((10-Input::GetMouseScroll())/10.f);
+    /*Zoom((10-Input::GetMouseScroll())/10.f);
     if(Input::GetKeyDown(KEY_CODE_LEFT_ALT) && Input::GetMouseButtonDown(MOUSE_BUTTON_LEFT)){
         glm::vec2 MousePosition=Input::GetMousePosition();
         if(MousePosition!=m_LastMousePosition){
@@ -26,7 +26,7 @@ void Camera::Update(){
     }
     else{
         m_LastMousePosition=Input::GetMousePosition();
-    }
+    }*/
     UpdateViewMatrix();
 }
 void Camera::SetFov(float fov){

@@ -1,11 +1,11 @@
-#include "application.h"
+//#include "application.h"
 
 import <stdexcept>;
 import <iostream>;
-import global_context;
+//import global_context;
 
 int main(){
-    RuntimeGlobalContext::StartSystem();
+    /*RuntimeGlobalContext::StartSystem();
     try{
         auto app=new Application;
         app->Init();
@@ -17,6 +17,6 @@ int main(){
         std::cerr<<e.what()<<std::endl;
         return 1;
     }
-    RuntimeGlobalContext::ShutdowmSystem();
+    RuntimeGlobalContext::ShutdowmSystem();*/
     return 0;
 }

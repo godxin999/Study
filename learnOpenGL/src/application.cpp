@@ -139,7 +139,7 @@ void Application::Init(){
         throw std::runtime_error("Failed to initialize GLAD");
     }
     
-    //glfwSwapInterval(1);
+    glfwSwapInterval(1);
 
     //启用深度测试
     glEnable(GL_DEPTH_TEST);
