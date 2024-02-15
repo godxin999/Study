@@ -2,11 +2,7 @@ module;
 #include <glad/glad.h>
 module shader;
 
-import <fstream>;
-import <ostream>;
-import <sstream>;
-import <iostream>;
-import <format>;
+import stl;
 import glm;
 
 

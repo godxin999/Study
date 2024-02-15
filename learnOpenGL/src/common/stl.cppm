@@ -8,3 +8,8 @@ export import <unordered_map>;
 export import <utility>;
 export import <stdexcept>;
 export import <format>;
+export import <algorithm>;
+export import <iostream>;
+export import <fstream>;
+export import <functional>;
+export import <sstream>;

@@ -1,6 +1,6 @@
 export module shader;
 
-import <string>;
+import stl;
 import glm;
 
 export class Shader{

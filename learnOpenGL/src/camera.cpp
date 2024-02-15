@@ -5,7 +5,6 @@ import glm;
 import screen;
 import input_state;
 import stl;
-import <algorithm>;
 
 Camera::Camera(float fov,float aspect,float nearClip,float farClip):m_Fov(fov),m_Aspect(aspect),m_NearClip(nearClip),m_FarClip(farClip){
     m_Distance=glm::distance(m_Position,m_FocalPoint);

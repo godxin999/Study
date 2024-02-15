@@ -1,5 +1,5 @@
 add_rules("mode.debug", "mode.release")
-add_languages("c++20")
+set_languages("c++latest")
 add_requires("glfw 3.3.9")
 add_requires("glad")
 add_requires("stb")
@@ -8,6 +8,7 @@ add_requires("spdlog 1.13.0", {configs = {header_only = true,std_format = true}}
 
 target("learnOpenGL")
     set_kind("binary")
+    set_policy("build.c++.modules", true)
     add_files("src/common/*.cppm")
     add_files("src/tools/*.cppm")
     add_files("src/control/*.cppm","src/control/*.cpp")

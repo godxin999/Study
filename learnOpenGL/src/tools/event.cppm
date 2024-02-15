@@ -1,9 +1,6 @@
 export module event;
 
-import <functional>;
-import <unordered_map>;
-import <ranges>;
-import <utility>;
+import stl;
 
 namespace Engine::inline Tools{
     export using ListenerID = uint64_t;
