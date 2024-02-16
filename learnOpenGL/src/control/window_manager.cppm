@@ -74,7 +74,7 @@ namespace Engine::inline Window{
     public:
         static WindowManager* FindWindowManager(GLFWwindow* window);
     private:
-        inline static std::unordered_map<GLFWwindow*,WindowManager*> m_Windows{};
+        inline static std::unordered_map<GLFWwindow*,WindowManager*> Windows{};
     private:
         void CreateGlfwWindow();
         //bind glfw callback

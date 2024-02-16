@@ -13,3 +13,6 @@ export import <iostream>;
 export import <fstream>;
 export import <functional>;
 export import <sstream>;
+export import <any>;
+export import <typeinfo>;
+export import <typeindex>;

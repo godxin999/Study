@@ -7,6 +7,8 @@ module window_manager;
 import input_state;
 import event;
 import stl;
+import log_manager;
+import service_locator;
 
 namespace Engine::inline Window{
     WindowManager::WindowManager(const Device& device):m_Device(device){
@@ -30,7 +32,7 @@ namespace Engine::inline Window{
         CloseEvent+=std::bind(&WindowManager::OnClose,this);
     }
     WindowManager::~WindowManager(){
-        m_Windows.erase(m_Window);
+        Windows.erase(m_Window);
         glfwDestroyWindow(m_Window);
     }
     void WindowManager::SetIcon(const std::string& path){}
@@ -134,7 +136,7 @@ namespace Engine::inline Window{
         return {static_cast<int16_t>(x),static_cast<int16_t>(y)};
     }
     WindowManager* WindowManager::FindWindowManager(GLFWwindow* window){
-        return m_Windows.find(window)!=m_Windows.end()?m_Windows[window]:nullptr;
+        return Windows.find(window)!=Windows.end()?Windows[window]:nullptr;
     }
     void WindowManager::CreateGlfwWindow(){
         GLFWmonitor* monitor=nullptr;
@@ -159,7 +161,7 @@ namespace Engine::inline Window{
         }
         UpdateSizeLimit();
         m_Position=GetPosition();
-        m_Windows[m_Window]=this;
+        Windows[m_Window]=this;
     }
     void WindowManager::BindKeyCallback()const{
         glfwSetKeyCallback(m_Window,[](GLFWwindow* window,int key,int scancode,int action,int mods){
@@ -255,7 +257,7 @@ namespace Engine::inline Window{
         }
     }
     void WindowManager::OnClose(){
-        std::cout<<"Window closed\n";
+        ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Window closed");
     }
     void WindowManager::UpdateSizeLimit()const{
         glfwSetWindowSizeLimits(m_Window,static_cast<int>(m_MinimumSize.first),static_cast<int>(m_MinimumSize.second),static_cast<int>(m_MaximumSize.first),static_cast<int>(m_MaximumSize.second));
