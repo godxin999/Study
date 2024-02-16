@@ -2,8 +2,8 @@ module;
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <GLFW/glfw3.h>
-module window_manager.window;
-import window_manager.device;
+module window_manager;
+
 import input_state;
 import event;
 import stl;
@@ -27,6 +27,7 @@ namespace Engine::inline Window{
 
         ResizeEvent+=std::bind(&WindowManager::OnResize,this,std::placeholders::_1,std::placeholders::_2);
         MoveEvent+=std::bind(&WindowManager::OnMove,this,std::placeholders::_1,std::placeholders::_2);
+        CloseEvent+=std::bind(&WindowManager::OnClose,this);
     }
     WindowManager::~WindowManager(){
         m_Windows.erase(m_Window);
@@ -66,7 +67,9 @@ namespace Engine::inline Window{
         m_CursorShape=shape;
         glfwSetCursor(m_Window,m_Device.GetCursorInstance(m_CursorShape));
     }
-    void WindowManager::SetShouldClose(bool shouldClose)const{glfwSetWindowShouldClose(m_Window,shouldClose);}
+    void WindowManager::SetShouldClose(bool shouldClose)const{
+        glfwSetWindowShouldClose(m_Window,shouldClose);
+    }
     void WindowManager::Minimize()const{
         glfwIconifyWindow(m_Window);
     }
@@ -250,6 +253,9 @@ namespace Engine::inline Window{
             m_Position.first=x;
             m_Position.second=y;
         }
+    }
+    void WindowManager::OnClose(){
+        std::cout<<"Window closed\n";
     }
     void WindowManager::UpdateSizeLimit()const{
         glfwSetWindowSizeLimits(m_Window,static_cast<int>(m_MinimumSize.first),static_cast<int>(m_MinimumSize.second),static_cast<int>(m_MaximumSize.first),static_cast<int>(m_MaximumSize.second));

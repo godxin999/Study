@@ -3,12 +3,14 @@ module context;
 import stl;
 import window_manager;
 import log_manager;
+import input_manager;
 
 namespace Engine::inline Editor{
     Context::Context(){
         m_LogManager=std::make_unique<LogManager>();
         m_Device=std::make_unique<Device>();
         m_WindowManager=std::make_unique<WindowManager>(*m_Device);
+        m_InputManager=std::make_unique<InputManager>(*m_WindowManager);
 
         m_WindowManager->MakeCurrentContext();
         auto [monitorWidth,monitorHeight]=m_Device->GetMonitorSize();

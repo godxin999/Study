@@ -143,8 +143,8 @@ namespace Engine::inline Input{
         MOUSE_BUTTON_MIDDLE = MOUSE_BUTTON_3
     };
     export enum class MouseButtonState: int{
-        MOUSE_RELEASE = 0,
-        MOUSE_PRESS = 1
+        MOUSE_BUTTON_RELEASE = 0,
+        MOUSE_BUTTON_PRESS = 1
     };
     export enum class CursorMode: int{
         NORMAL = 0x00034001,

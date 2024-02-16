@@ -2,6 +2,7 @@ export module context;
 import stl;
 import window_manager;
 import log_manager;
+import input_manager;
 
 
 namespace Engine::inline Editor{
@@ -16,6 +17,7 @@ namespace Engine::inline Editor{
 
         std::unique_ptr<Device> m_Device{nullptr};
         std::unique_ptr<WindowManager> m_WindowManager{nullptr};
+        std::unique_ptr<InputManager> m_InputManager{nullptr};
         std::unique_ptr<LogManager> m_LogManager{nullptr};
     };
 };
