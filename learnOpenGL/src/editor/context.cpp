@@ -15,6 +15,9 @@ namespace Engine::inline Editor{
         m_InputManager=std::make_unique<InputManager>(*m_WindowManager);
 
         m_WindowManager->MakeCurrentContext();
+        m_WindowManager->LoadGlad();
+        
+
         auto [monitorWidth,monitorHeight]=m_Device->GetMonitorSize();
         auto [windowWidth,windowHeight]=m_WindowManager->GetSize();
         m_WindowManager->SetPosition((monitorWidth-windowWidth)/2,(monitorHeight-windowHeight)/2);

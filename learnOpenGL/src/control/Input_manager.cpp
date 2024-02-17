@@ -1,10 +1,11 @@
 module;
 #include <GLFW/glfw3.h>
 module input_manager;
-import input_state;
+
 import event;
 import window_manager;
 import stl;
+import glm;
 
 namespace Engine::inline Input{
     InputManager::InputManager(WindowManager& windowManager):m_WindowManager(windowManager){
@@ -47,10 +48,10 @@ namespace Engine::inline Input{
     bool InputManager::IsMouseButtonReleased(MouseButton button) const{
         return m_MouseButtonStates.find(button)!=m_MouseButtonStates.end()&&m_MouseButtonStates.at(button)==MouseButtonState::MOUSE_BUTTON_RELEASE;
     }
-    std::pair<double,double> InputManager::GetMousePosition() const{
-        std::pair<double, double> result;
-        glfwGetCursorPos(m_WindowManager.GetGlfwWindow(),&result.first,&result.second);
-        return result;
+    glm::vec2 InputManager::GetMousePosition() const{
+        double x,y;
+        glfwGetCursorPos(m_WindowManager.GetGlfwWindow(),&x,&y);
+        return {static_cast<float>(x),static_cast<float>(y)};
     }
     void InputManager::ClearStates(){
         m_KeyStates.clear();

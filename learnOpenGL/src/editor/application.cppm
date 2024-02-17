@@ -71,8 +71,7 @@ unsigned CubeVAO,LightCubeVAO,VBO;
 Shader LightingShader,LightCubeShader;
 unsigned texture1,texture2;
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-Camera camera{45.f,800.f/600.f,.1f,1000.f};
-
+Engine::Camera* camera{nullptr};
 
 void render(){
     LightingShader.Use();
@@ -80,12 +79,12 @@ void render(){
     LightingShader.SetVec3("objectColor",1.f,.5f,.31f);
     LightingShader.SetVec3("lightColor",1.f,1.f,1.f);
     LightingShader.SetVec3("lightPos",lightPos);
-    LightingShader.SetVec3("viewPos",camera.GetPosition());
+    LightingShader.SetVec3("viewPos",camera->GetPosition());
 
     glm::mat4 model=glm::mat4(1.f);
     LightingShader.SetMat4("model",model);
-    LightingShader.SetMat4("view",camera.GetViewMatrix());
-    LightingShader.SetMat4("projection",camera.GetProjMatrix());
+    LightingShader.SetMat4("view",camera->GetViewMatrix());
+    LightingShader.SetMat4("projection",camera->GetProjMatrix());
     LightingShader.SetMat4("transInvModel",glm::transpose(glm::inverse(model)));
 
     glBindVertexArray(CubeVAO);
@@ -98,19 +97,17 @@ void render(){
     model=glm::scale(model,glm::vec3(.2f));
     
     LightCubeShader.SetMat4("model",model);
-    LightCubeShader.SetMat4("view",camera.GetViewMatrix());
-    LightCubeShader.SetMat4("projection",camera.GetProjMatrix());
+    LightCubeShader.SetMat4("view",camera->GetViewMatrix());
+    LightCubeShader.SetMat4("projection",camera->GetProjMatrix());
 
     glBindVertexArray(LightCubeVAO);
     glDrawArrays(GL_TRIANGLES,0,36);
 }
 void update(){
-    camera.Update();
+    camera->Update();
 }
 void init(){
-    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
-        throw std::runtime_error("Failed to initialize GLAD");
-    }
+    
     
 
     //启用深度测试
@@ -148,7 +145,8 @@ void init(){
     //解绑VAO
     glBindVertexArray(0);
 
-    camera.SetPostion(glm::vec3(0.f,0.f,3.f));
+    camera=new Engine::Camera(45.f,800.f/600.f,.1f,1000.f);
+    camera->SetPostion(glm::vec3(0.f,0.f,3.f));
 }
 
 namespace Engine::inline Editor{

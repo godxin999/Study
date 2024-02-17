@@ -2,6 +2,7 @@ module;
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 module window_manager;
 
 import input_state;
@@ -13,7 +14,6 @@ import service_locator;
 namespace Engine::inline Window{
     WindowManager::WindowManager(const Device& device):m_Device(device){
         CreateGlfwWindow();
-
         SetCursorMode(CursorMode::NORMAL);
         SetCursorShape(CursorShape::ARROW);
 
@@ -28,6 +28,7 @@ namespace Engine::inline Window{
         BindCloseCallback();
 
         ResizeEvent+=std::bind(&WindowManager::OnResize,this,std::placeholders::_1,std::placeholders::_2);
+        FrameBufferResizeEvent+=std::bind(&WindowManager::OnFrameBufferResize,this,std::placeholders::_1,std::placeholders::_2);
         MoveEvent+=std::bind(&WindowManager::OnMove,this,std::placeholders::_1,std::placeholders::_2);
         CloseEvent+=std::bind(&WindowManager::OnClose,this);
     }
@@ -163,6 +164,12 @@ namespace Engine::inline Window{
         m_Position=GetPosition();
         Windows[m_Window]=this;
     }
+    void WindowManager::LoadGlad()const{
+        if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
+            glfwTerminate();
+            throw std::runtime_error("Failed to initialize GLAD");
+        }
+    }
     void WindowManager::BindKeyCallback()const{
         glfwSetKeyCallback(m_Window,[](GLFWwindow* window,int key,int scancode,int action,int mods){
             if(WindowManager* manager=FindWindowManager(window)){
@@ -197,7 +204,7 @@ namespace Engine::inline Window{
     void WindowManager::BindFrameBufferResizeCallback()const{
         glfwSetFramebufferSizeCallback(m_Window,[](GLFWwindow* window,int width,int height){
             if(WindowManager* manager=FindWindowManager(window)){
-                manager->ResizeEvent.Invoke(static_cast<uint16_t>(width),static_cast<uint16_t>(height));
+                manager->FrameBufferResizeEvent.Invoke(static_cast<uint16_t>(width),static_cast<uint16_t>(height));
             }
         });
     }
@@ -258,6 +265,9 @@ namespace Engine::inline Window{
     }
     void WindowManager::OnClose(){
         ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Window closed");
+    }
+    void WindowManager::OnFrameBufferResize(uint16_t width,uint16_t height){
+        glViewport(0,0,width,height);
     }
     void WindowManager::UpdateSizeLimit()const{
         glfwSetWindowSizeLimits(m_Window,static_cast<int>(m_MinimumSize.first),static_cast<int>(m_MinimumSize.second),static_cast<int>(m_MaximumSize.first),static_cast<int>(m_MaximumSize.second));

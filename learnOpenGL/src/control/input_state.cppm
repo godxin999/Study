@@ -1,4 +1,4 @@
-export module input_state;
+export module input_manager.input_state;
 
 namespace Engine::inline Input{
     export enum class Key: int{
