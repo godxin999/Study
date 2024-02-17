@@ -3,7 +3,7 @@ module;
 export module window_manager;
 export import window_manager.device;
 
-import input_state;
+import input_manager.input_state;
 import event;
 import stl;
 

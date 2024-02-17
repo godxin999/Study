@@ -1,5 +1,5 @@
 export module input_manager;
-export import input_state;
+export import input_manager.input_state;
 
 import event;
 import window_manager;

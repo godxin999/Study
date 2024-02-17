@@ -2,7 +2,6 @@ module camera;
 
 import glm;
 import input_manager;
-import input_state;
 import stl;
 import service_locator;
 import window_manager;

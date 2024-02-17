@@ -5,7 +5,7 @@ module;
 #include <glad/glad.h>
 module window_manager;
 
-import input_state;
+import input_manager.input_state;
 import event;
 import stl;
 import log_manager;
