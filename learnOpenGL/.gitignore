@@ -8,3 +8,5 @@ vsxmake2022/
 .DS_Store
 
 
+!core/
+!debug/
