@@ -9,10 +9,18 @@ import glm;
 
 namespace Engine::inline Input{
     InputManager::InputManager(WindowManager& windowManager):m_WindowManager(windowManager){
-        m_KeyPressedListener=m_WindowManager.KeyPressedEvent.AddListener(std::bind(&InputManager::OnKeyPressed,this,std::placeholders::_1));
-        m_KeyReleasedListener=m_WindowManager.KeyReleasedEvent.AddListener(std::bind(&InputManager::OnKeyReleased,this,std::placeholders::_1));
-        m_MouseButtonPressedListener=m_WindowManager.MouseButtonPressedEvent.AddListener(std::bind(&InputManager::OnMouseButtonPressed,this,std::placeholders::_1));
-        m_MouseButtonReleasedListener=m_WindowManager.MouseButtonReleasedEvent.AddListener(std::bind(&InputManager::OnMouseButtonReleased,this,std::placeholders::_1));
+        m_KeyPressedListener=m_WindowManager.KeyPressedEvent.AddListener([this](Key key){
+            m_KeyStates[key]=KeyState::KEY_PRESS;
+        });
+        m_KeyReleasedListener=m_WindowManager.KeyReleasedEvent.AddListener([this](Key key){
+            m_KeyStates[key]=KeyState::KEY_RELEASE;
+        });
+        m_MouseButtonPressedListener=m_WindowManager.MouseButtonPressedEvent.AddListener([this](MouseButton button){
+            m_MouseButtonStates[button]=MouseButtonState::MOUSE_BUTTON_PRESS;
+        });
+        m_MouseButtonReleasedListener=m_WindowManager.MouseButtonReleasedEvent.AddListener([this](MouseButton button){
+            m_MouseButtonStates[button]=MouseButtonState::MOUSE_BUTTON_RELEASE;
+        });
     }
 
     InputManager::~InputManager(){
@@ -56,17 +64,5 @@ namespace Engine::inline Input{
     void InputManager::ClearStates(){
         m_KeyStates.clear();
         m_MouseButtonStates.clear();
-    }
-    void InputManager::OnKeyPressed(Key key){
-        m_KeyStates[key]=KeyState::KEY_PRESS;
-    }
-    void InputManager::OnKeyReleased(Key key){
-        m_KeyStates[key]=KeyState::KEY_RELEASE;
-    }
-    void InputManager::OnMouseButtonPressed(MouseButton button){
-        m_MouseButtonStates[button]=MouseButtonState::MOUSE_BUTTON_PRESS;
-    }
-    void InputManager::OnMouseButtonReleased(MouseButton button){
-        m_MouseButtonStates[button]=MouseButtonState::MOUSE_BUTTON_RELEASE;
     }
 }

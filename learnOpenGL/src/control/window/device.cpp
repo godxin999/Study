@@ -14,7 +14,7 @@ namespace Engine::inline Window{
             throw std::runtime_error("Fail to initialize GLFW");
         }
         CreateCursors();
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);//主版本号
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,4);//主版本号
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);//次版本号
         glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);//核心模式
         m_IsInitialized=true;

@@ -47,9 +47,9 @@ namespace Engine::inline Render{
     void Camera::Rotate(const glm::vec2& lastPos,const glm::vec2& currentPos){
         auto va=GetArcballVector(lastPos);
         auto vb=GetArcballVector(currentPos);
-        float angle=std::acos(std::clamp(glm::dot(va,vb),-1.f,1.f));
+        float radians=std::acos(std::clamp(glm::dot(va,vb),-1.f,1.f));
         glm::vec3 axisInCameraSpace=glm::normalize(glm::cross(va,vb));
-        m_CameraToWorldRotation=glm::angleAxis(angle,axisInCameraSpace)*m_CameraToWorldRotation;
+        m_CameraToWorldRotation=glm::angleAxis(radians,axisInCameraSpace)*m_CameraToWorldRotation;
         m_WorldToCameraRotation=glm::inverse(m_CameraToWorldRotation);
     }
     glm::vec3 Camera::GetUpDirection()const{

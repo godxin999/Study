@@ -1,4 +1,4 @@
-export module tranform;
+export module transform;
 
 import glm;
 import event;

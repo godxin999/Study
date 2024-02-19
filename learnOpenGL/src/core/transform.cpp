@@ -1,4 +1,4 @@
-module tranform;
+module transform;
 
 import glm;
 import event;
@@ -71,7 +71,7 @@ namespace Engine::inline Core{
         SetLocalPosition(m_LocalPosition+translation);
     }
     void Transform::RotateLocal(const glm::quat& rotation){
-        SetLocalRotation(rotation*m_LocalRotation);
+        SetLocalRotation(m_LocalRotation*rotation);
     }
     void Transform::ScaleLocal(const glm::vec3& scale){
         SetLocalScale(glm::vec3(m_LocalScale.x*scale.x,m_LocalScale.y*scale.y,m_LocalScale.z*scale.z));

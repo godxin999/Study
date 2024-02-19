@@ -27,10 +27,25 @@ namespace Engine::inline Window{
         BindFocusCallback();
         BindCloseCallback();
 
-        ResizeEvent+=std::bind(&WindowManager::OnResize,this,std::placeholders::_1,std::placeholders::_2);
-        FrameBufferResizeEvent+=std::bind(&WindowManager::OnFrameBufferResize,this,std::placeholders::_1,std::placeholders::_2);
-        MoveEvent+=std::bind(&WindowManager::OnMove,this,std::placeholders::_1,std::placeholders::_2);
-        CloseEvent+=std::bind(&WindowManager::OnClose,this);
+        ResizeEvent+=[this](uint16_t width,uint16_t height){
+            m_Size.first=width;
+            m_Size.second=height;
+            ServiceLocator::Get<LogManager>().Log(LogLevel::info,std::format("Window resized to {}x{}",width,height));
+        };
+        FrameBufferResizeEvent+=[this](uint16_t width,uint16_t height){
+            glViewport(0,0,width,height);
+            ServiceLocator::Get<LogManager>().Log(LogLevel::info,std::format("Framebuffer resized to {}x{}",width,height));
+        };
+        MoveEvent+=[this](int16_t x,int16_t y){
+            if(!m_IsFullscreen){
+                m_Position.first=x;
+                m_Position.second=y;
+            }
+            ServiceLocator::Get<LogManager>().Log(LogLevel::info,std::format("Window moved to ({},{})",x,y));
+        };
+        CloseEvent+=[this](){
+            ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Window closed");
+        };
     }
     WindowManager::~WindowManager(){
         Windows.erase(m_Window);
@@ -252,22 +267,6 @@ namespace Engine::inline Window{
                 manager->CloseEvent.Invoke();
             }
         });
-    }
-    void WindowManager::OnResize(uint16_t width,uint16_t height){
-        m_Size.first=width;
-        m_Size.second=height;
-    }
-    void WindowManager::OnMove(int16_t x,int16_t y){
-        if(!m_IsFullscreen){
-            m_Position.first=x;
-            m_Position.second=y;
-        }
-    }
-    void WindowManager::OnClose(){
-        ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Window closed");
-    }
-    void WindowManager::OnFrameBufferResize(uint16_t width,uint16_t height){
-        glViewport(0,0,width,height);
     }
     void WindowManager::UpdateSizeLimit()const{
         glfwSetWindowSizeLimits(m_Window,static_cast<int>(m_MinimumSize.first),static_cast<int>(m_MinimumSize.second),static_cast<int>(m_MaximumSize.first),static_cast<int>(m_MaximumSize.second));

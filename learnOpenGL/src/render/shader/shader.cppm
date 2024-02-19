@@ -7,9 +7,9 @@ export class Shader{
 public:
     Shader()=default;
     Shader(const std::string& vertexShaderPath,const std::string& fragmentShaderPath);
-    [[nodiscard]]unsigned GetShaderProgramId() const;
-    void Use();
-    void Unuse();
+    [[nodiscard]]uint32_t GetShaderProgramId() const;
+    void Bind();
+    void Unbind();
     void SetBool(const std::string& name,bool value) const;
     void SetInt(const std::string& name,int value) const;
     void SetFloat(const std::string& name,float value) const;
@@ -24,6 +24,6 @@ public:
     void SetMat4(const std::string& name,const glm::mat4& value)const;
     ~Shader()=default;
 private:
-    unsigned m_ShaderProgramId{0};
-    void CheckCompileErrors(unsigned shader,const std::string& type);
+    uint32_t m_ShaderProgramId{0};
+    void CheckCompileErrors(uint32_t shader,const std::string& type);
 };

@@ -17,3 +17,5 @@ export import <any>;
 export import <typeinfo>;
 export import <typeindex>;
 export import <vector>;
+export import <limits>;
+export import <cstdint>;

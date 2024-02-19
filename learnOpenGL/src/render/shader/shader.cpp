@@ -6,7 +6,7 @@ import stl;
 import glm;
 
 
-void Shader::CheckCompileErrors(unsigned shader,const std::string& type){
+void Shader::CheckCompileErrors(uint32_t shader,const std::string& type){
     int success;
     char info_log[512];
     if(type!="PROGRAM"){
@@ -82,15 +82,15 @@ Shader::Shader(const std::string& vertexShaderPath,const std::string& fragmentSh
     glDeleteShader(fragment_shader);
 }
 
-unsigned Shader::GetShaderProgramId()const{
+uint32_t Shader::GetShaderProgramId()const{
     return m_ShaderProgramId;
 }
 
-void Shader::Use(){
+void Shader::Bind(){
     glUseProgram(m_ShaderProgramId);
 }
 
-void Shader::Unuse(){
+void Shader::Unbind(){
     glUseProgram(0);
 }
 

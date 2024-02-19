@@ -1,7 +1,6 @@
 module;
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
-#include <stb/stb_image.h>
 export module application;
 import stl;
 import context;
@@ -10,6 +9,9 @@ import glm;
 import camera;
 import shader;
 import buffer;
+import texture;
+import light;
+import transform;
 
 float vertices[] = {
         // positions          // normals           // texture coords
@@ -73,39 +75,44 @@ glm::vec3 cubePositions[] = {
 std::unique_ptr<Engine::VertexBuffer<float>> VBO;
 std::unique_ptr<Engine::VertexArray> CubeVAO,LightCubeVAO;
 Shader LightingShader,LightCubeShader;
-unsigned diffuseMap,specularMap,emissionMap;
+Engine::Texture diffuseMap,specularMap,emissionMap;
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 Engine::Camera* camera{nullptr};
+Engine::Light* light{nullptr};
+Engine::Transform transform(glm::vec3(0.f,0.f,2.0f),glm::quat(),glm::vec3(1.f));
 
 void render(){
-    LightingShader.Use();
-
+    LightingShader.Bind();
+    LightingShader.SetMat4("light",light->GenerateDataMatrix());
     LightingShader.SetFloat("matrixLight",(1.f+sin(glfwGetTime()))/2.f+.5f);
     LightingShader.SetFloat("matrixMove",glfwGetTime());
-    LightingShader.SetVec3("light.position",lightPos);
-    LightingShader.SetVec3("viewPos",camera->GetPosition());
-    LightingShader.SetVec3("light.specular",1.f,1.f,1.f);
-    LightingShader.SetVec3("light.ambient",.2f,.2f,.2f);
-    LightingShader.SetVec3("light.diffuse",.5f,.5f,.5f);
+    LightingShader.SetVec3("viewPos",camera->GetPosition());    
     LightingShader.SetFloat("material.shininess",64.f);
 
     glm::mat4 model=glm::mat4(1.f);
-    LightingShader.SetMat4("model",model);
+    //LightingShader.SetMat4("model",model);
     LightingShader.SetMat4("view",camera->GetViewMatrix());
     LightingShader.SetMat4("projection",camera->GetProjMatrix());
-    LightingShader.SetMat4("transInvModel",glm::transpose(glm::inverse(model)));
+    //LightingShader.SetMat4("transInvModel",glm::transpose(glm::inverse(model)));
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,diffuseMap);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D,specularMap);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D,emissionMap);
+    diffuseMap.Bind(0);
+    specularMap.Bind(1);
+    //emissionMap.Bind(2);
 
     CubeVAO->Bind();
-    glDrawArrays(GL_TRIANGLES,0,36);
+    
+    for(int i=0;i<10;++i){
+        model=glm::mat4(1.f);
+        model=glm::translate(model,cubePositions[i]);
+        float angle=20.f*i;
+        model=glm::rotate(model,glm::radians(angle),glm::vec3(1.f,.3f,.5f));
+        LightingShader.SetMat4("model",model);
+        LightingShader.SetMat4("transInvModel",glm::transpose(glm::inverse(model)));
+        glDrawArrays(GL_TRIANGLES,0,36);
+    }
 
-    LightCubeShader.Use();
+
+    /*LightCubeShader.Bind();
     
     model=glm::mat4(1.f);
     model=glm::translate(model,lightPos);
@@ -116,7 +123,7 @@ void render(){
     LightCubeShader.SetMat4("projection",camera->GetProjMatrix());
 
     LightCubeVAO->Bind();
-    glDrawArrays(GL_TRIANGLES,0,36);
+    glDrawArrays(GL_TRIANGLES,0,36);*/
 }
 void update(){
     camera->Update();
@@ -125,7 +132,7 @@ void init(){
     //启用深度测试
     glEnable(GL_DEPTH_TEST);
 
-    LightingShader=Shader("../../../../shaders/lighting_map.vs","../../../../shaders/lighting_map.fs");
+    LightingShader=Shader("../../../../shaders/light.vs","../../../../shaders/light.fs");
     LightCubeShader=Shader("../../../../shaders/light_cube.vs","../../../../shaders/light_cube.fs");
 
     VBO=std::make_unique<Engine::VertexBuffer<float>>(vertices,sizeof(vertices)/sizeof(float));
@@ -140,93 +147,37 @@ void init(){
     LightCubeVAO->Bind();
     LightCubeVAO->BindAttribute(0,3,Engine::Render::DataType::FLOAT,false,8*sizeof(float),(void*)0);
 
-    glGenTextures(1,&diffuseMap);
-    int width,height,nrChannels;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* data=stbi_load("../../../../assets/container2.png",&width,&height,&nrChannels,0);
-    if(data){
-        GLenum format;
-        if(nrChannels==1){
-            format=GL_RED;
-        }else if(nrChannels==3){
-            format=GL_RGB;
-        }else if(nrChannels==4){
-            format=GL_RGBA;
-        }
-        glBindTexture(GL_TEXTURE_2D,diffuseMap);
-        glTexImage2D(GL_TEXTURE_2D,0,format,width,height,0,format,GL_UNSIGNED_BYTE,data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    }
-    stbi_image_free(data);
+    diffuseMap.LoadTexture("../../../../assets/container2.png");
+    specularMap.LoadTexture("../../../../assets/container2_specular.png");
+    emissionMap.LoadTexture("../../../../assets/matrix.jpg");
 
-    glGenTextures(1,&specularMap);
-    //data=stbi_load("../../../../assets/container2_specular.png",&width,&height,&nrChannels,0);
-    data=stbi_load("../../../../assets/lighting_maps_specular_color.png",&width,&height,&nrChannels,0);
-    if(data){
-        GLenum format;
-        if(nrChannels==1){
-            format=GL_RED;
-        }else if(nrChannels==3){
-            format=GL_RGB;
-        }else if(nrChannels==4){
-            format=GL_RGBA;
-        }
-        glBindTexture(GL_TEXTURE_2D,specularMap);
-        glTexImage2D(GL_TEXTURE_2D,0,format,width,height,0,format,GL_UNSIGNED_BYTE,data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    }
-    stbi_image_free(data);
-
-    glGenTextures(1,&emissionMap);
-    data=stbi_load("../../../../assets/matrix.jpg",&width,&height,&nrChannels,0);
-    if(data){
-        GLenum format;
-        if(nrChannels==1){
-            format=GL_RED;
-        }else if(nrChannels==3){
-            format=GL_RGB;
-        }else if(nrChannels==4){
-            format=GL_RGBA;
-        }
-        glBindTexture(GL_TEXTURE_2D,emissionMap);
-        glTexImage2D(GL_TEXTURE_2D,0,format,width,height,0,format,GL_UNSIGNED_BYTE,data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    }
-    stbi_image_free(data);
-
-    LightingShader.Use();
+    LightingShader.Bind();
     LightingShader.SetInt("material.diffuse",0);
     LightingShader.SetInt("material.specular",1);
     LightingShader.SetInt("material.emission",2);
-
+    LightingShader.Unbind();
     VBO->Unbind();
     LightCubeVAO->Unbind();
 
     camera=new Engine::Camera(45.f,800.f/600.f,.1f,1000.f);
-    camera->SetPostion(glm::vec3(0.f,0.f,3.f));
+    camera->SetPostion(glm::vec3(0.f,0.f,2.f));
+
+    transform.SetWorldRotation(glm::angleAxis(glm::radians(180.f),glm::vec3(0.f,1.f,0.f)));
+    //light=new Engine::Light(transform,Engine::LightType::Directional);
+    //light=new Engine::Light(transform,Engine::LightType::Point);
+    light=new Engine::Light(transform,Engine::LightType::Spot);
+    light->m_AttCoeff=glm::vec3(1.f,0.09f,0.032f);
+    //light->m_AttCoeff=glm::vec3(1.f,0.022f,0.0019f);
+    light->m_Cutoff=12.5f;
+    light->m_OuterCutoff=17.5f;
+    glm::mat4 data=light->GenerateDataMatrix();
 }
 
 namespace Engine::inline Editor{
     export class Application{
     public:
-        Application(){
-
-        }
-        ~Application(){
-
-        }
+        Application()=default;
+        ~Application()=default;
         void Run(){
             init();
             while(IsRunning()){

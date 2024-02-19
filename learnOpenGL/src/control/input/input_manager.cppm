@@ -20,11 +20,6 @@ namespace Engine::inline Input{
         glm::vec2 GetMousePosition() const;
         void ClearStates();
     private:
-        void OnKeyPressed(Key key);
-        void OnKeyReleased(Key key);
-        void OnMouseButtonPressed(MouseButton button);
-        void OnMouseButtonReleased(MouseButton button);
-    private:
         WindowManager& m_WindowManager;
         ListenerID m_KeyPressedListener;
         ListenerID m_KeyReleasedListener;

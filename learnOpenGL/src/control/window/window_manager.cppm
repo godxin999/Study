@@ -88,11 +88,6 @@ namespace Engine::inline Window{
         void BindIconifyCallback()const;
         void BindFocusCallback()const;
         void BindCloseCallback()const;
-        //event callback
-        void OnResize(uint16_t width,uint16_t height);
-        void OnFrameBufferResize(uint16_t width,uint16_t height);
-        void OnMove(int16_t x,int16_t y);
-        void OnClose();
 
         void UpdateSizeLimit()const;
 
