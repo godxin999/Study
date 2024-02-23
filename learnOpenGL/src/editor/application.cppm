@@ -76,6 +76,7 @@ std::unique_ptr<Engine::VertexBuffer<float>> VBO;
 std::unique_ptr<Engine::VertexArray> CubeVAO,LightCubeVAO;
 Shader LightingShader,LightCubeShader;
 Engine::Texture diffuseMap,specularMap,emissionMap;
+Engine::Texture spotLightMap;
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 Engine::Camera* camera{nullptr};
 Engine::Light* light{nullptr};
@@ -98,6 +99,7 @@ void render(){
     diffuseMap.Bind(0);
     specularMap.Bind(1);
     //emissionMap.Bind(2);
+    spotLightMap.Bind(3);
 
     CubeVAO->Bind();
     
@@ -151,11 +153,14 @@ void init(){
     specularMap.LoadTexture("../../../../assets/container2_specular.png");
     emissionMap.LoadTexture("../../../../assets/matrix.jpg");
 
+    spotLightMap.LoadTexture("../../../../assets/awesomeface.png");
     LightingShader.Bind();
     LightingShader.SetInt("material.diffuse",0);
     LightingShader.SetInt("material.specular",1);
     LightingShader.SetInt("material.emission",2);
+    LightingShader.SetInt("spotLightMap",3);
     LightingShader.Unbind();
+    
     VBO->Unbind();
     LightCubeVAO->Unbind();
 
@@ -168,8 +173,8 @@ void init(){
     light=new Engine::Light(transform,Engine::LightType::Spot);
     light->m_AttCoeff=glm::vec3(1.f,0.09f,0.032f);
     //light->m_AttCoeff=glm::vec3(1.f,0.022f,0.0019f);
-    light->m_Cutoff=12.5f;
-    light->m_OuterCutoff=17.5f;
+    light->m_Cutoff=10.f;
+    light->m_OuterCutoff=15.f;
     glm::mat4 data=light->GenerateDataMatrix();
 }
 

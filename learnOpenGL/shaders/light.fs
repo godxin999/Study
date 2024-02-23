@@ -7,13 +7,15 @@ struct Material{
     float shininess;
 };
 in vec3 Normal;
-in vec3 FragPos;
+in vec3 FragWorldPos;
+in vec3 FragViewPos;
 in vec2 TexCoords;
 out vec4 FragColor;
 
 uniform vec3 viewPos;
 uniform Material material;
 uniform mat4 light;
+uniform sampler2D spotLightMap;
 
 uniform float matrixLight;
 uniform float matrixMove;
@@ -39,14 +41,14 @@ float CalculateLuminosity(mat4 LightData){
     const float linear=LightData[3].y;
     const float quadratic=LightData[3].z;
     const float intensity=LightData[3][3];
-    const float distance=length(lightPos-FragPos);
+    const float distance=length(lightPos-FragWorldPos);
     return intensity/(constant+linear*distance+quadratic*(distance*distance));
 }
 
 vec3 CalculatePointLight(mat4 LightData){
     const vec3 lightPos=LightData[0].xyz;
     const vec3 lightColor=LightData[2].rgb;
-    const vec3 lightDir=normalize(lightPos-FragPos);
+    const vec3 lightDir=normalize(lightPos-FragWorldPos);
     const float luminosity=CalculateLuminosity(LightData);
     return BlinnPhong(lightDir,lightColor,luminosity);
 }
@@ -62,7 +64,7 @@ vec3 CalculateSpotLight(mat4 LightData){
     const vec3 lightPos=LightData[0].xyz;
     const vec3 SpotDir=normalize(-LightData[1].xyz);
     const vec3 lightColor=LightData[2].rgb;
-    const vec3 lightDir=normalize(lightPos-FragPos);
+    const vec3 lightDir=normalize(lightPos-FragWorldPos);
     const float luminosity=CalculateLuminosity(LightData);
 
     const float cutoff=cos(radians(LightData[1][3]));
@@ -78,9 +80,10 @@ vec3 CalculateSpotLight(mat4 LightData){
 void main(){
     g_Normal=normalize(Normal);
     g_TexCoords=TexCoords;
-    g_ViewDir=normalize(viewPos-FragPos);
+    g_ViewDir=normalize(viewPos-FragWorldPos);
     g_DiffuseTexel=texture(material.diffuse,TexCoords);
     g_SpecularTexel=texture(material.specular,TexCoords);
+    const vec4 g_SpotLightTexel=texture(spotLightMap,TexCoords);
     switch(int(light[0][3])){
         case 0:
             FragColor=vec4(CalculateDirectionalLight(light),1.0);
@@ -89,6 +92,7 @@ void main(){
             FragColor=vec4(CalculatePointLight(light),1.0);
             break;
         case 2:
+            g_DiffuseTexel+=g_SpotLightTexel;
             FragColor=vec4(CalculateSpotLight(light),1.0);
             break;
     }
