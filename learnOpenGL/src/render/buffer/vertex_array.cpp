@@ -17,7 +17,7 @@ namespace Engine::inline Render{
     void VertexArray::Unbind() const{
         glBindVertexArray(0);
     }
-    void VertexArray::BindAttribute(uint32_t index, int32_t size, DataType type, bool normalized, uint64_t stride, const void* pointer){
+    void VertexArray::BindAttribute(uint32_t index, size_t size, DataType type, bool normalized, uint64_t stride, const void* pointer){
         glVertexAttribPointer(index, size, static_cast<GLenum>(type), normalized, stride, pointer);
         glEnableVertexAttribArray(index);
     }

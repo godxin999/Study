@@ -8,7 +8,7 @@ namespace Engine::inline Core{
     public:
         Event<> TransformChangedEvent;
         Event<> TransformDestroyedEvent;
-
+        Transform()=default;
         Transform(const glm::vec3& localPostion, const glm::quat& localRotation, const glm::vec3& localScale);
         ~Transform();
 

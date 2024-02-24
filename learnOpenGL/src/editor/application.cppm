@@ -2,6 +2,7 @@ module;
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 export module application;
+import service_locator;
 import stl;
 import context;
 import window_manager;
@@ -71,38 +72,27 @@ glm::vec3 cubePositions[] = {
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-//unsigned CubeVAO,LightCubeVAO,VBO;
+
 std::unique_ptr<Engine::VertexBuffer<float>> VBO;
 std::unique_ptr<Engine::VertexArray> CubeVAO,LightCubeVAO;
 Shader LightingShader,LightCubeShader;
 Engine::Texture diffuseMap,specularMap,emissionMap;
-Engine::Texture spotLightMap;
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 Engine::Camera* camera{nullptr};
 Engine::Light* light{nullptr};
 Engine::Transform transform(glm::vec3(0.f,0.f,2.0f),glm::quat(),glm::vec3(1.f));
 
 void render(){
+    auto& context=Engine::ServiceLocator::Get<Engine::Editor::Context>();
+    context.m_UBO->SetSubData(camera->GetViewMatrix(),0);
+    context.m_UBO->SetSubData(camera->GetProjMatrix(),sizeof(glm::mat4));
+    context.m_UBO->SetSubData(camera->GetPosition(),sizeof(glm::mat4)*2);
+    context.m_UBO->Bind();
     LightingShader.Bind();
-    LightingShader.SetMat4("light",light->GenerateDataMatrix());
-    LightingShader.SetFloat("matrixLight",(1.f+sin(glfwGetTime()))/2.f+.5f);
-    LightingShader.SetFloat("matrixMove",glfwGetTime());
-    LightingShader.SetVec3("viewPos",camera->GetPosition());    
-    LightingShader.SetFloat("material.shininess",64.f);
-
+    context.m_LightSSBO->Bind(0);
     glm::mat4 model=glm::mat4(1.f);
-    //LightingShader.SetMat4("model",model);
-    LightingShader.SetMat4("view",camera->GetViewMatrix());
-    LightingShader.SetMat4("projection",camera->GetProjMatrix());
-    //LightingShader.SetMat4("transInvModel",glm::transpose(glm::inverse(model)));
-
     diffuseMap.Bind(0);
     specularMap.Bind(1);
-    //emissionMap.Bind(2);
-    spotLightMap.Bind(3);
-
     CubeVAO->Bind();
-    
     for(int i=0;i<10;++i){
         model=glm::mat4(1.f);
         model=glm::translate(model,cubePositions[i]);
@@ -112,8 +102,6 @@ void render(){
         LightingShader.SetMat4("transInvModel",glm::transpose(glm::inverse(model)));
         glDrawArrays(GL_TRIANGLES,0,36);
     }
-
-
     /*LightCubeShader.Bind();
     
     model=glm::mat4(1.f);
@@ -152,13 +140,10 @@ void init(){
     diffuseMap.LoadTexture("../../../../assets/container2.png");
     specularMap.LoadTexture("../../../../assets/container2_specular.png");
     emissionMap.LoadTexture("../../../../assets/matrix.jpg");
-
-    spotLightMap.LoadTexture("../../../../assets/awesomeface.png");
     LightingShader.Bind();
-    LightingShader.SetInt("material.diffuse",0);
-    LightingShader.SetInt("material.specular",1);
-    LightingShader.SetInt("material.emission",2);
-    LightingShader.SetInt("spotLightMap",3);
+    LightingShader.SetInt("u_DiffuseMap",0);
+    LightingShader.SetInt("u_SpecularMap",1);
+    //LightingShader.SetInt("u_Emission",2);
     LightingShader.Unbind();
     
     VBO->Unbind();
@@ -173,9 +158,8 @@ void init(){
     light=new Engine::Light(transform,Engine::LightType::Spot);
     light->m_AttCoeff=glm::vec3(1.f,0.09f,0.032f);
     //light->m_AttCoeff=glm::vec3(1.f,0.022f,0.0019f);
-    light->m_Cutoff=10.f;
-    light->m_OuterCutoff=15.f;
-    glm::mat4 data=light->GenerateDataMatrix();
+    light->m_Cutoff=15.f;
+    light->m_OuterCutoff=22.5f;
 }
 
 namespace Engine::inline Editor{

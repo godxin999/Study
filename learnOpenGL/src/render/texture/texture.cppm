@@ -9,7 +9,6 @@ namespace Engine::inline Render{
         void Bind(uint32_t slot) const;
         void Unbind() const;
         ~Texture()=default;
-    private:
-        uint32_t m_TextureId{0};
+        uint32_t m_TextureID{0};
     };
 }

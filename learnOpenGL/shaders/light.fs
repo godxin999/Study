@@ -1,31 +1,40 @@
 #version 430 core
 
-struct Material{
-    sampler2D diffuse;
-    sampler2D specular;
-    sampler2D emission;
-    float shininess;
+layout (std140) uniform UBO
+{
+    //mat4 model;
+    mat4 view;
+    mat4 projection;
+    //mat4 transInvModel;
+    vec3 viewPos;
 };
-in vec3 Normal;
-in vec3 FragWorldPos;
-in vec3 FragViewPos;
-in vec2 TexCoords;
+
+in VS_OUT
+{
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+} fs_in;
+
+layout (std430, binding = 0) buffer LightSSBO
+{
+    mat4 lights[];
+}
+
+uniform sampler2D u_DiffuseMap;
+uniform sampler2D u_SpecularMap;
+uniform float u_Shininess=100.0;
+uniform vec4 u_Diffuse=vec4(1.0,1.0,1.0,1.0);
+uniform vec3 u_Specular=vec3(1.0,1.0,1.0);
+
+
 out vec4 FragColor;
-
-uniform vec3 viewPos;
-uniform Material material;
-uniform mat4 light;
-uniform sampler2D spotLightMap;
-
-uniform float matrixLight;
-uniform float matrixMove;
 
 vec3 g_Normal;
 vec2 g_TexCoords;
 vec3 g_ViewDir;
 vec4 g_DiffuseTexel;
 vec4 g_SpecularTexel;
-
 
 vec3 BlinnPhong(vec3 lightDir,vec3 lightColor,float luminosity){
     const vec3 halfwayDir=normalize(lightDir+g_ViewDir);
@@ -75,25 +84,30 @@ vec3 CalculateSpotLight(mat4 LightData){
     const float spotIntensity=clamp((theta-outerCutoff)/epsilon,0.0,1.0);
 
     return BlinnPhong(lightDir,lightColor,luminosity*spotIntensity);
+    //return BlinnPhong(lightDir,g_SpotLightTexel.rgb,luminosity*spotIntensity);
 }
 
 void main(){
-    g_Normal=normalize(Normal);
-    g_TexCoords=TexCoords;
-    g_ViewDir=normalize(viewPos-FragWorldPos);
-    g_DiffuseTexel=texture(material.diffuse,TexCoords);
-    g_SpecularTexel=texture(material.specular,TexCoords);
-    const vec4 g_SpotLightTexel=texture(spotLightMap,TexCoords);
-    switch(int(light[0][3])){
+    g_TexCoords=fs_in.TexCoords;
+    g_Normal=fs_in.Normal;
+    g_ViewDir=normalize(fs_in.viewPos-fs_in.FragPos);
+    g_DiffuseTexel=texture(u_DiffuseMap,fs_in.TexCoords)*u_Diffuse;
+    g_SpecularTexel=texture(u_SpecularMap,fs_in.TexCoords)*vec4(u_Specular,1.0);
+
+    vec3 lightSum=vec3(0.0);
+    for(int i=0;i<lights.length();++i){
+        switch(int(lights[i][0][3])){
         case 0:
-            FragColor=vec4(CalculateDirectionalLight(light),1.0);
+            lightSum+=CalculateDirectionalLight(light[i]);
             break;
         case 1:
-            FragColor=vec4(CalculatePointLight(light),1.0);
+            lightSum+=CalculatePointLight(light[i]);
             break;
         case 2:
-            g_DiffuseTexel+=g_SpotLightTexel;
-            FragColor=vec4(CalculateSpotLight(light),1.0);
+            lightSum+=CalculateSpotLight(light[i]);
             break;
+        }
     }
+    FragColor=vec4(lightSum,g_DiffuseTexel.a);
+    //FragColor=vec4(1.0);
 }

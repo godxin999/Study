@@ -5,7 +5,7 @@ import stl;
 import transform;
 
 namespace Engine::inline Render{
-    export enum class LightType: int32_t{
+    export enum class LightType: uint32_t{
         Directional,
         Point,
         Spot,
