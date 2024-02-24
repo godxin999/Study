@@ -27,5 +27,5 @@ void main(){
     vs_out.FragPos=vec3(model*vec4(aPos,1.0));
     vs_out.Normal=normalize(mat3(transInvModel)*aNormal);
     vs_out.TexCoords=aTexCoords;
-    gl_Position=projection*view*model*vec4(aPos,1.0);
+    gl_Position=projection*view*vec4(vs_out.FragPos,1.0);
 }

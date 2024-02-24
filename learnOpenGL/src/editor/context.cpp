@@ -43,7 +43,9 @@ namespace Engine::inline Editor{
         std::vector<glm::mat4> lightData;
         lightData.push_back(directionalLight.GenerateDataMatrix());
         m_LightSSBO->SendBlocks(lightData.data(),lightData.size()*sizeof(glm::mat4));
-
+        
+        
+        ServiceLocator::Register<Context>(*this);
         m_LogManager->Log(LogLevel::info,"Context initialized");
     }
     Context::~Context(){

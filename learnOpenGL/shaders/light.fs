@@ -19,13 +19,13 @@ in VS_OUT
 layout (std430, binding = 0) buffer LightSSBO
 {
     mat4 lights[];
-}
+};
 
-uniform sampler2D u_DiffuseMap;
-uniform sampler2D u_SpecularMap;
 uniform float u_Shininess=100.0;
 uniform vec4 u_Diffuse=vec4(1.0,1.0,1.0,1.0);
 uniform vec3 u_Specular=vec3(1.0,1.0,1.0);
+uniform sampler2D u_DiffuseMap;
+uniform sampler2D u_SpecularMap;
 
 
 out vec4 FragColor;
@@ -39,7 +39,7 @@ vec4 g_SpecularTexel;
 vec3 BlinnPhong(vec3 lightDir,vec3 lightColor,float luminosity){
     const vec3 halfwayDir=normalize(lightDir+g_ViewDir);
     const float diffuseCoefficient=max(dot(g_Normal,lightDir),0.0);
-    const float specularCoefficient=pow(max(dot(g_Normal,halfwayDir),0.0),material.shininess);
+    const float specularCoefficient=pow(max(dot(g_Normal,halfwayDir),0.0),u_Shininess);
 
     return luminosity*lightColor*(g_DiffuseTexel.rgb*diffuseCoefficient+g_SpecularTexel.rgb*specularCoefficient);
 }
@@ -50,14 +50,14 @@ float CalculateLuminosity(mat4 LightData){
     const float linear=LightData[3].y;
     const float quadratic=LightData[3].z;
     const float intensity=LightData[3][3];
-    const float distance=length(lightPos-FragWorldPos);
+    const float distance=length(lightPos-fs_in.FragPos);
     return intensity/(constant+linear*distance+quadratic*(distance*distance));
 }
 
 vec3 CalculatePointLight(mat4 LightData){
     const vec3 lightPos=LightData[0].xyz;
     const vec3 lightColor=LightData[2].rgb;
-    const vec3 lightDir=normalize(lightPos-FragWorldPos);
+    const vec3 lightDir=normalize(lightPos-fs_in.FragPos);
     const float luminosity=CalculateLuminosity(LightData);
     return BlinnPhong(lightDir,lightColor,luminosity);
 }
@@ -73,7 +73,7 @@ vec3 CalculateSpotLight(mat4 LightData){
     const vec3 lightPos=LightData[0].xyz;
     const vec3 SpotDir=normalize(-LightData[1].xyz);
     const vec3 lightColor=LightData[2].rgb;
-    const vec3 lightDir=normalize(lightPos-FragWorldPos);
+    const vec3 lightDir=normalize(lightPos-fs_in.FragPos);
     const float luminosity=CalculateLuminosity(LightData);
 
     const float cutoff=cos(radians(LightData[1][3]));
@@ -90,7 +90,7 @@ vec3 CalculateSpotLight(mat4 LightData){
 void main(){
     g_TexCoords=fs_in.TexCoords;
     g_Normal=fs_in.Normal;
-    g_ViewDir=normalize(fs_in.viewPos-fs_in.FragPos);
+    g_ViewDir=normalize(viewPos-fs_in.FragPos);
     g_DiffuseTexel=texture(u_DiffuseMap,fs_in.TexCoords)*u_Diffuse;
     g_SpecularTexel=texture(u_SpecularMap,fs_in.TexCoords)*vec4(u_Specular,1.0);
 
@@ -98,13 +98,13 @@ void main(){
     for(int i=0;i<lights.length();++i){
         switch(int(lights[i][0][3])){
         case 0:
-            lightSum+=CalculateDirectionalLight(light[i]);
+            lightSum+=CalculateDirectionalLight(lights[i]);
             break;
         case 1:
-            lightSum+=CalculatePointLight(light[i]);
+            lightSum+=CalculatePointLight(lights[i]);
             break;
         case 2:
-            lightSum+=CalculateSpotLight(light[i]);
+            lightSum+=CalculateSpotLight(lights[i]);
             break;
         }
     }

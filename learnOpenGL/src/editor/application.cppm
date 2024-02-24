@@ -82,7 +82,7 @@ Engine::Light* light{nullptr};
 Engine::Transform transform(glm::vec3(0.f,0.f,2.0f),glm::quat(),glm::vec3(1.f));
 
 void render(){
-    auto& context=Engine::ServiceLocator::Get<Engine::Editor::Context>();
+    auto& context=Engine::ServiceLocator::Get<Engine::Context>();
     context.m_UBO->SetSubData(camera->GetViewMatrix(),0);
     context.m_UBO->SetSubData(camera->GetProjMatrix(),sizeof(glm::mat4));
     context.m_UBO->SetSubData(camera->GetPosition(),sizeof(glm::mat4)*2);
@@ -144,13 +144,16 @@ void init(){
     LightingShader.SetInt("u_DiffuseMap",0);
     LightingShader.SetInt("u_SpecularMap",1);
     //LightingShader.SetInt("u_Emission",2);
+
+    Engine::UniformBuffer::BindBlockToShader(LightingShader,Engine::UniformBuffer::GetBlockLocation(LightingShader,"UBO"),0);
+
     LightingShader.Unbind();
     
     VBO->Unbind();
     LightCubeVAO->Unbind();
 
     camera=new Engine::Camera(45.f,800.f/600.f,.1f,1000.f);
-    camera->SetPostion(glm::vec3(0.f,0.f,2.f));
+    camera->SetPostion(glm::vec3(0.f,0.f,10.f));
 
     transform.SetWorldRotation(glm::angleAxis(glm::radians(180.f),glm::vec3(0.f,1.f,0.f)));
     //light=new Engine::Light(transform,Engine::LightType::Directional);
