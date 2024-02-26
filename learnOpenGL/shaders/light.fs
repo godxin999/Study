@@ -84,7 +84,14 @@ vec3 CalculateSpotLight(mat4 LightData){
     const float spotIntensity=clamp((theta-outerCutoff)/epsilon,0.0,1.0);
 
     return BlinnPhong(lightDir,lightColor,luminosity*spotIntensity);
-    //return BlinnPhong(lightDir,g_SpotLightTexel.rgb,luminosity*spotIntensity);
+}
+
+vec3 CalculateAmbientSphereLight(mat4 LightData){
+    const vec3 lightPos=LightData[0].xyz;
+    const vec3 lightColor=LightData[2].rgb;
+    const float intensity=LightData[3][3];
+    const float radius=LightData[3].x;
+    return distance(lightPos,fs_in.FragPos)<=radius?g_DiffuseTexel.rgb*lightColor*intensity:vec3(0.0);
 }
 
 void main(){
@@ -105,6 +112,9 @@ void main(){
             break;
         case 2:
             lightSum+=CalculateSpotLight(lights[i]);
+            break;
+        case 3:
+            lightSum+=CalculateAmbientSphereLight(lights[i]);
             break;
         }
     }

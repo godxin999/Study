@@ -1,6 +1,6 @@
 module;
 #include <glad/glad.h>
-module buffer.index_buffer;
+module index_buffer;
 
 import stl;
 

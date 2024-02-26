@@ -1,4 +1,4 @@
-export module buffer.index_buffer;
+export module index_buffer;
 
 import stl;
 

@@ -155,14 +155,6 @@ void init(){
     camera=new Engine::Camera(45.f,800.f/600.f,.1f,1000.f);
     camera->SetPostion(glm::vec3(0.f,0.f,10.f));
 
-    transform.SetWorldRotation(glm::angleAxis(glm::radians(180.f),glm::vec3(0.f,1.f,0.f)));
-    //light=new Engine::Light(transform,Engine::LightType::Directional);
-    //light=new Engine::Light(transform,Engine::LightType::Point);
-    light=new Engine::Light(transform,Engine::LightType::Spot);
-    light->m_AttCoeff=glm::vec3(1.f,0.09f,0.032f);
-    //light->m_AttCoeff=glm::vec3(1.f,0.022f,0.0019f);
-    light->m_Cutoff=15.f;
-    light->m_OuterCutoff=22.5f;
 }
 
 namespace Engine::inline Editor{

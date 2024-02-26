@@ -1,6 +1,6 @@
 module;
 #include <glad/glad.h>
-module buffer.vertex_array;
+module vertex_array;
 
 import stl;
 

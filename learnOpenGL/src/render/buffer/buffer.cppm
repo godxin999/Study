@@ -1,6 +1,6 @@
 export module buffer;
-export import buffer.vertex_buffer;
-export import buffer.index_buffer;
-export import buffer.vertex_array;
-export import buffer.uniform_buffer;
-export import buffer.shader_storage_buffer;
+export import vertex_buffer;
+export import index_buffer;
+export import vertex_array;
+export import uniform_buffer;
+export import shader_storage_buffer;

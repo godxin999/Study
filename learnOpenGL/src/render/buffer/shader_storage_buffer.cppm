@@ -1,6 +1,6 @@
 module;
 #include <glad/glad.h>
-export module buffer.shader_storage_buffer;
+export module shader_storage_buffer;
 
 import stl;
 import gl_enum;

@@ -25,7 +25,7 @@ namespace Engine::inline Render{
         result[1]=glm::vec4(forward,m_Cutoff);
         result[2]=glm::vec4(m_Color,m_OuterCutoff);
         result[3]=glm::vec4(m_AttCoeff,m_Intensity);
-        return result;  
+        return result;
     }
     float Light::GetEffectRange()const{
         switch(static_cast<LightType>(static_cast<int>(m_Type))){
@@ -33,6 +33,8 @@ namespace Engine::inline Render{
                 [[fallthrough]];
             case LightType::Point:
                 return CalculatePointLightRange(m_Intensity,m_AttCoeff);
+            case LightType::AmbientSphere:
+                return m_AttCoeff.x;
             default:
                 return std::numeric_limits<float>::infinity();
         }

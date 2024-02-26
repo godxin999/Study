@@ -1,4 +1,4 @@
-export module buffer.vertex_array;
+export module vertex_array;
 
 import stl;
 

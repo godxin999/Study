@@ -1,4 +1,6 @@
-export module buffer.vertex_buffer;
+module;
+#include <glad/glad.h>
+export module vertex_buffer;
 
 import stl;
 
@@ -17,5 +19,31 @@ namespace Engine::inline Render{
     private:
         uint32_t m_BufferID;
     };
-    export template class VertexBuffer<float>;
+}
+
+module : private;
+
+namespace Engine::inline Render{
+    template <typename T>
+    VertexBuffer<T>::VertexBuffer(const T* data, uint32_t count){
+        glGenBuffers(1,&m_BufferID);
+        glBindBuffer(GL_ARRAY_BUFFER,m_BufferID);
+        glBufferData(GL_ARRAY_BUFFER,count * sizeof(T),data,GL_STATIC_DRAW);
+    }
+    template <typename T>
+    VertexBuffer<T>::VertexBuffer(const std::vector<T>& data):VertexBuffer(data.data(),data.size()){
+
+    }
+    template <typename T>
+    VertexBuffer<T>::~VertexBuffer(){
+        glDeleteBuffers(1,&m_BufferID);
+    }
+    template <typename T>
+    void VertexBuffer<T>::Bind() const{
+        glBindBuffer(GL_ARRAY_BUFFER,m_BufferID);
+    }
+    template <typename T>
+    void VertexBuffer<T>::Unbind() const{
+        glBindBuffer(GL_ARRAY_BUFFER,0);
+    }
 }

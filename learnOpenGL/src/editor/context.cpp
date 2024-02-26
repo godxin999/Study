@@ -38,12 +38,34 @@ namespace Engine::inline Editor{
         m_LightSSBO=std::make_unique<ShaderStorageBuffer>(AccessSpecifier::STREAM_DRAW);
 
         Transform lightTransform;
+        Transform spotLightTransform;
+        Transform pointLightTransform;
+        Transform ambientSphereLightTransform;
+        std::vector<glm::mat4> lightData;
+
         lightTransform.SetLocalRotation(glm::quat(glm::vec3(glm::radians(45.f),glm::radians(180.f),glm::radians(10.f))));
         Light directionalLight(lightTransform,LightType::Directional);
-        std::vector<glm::mat4> lightData;
         lightData.push_back(directionalLight.GenerateDataMatrix());
+
+        spotLightTransform.SetWorldRotation(glm::angleAxis(glm::radians(180.f),glm::vec3(0.f,1.f,0.f)));
+        spotLightTransform.SetWorldPosition(glm::vec3(0.f,0.f,2.0f));
+        Light spotLight(spotLightTransform,LightType::Spot);
+        spotLight.m_AttCoeff=glm::vec3(1.f,0.09f,0.032f);
+        spotLight.m_Cutoff=15.f;
+        spotLight.m_OuterCutoff=22.5f;
+        lightData.push_back(spotLight.GenerateDataMatrix());
+
+        pointLightTransform.SetWorldPosition(glm::vec3(5.f,0.f,-5.0f));
+        Light pointLight(pointLightTransform,LightType::Point);
+        lightData.push_back(pointLight.GenerateDataMatrix());
+
+        ambientSphereLightTransform.SetWorldPosition(glm::vec3(0.f,0.f,0.f));
+        Light ambientSphereLight(ambientSphereLightTransform,LightType::AmbientSphere);
+        ambientSphereLight.m_AttCoeff=glm::vec3(1000.f);
+        ambientSphereLight.m_Color=glm::vec3(0.5f);
+        lightData.push_back(ambientSphereLight.GenerateDataMatrix());
+
         m_LightSSBO->SendBlocks(lightData.data(),lightData.size()*sizeof(glm::mat4));
-        
         
         ServiceLocator::Register<Context>(*this);
         m_LogManager->Log(LogLevel::info,"Context initialized");
