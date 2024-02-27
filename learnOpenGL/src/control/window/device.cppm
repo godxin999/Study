@@ -1,6 +1,6 @@
 module;
 #include <GLFW/glfw3.h>
-export module window_manager.device;
+export module device;
 import input_manager.input_state;
 import event;
 import stl;

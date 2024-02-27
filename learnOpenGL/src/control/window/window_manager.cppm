@@ -1,13 +1,13 @@
 module;
 #include <GLFW/glfw3.h>
 export module window_manager;
-export import window_manager.device;
 
 import input_manager.input_state;
 import event;
 import stl;
 
 namespace Engine::inline Window{
+    export class Device;
     export class WindowManager{
     public:
         //Input Event

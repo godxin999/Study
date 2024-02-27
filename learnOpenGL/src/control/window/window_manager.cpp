@@ -10,6 +10,7 @@ import event;
 import stl;
 import log_manager;
 import service_locator;
+import device;
 
 namespace Engine::inline Window{
     WindowManager::WindowManager(const Device& device):m_Device(device){

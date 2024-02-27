@@ -7,7 +7,7 @@ import imgui;
 
 namespace Engine::inline UI{
     Widget::Widget(){
-        m_WidgetID=m_WidgetCounter++;
+        m_WidgetID=WidgetCounter++;
     }
     void Widget::Draw(){
         if(m_IsEnabled){
@@ -21,11 +21,5 @@ namespace Engine::inline UI{
                 ImGui::SameLine();
             }
         }
-    }
-    WidgetContainer* Widget::GetParent() const{
-        return m_Parent;
-    }
-    void Widget::SetParent(WidgetContainer* parent){
-        m_Parent=parent;
     }
 }

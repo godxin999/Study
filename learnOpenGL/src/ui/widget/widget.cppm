@@ -19,8 +19,12 @@ namespace Engine::inline UI{
         bool IsDestroyed() const{
             return m_IsDestroyed;
         }
-        void SetParent(WidgetContainer* parent);
-        WidgetContainer* GetParent() const;
+        WidgetContainer* GetParent() const{
+            return m_Parent;
+        }
+        void SetParent(WidgetContainer* parent){
+            m_Parent=parent;
+        }
         bool HasParent() const{
             return m_Parent;
         }
@@ -34,7 +38,7 @@ namespace Engine::inline UI{
         uint64_t m_WidgetID{0};
         bool m_IsAutoExecutePlugins{true};
     private:
-        inline static uint64_t m_WidgetCounter{0};
+        inline static uint64_t WidgetCounter{0};
         bool m_IsDestroyed{false};
     };
 }

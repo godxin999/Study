@@ -4,6 +4,7 @@ import window_manager;
 import log_manager;
 import input_manager;
 import buffer;
+import device;
 import gl_enum;
 
 namespace Engine::inline Editor{
