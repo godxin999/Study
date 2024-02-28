@@ -20,3 +20,4 @@ export import <vector>;
 export import <limits>;
 export import <cstdint>;
 export import <type_traits>;
+export import <chrono>;

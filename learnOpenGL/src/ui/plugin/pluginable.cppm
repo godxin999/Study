@@ -30,7 +30,6 @@ namespace Engine::inline UI{
         m_Plugins.push_back(plugin);
         return *plugin;
     }
-
     template <typename T>
     requires std::derived_from<T,Plugin>
     T* Pluginable::GetPlugin(){
@@ -40,5 +39,19 @@ namespace Engine::inline UI{
             }
         }
         return nullptr;
+    }
+    void Pluginable::ExecutePlugins(){
+        for(auto& plugin : m_Plugins){
+            plugin->Execute();
+        }
+    }
+    void Pluginable::RemoveAllPlugins(){
+        for(auto& plugin : m_Plugins){
+            delete plugin;
+        }
+        m_Plugins.clear();
+    }
+    Pluginable::~Pluginable(){
+        RemoveAllPlugins();
     }
 }

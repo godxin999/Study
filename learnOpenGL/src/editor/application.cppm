@@ -5,6 +5,7 @@ export module application;
 import service_locator;
 import stl;
 import context;
+import editor;
 import window_manager;
 import glm;
 import camera;
@@ -12,6 +13,7 @@ import shader;
 import buffer;
 import texture;
 import light;
+import clock;
 import transform;
 
 float vertices[] = {
@@ -157,13 +159,15 @@ void init(){
 
 }
 
-namespace Engine::inline Editor{
+namespace Engine::inline editor{
     export class Application{
     public:
-        Application()=default;
+        Application():m_Context(),m_Editor(m_Context){
+
+        }
         ~Application()=default;
         void Run(){
-            init();
+            /*init();
             while(IsRunning()){
                 update();
 
@@ -174,6 +178,13 @@ namespace Engine::inline Editor{
 
                 glfwSwapBuffers(m_Context.m_WindowManager->GetGlfwWindow());//交换颜色缓冲
                 glfwPollEvents();//检查是否触发事件并调用对应的回调函数
+            }*/
+            Clock clock;
+            while(IsRunning()){
+                m_Editor.PreUpdate();
+                m_Editor.Update(clock.GetDeltaTime());
+                m_Editor.PostUpdate();
+                clock.Update();
             }
         }
         bool IsRunning()const{
@@ -181,5 +192,6 @@ namespace Engine::inline Editor{
         }
     private:
         Context m_Context;
+        Editor m_Editor;
     };
 };

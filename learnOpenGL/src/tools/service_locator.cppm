@@ -2,7 +2,7 @@ export module service_locator;
 
 import stl;
 
-namespace Engine::inline Core{
+namespace Engine::inline Tools{
     export class ServiceLocator{
     public:
         template<typename T>

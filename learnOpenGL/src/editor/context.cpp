@@ -9,8 +9,9 @@ import transform;
 import light;
 import glm;
 import buffer;
+import gl_enum;
 
-namespace Engine::inline Editor{
+namespace Engine::inline editor{
     Context::Context(){
         m_LogManager=std::make_unique<LogManager>();
         ServiceLocator::Register<LogManager>(*m_LogManager);
@@ -27,6 +28,11 @@ namespace Engine::inline Editor{
         m_WindowManager->SetPosition((monitorWidth-windowWidth)/2,(monitorHeight-windowHeight)/2);
 
         m_Device->SetVsync(true);
+
+        m_UIManager=std::make_unique<UIManager>(m_WindowManager->GetGlfwWindow());
+        m_UIManager->SetEditorLayoutAutoSaveInterval(60.f);
+        m_UIManager->EnableEditorLayoutSave(true);
+        m_UIManager->EnableDocking(true);
 
         ServiceLocator::Register<WindowManager>(*m_WindowManager);
         ServiceLocator::Register<InputManager>(*m_InputManager);
