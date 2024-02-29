@@ -9,13 +9,13 @@ namespace Engine::inline UI{
         Panel();
         ~Panel()=default;
         void Draw() override;
-        uint64_t GetPanelID() const;
+        const std::string& GetPanelID() const;
     protected:
         virtual void DrawImpl() = 0;
     public:
         bool IsEnabled{true};
     protected:
-        uint64_t m_PanelID{};
+        std::string m_PanelID{};
     private:
         inline static uint64_t PanelCounter{};
     };
@@ -25,14 +25,14 @@ module : private;
 
 namespace Engine::inline UI{
     Panel::Panel(){
-        m_PanelID=PanelCounter++;
+        m_PanelID=std::to_string(PanelCounter++);
     }
     void Panel::Draw(){
         if(IsEnabled){
             DrawImpl();
         }
     }
-    uint64_t Panel::GetPanelID() const{
+    const std::string& Panel::GetPanelID() const{
         return m_PanelID;
     }
 }

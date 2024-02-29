@@ -40,7 +40,7 @@ namespace Engine::inline UI{
         }
     }
     void PanelWindow::Focus(){
-        ImGui::SetWindowFocus((name+std::to_string(m_PanelID)).c_str());
+        ImGui::SetWindowFocus((name+m_PanelID).c_str());
     }
     void PanelWindow::SetOpenState(bool isOpened){
         if(isOpened!=m_IsOpened){
@@ -63,7 +63,7 @@ namespace Engine::inline UI{
         return m_IsFocused;
     }
     bool PanelWindow::IsAppearing() const{
-        if(auto window=ImGui::FindWindowByName((name+std::to_string(m_PanelID)).c_str())){
+        if(auto window=ImGui::FindWindowByName((name+m_PanelID).c_str())){
             return window->Appearing;
         }
         else{
@@ -100,7 +100,7 @@ namespace Engine::inline UI{
 
             ImGui::SetNextWindowSizeConstraints(Converter::ToImVec2(minSize),Converter::ToImVec2(maxSize));
 
-            if(ImGui::Begin((name+std::to_string(m_PanelID)).c_str(),(closable?&m_IsOpened:nullptr),windowFlags)){
+            if(ImGui::Begin((name+m_PanelID).c_str(),(closable?&m_IsOpened:nullptr),windowFlags)){
                 m_IsHovered=ImGui::IsWindowHovered();
                 m_IsFocused=ImGui::IsWindowFocused();
 
@@ -109,9 +109,10 @@ namespace Engine::inline UI{
                 m_ScrolledToTop=(scrollY==ImGui::GetScrollMaxY());
                 m_ScrolledToBottom=(scrollY==0.f);
 
+                /*
                 if(!m_IsOpened){
                     closeEvent.Invoke();
-                }
+                }*/
 
                 Update();
 

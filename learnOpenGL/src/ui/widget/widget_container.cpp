@@ -51,13 +51,13 @@ namespace Engine::inline UI{
     void WidgetContainer::DrawWidgets(){
         CollectGarbage();
         if(m_IsReverseDraw){
-            std::ranges::for_each(m_Widgets|std::views::reverse,[](const auto& pair){
-                pair.first->Draw();
+            std::ranges::for_each(m_Widgets|std::views::reverse,&Widget::Draw,[](const auto& p){
+                return p.first;
             });
         }
         else{
-            std::ranges::for_each(m_Widgets,[](const auto& pair){
-                pair.first->Draw();
+            std::ranges::for_each(m_Widgets,&Widget::Draw,[](const auto& p){
+                return p.first;
             });
         }
     }

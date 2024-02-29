@@ -41,4 +41,10 @@ export namespace ImGui{
     using ImGui::BeginMainMenuBar;
     using ImGui::EndMainMenuBar;
     using ImGui::SetWindowFocus;
+    using ImGui::Columns;
+    using ImGui::NextColumn;
+    using ImGui::SetColumnWidth;
+    using ImGui::Dummy;
+    using ImGui::NewLine;
+    using ImGui::Spacing;
 }
