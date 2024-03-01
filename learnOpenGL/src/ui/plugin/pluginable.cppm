@@ -6,6 +6,8 @@ import stl;
 namespace Engine::inline UI{
     export class Pluginable{
     public:
+        Pluginable()=default;
+        virtual ~Pluginable();
         template <typename T,typename... Args>
         requires std::derived_from<T,Plugin>
         T& AddPlugin(Args&&... args);
@@ -14,7 +16,6 @@ namespace Engine::inline UI{
         T* GetPlugin();
         void ExecutePlugins();
         void RemoveAllPlugins();
-        ~Pluginable();
     private:
         std::vector<Plugin*> m_Plugins;
     };

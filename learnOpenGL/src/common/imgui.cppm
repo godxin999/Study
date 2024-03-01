@@ -47,4 +47,5 @@ export namespace ImGui{
     using ImGui::Dummy;
     using ImGui::NewLine;
     using ImGui::Spacing;
+    using ImGui::CollapsingHeader;
 }

@@ -25,11 +25,10 @@ namespace Engine::inline UI{
 
     }
     void Spacing::DrawImpl(){
-        for(auto i=0;i<spaces;++i){
+        for(auto i:std::views::iota(0,spaces-1)){
             ImGui::Spacing();
-            if(i+1<spaces){
-                ImGui::SameLine();
-            }
+            ImGui::SameLine();
         }
+        ImGui::Spacing();
     }
 }

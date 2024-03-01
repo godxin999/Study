@@ -1,13 +1,12 @@
 export module column;
 
-import stl;
-import widget;
-import widget_container;
+import group;
 import imgui;
+import stl;
 
 namespace Engine::inline UI{
     export template <size_t N>
-    class Column:public WidgetContainer,public Widget{
+    class Column:public Group{
     public:
         Column();
         ~Column()=default;

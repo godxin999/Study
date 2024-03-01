@@ -109,11 +109,6 @@ namespace Engine::inline UI{
                 m_ScrolledToTop=(scrollY==ImGui::GetScrollMaxY());
                 m_ScrolledToBottom=(scrollY==0.f);
 
-                /*
-                if(!m_IsOpened){
-                    closeEvent.Invoke();
-                }*/
-
                 Update();
 
                 if(m_MustScrollToTop){
@@ -127,6 +122,10 @@ namespace Engine::inline UI{
                 DrawWidgets();
             }
             ImGui::End();
+            
+            if(!m_IsOpened){
+                closeEvent.Invoke();
+            }
         }
     }
 }
