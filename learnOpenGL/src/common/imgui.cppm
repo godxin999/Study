@@ -3,13 +3,14 @@ module;
 #include <imgui_internal.h>
 export module imgui;
 
-//export ImGuiViewport;
-//export ImGuiID;
-//export ImVec2;
-//export ImGuiWindowFlags_;
-//export ImGuiStyleVar_;
-//export ImGuiDockNodeFlags_;
-//export ImFont;
+export ImGuiViewport;
+export ImGuiID;
+export ImVec2;
+export ImGuiWindowFlags_;
+export ImGuiStyleVar_;
+export ImGuiDockNodeFlags_;
+export ImFont;
+export ImGuiTreeNodeFlags_;
 
 export namespace ImGui{
     using ImGui::SameLine;
@@ -48,4 +49,13 @@ export namespace ImGui{
     using ImGui::NewLine;
     using ImGui::Spacing;
     using ImGui::CollapsingHeader;
+    using ImGui::TreeNodeEx;
+    using ImGui::SetNextItemOpen;
+    using ImGui::IsItemClicked;
+    using ImGui::GetMousePos;
+    using ImGui::GetItemRectMin;
+    using ImGui::GetTreeNodeToLabelSpacing;
+    using ImGui::IsMouseDoubleClicked;
+    using ImGui::TreePop;
+
 }

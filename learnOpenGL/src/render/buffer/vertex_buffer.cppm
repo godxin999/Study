@@ -30,18 +30,22 @@ namespace Engine::inline Render{
         glBindBuffer(GL_ARRAY_BUFFER,m_BufferID);
         glBufferData(GL_ARRAY_BUFFER,count * sizeof(T),data,GL_STATIC_DRAW);
     }
+
     template <typename T>
     VertexBuffer<T>::VertexBuffer(const std::vector<T>& data):VertexBuffer(data.data(),data.size()){
 
     }
+
     template <typename T>
     VertexBuffer<T>::~VertexBuffer(){
         glDeleteBuffers(1,&m_BufferID);
     }
+
     template <typename T>
     void VertexBuffer<T>::Bind() const{
         glBindBuffer(GL_ARRAY_BUFFER,m_BufferID);
     }
+    
     template <typename T>
     void VertexBuffer<T>::Unbind() const{
         glBindBuffer(GL_ARRAY_BUFFER,0);

@@ -32,18 +32,22 @@ namespace Engine::inline UI{
     void DataDispatcher<T>::BindData(const T& data){
         m_Data=std::addressof(data);
     }
+
     template <typename T>
     void DataDispatcher<T>::RegisterProvider(std::function<void(T)> provider){
         m_Provider=provider;
     }
+
     template <typename T>
     void DataDispatcher<T>::RegisterGatherer(std::function<T()> gatherer){
         m_Gatherer=gatherer;
     }
+
     template <typename T>
     void DataDispatcher<T>::NotifyChange(){
         m_IsValueChanged=true;
     }
+
     template <typename T>
     void DataDispatcher<T>::Provide(T data){
         if(m_IsValueChanged){
@@ -56,6 +60,7 @@ namespace Engine::inline UI{
             m_IsValueChanged=false;
         }
     }
+
     template <typename T>
     T DataDispatcher<T>::Gather(){
         if(m_Data){
@@ -65,6 +70,7 @@ namespace Engine::inline UI{
             return m_Gatherer();
         }
     }
+    
     template <typename T>
     void DataDispatcher<T>::Execute(){
 

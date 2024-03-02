@@ -10,22 +10,6 @@ namespace Engine::inline Window{
     export class Device;
     export class WindowManager{
     public:
-        //Input Event
-        Event<Key> KeyPressedEvent;
-        Event<Key> KeyReleasedEvent;
-        Event<MouseButton> MouseButtonPressedEvent;
-        Event<MouseButton> MouseButtonReleasedEvent;
-        //Window Event
-        Event<uint16_t,uint16_t> ResizeEvent;
-        Event<uint16_t,uint16_t> FrameBufferResizeEvent;
-        Event<int16_t,int16_t> MoveEvent;
-        Event<int16_t,int16_t> CursorMoveEvent;
-        Event<> MinimizeEvent;
-        Event<> MaximizeEvent;
-        Event<> GainFocusEvent;
-        Event<> LostFocusEvent;
-        Event<> CloseEvent;
-        
         WindowManager(const Device& device);
         ~WindowManager();
 
@@ -72,10 +56,8 @@ namespace Engine::inline Window{
         CursorMode GetCursorMode()const{return m_CursorMode;}
         int32_t GetRefreshRate()const{return m_RefreshRate;}
         GLFWwindow* GetGlfwWindow()const{return m_Window;}
-    public:
+
         static WindowManager* FindWindowManager(GLFWwindow* window);
-    private:
-        inline static std::unordered_map<GLFWwindow*,WindowManager*> Windows{};
     private:
         void CreateGlfwWindow();
         //bind glfw callback
@@ -88,9 +70,25 @@ namespace Engine::inline Window{
         void BindIconifyCallback()const;
         void BindFocusCallback()const;
         void BindCloseCallback()const;
-
+        
         void UpdateSizeLimit()const;
-
+    public:
+        //Input Event
+        Event<Key> KeyPressedEvent{};
+        Event<Key> KeyReleasedEvent{};
+        Event<MouseButton> MouseButtonPressedEvent{};
+        Event<MouseButton> MouseButtonReleasedEvent{};
+        //Window Event
+        Event<uint16_t,uint16_t> ResizeEvent{};
+        Event<uint16_t,uint16_t> FrameBufferResizeEvent{};
+        Event<int16_t,int16_t> MoveEvent{};
+        Event<int16_t,int16_t> CursorMoveEvent{};
+        Event<> MinimizeEvent{};
+        Event<> MaximizeEvent{};
+        Event<> GainFocusEvent{};
+        Event<> LostFocusEvent{};
+        Event<> CloseEvent{};
+    private:
         const Device& m_Device;
         GLFWwindow* m_Window{nullptr};
         std::string m_Title{"Window"};
@@ -102,5 +100,7 @@ namespace Engine::inline Window{
         int32_t m_RefreshRate{-1};
         CursorMode m_CursorMode{CursorMode::NORMAL};
         CursorShape m_CursorShape{CursorShape::ARROW};
+
+        inline static std::unordered_map<GLFWwindow*,WindowManager*> Windows{};
     };
 };

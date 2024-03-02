@@ -6,8 +6,6 @@ import event;
 namespace Engine::inline Core{
     export class Transform{
     public:
-        Event<> TransformChangedEvent;
-        Event<> TransformDestroyedEvent;
         Transform()=default;
         Transform(const glm::vec3& localPostion, const glm::quat& localRotation, const glm::vec3& localScale);
         ~Transform();
@@ -64,7 +62,10 @@ namespace Engine::inline Core{
         
         void OnTransformChanged();
         void OnTransformDestroyed();
-
+    public:
+        Event<> TransformChangedEvent{};
+        Event<> TransformDestroyedEvent{};
+    private:
         ListenerID m_TransformChangedListenerID{0};
 
         glm::vec3 m_LocalPosition{};

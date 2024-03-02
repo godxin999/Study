@@ -22,12 +22,15 @@ namespace Engine::inline UI{
     glm::vec2 Converter::ToVec2(const ImVec2& vec){
         return glm::vec2(vec.x, vec.y);
     }
+
     ImVec2 Converter::ToImVec2(const glm::vec2& vec){
         return ImVec2(vec.x, vec.y);
     }
+
     glm::vec4 Converter::ToVec4(const ImVec4& vec){
         return glm::vec4(vec.x, vec.y, vec.z, vec.w);
     }
+    
     ImVec4 Converter::ToImVec4(const glm::vec4& vec){
         return ImVec4(vec.x, vec.y, vec.z, vec.w);
     }

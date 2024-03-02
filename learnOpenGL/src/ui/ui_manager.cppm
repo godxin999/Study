@@ -18,12 +18,12 @@ namespace Engine::inline UI{
         bool UseFont(const std::string& name);
         void UseDefaultFont();
         void EnableEditorLayoutSave(bool enable);
-        bool IsEditorLayoutSaveEnabled()const;
+        [[nodiscard]]bool IsEditorLayoutSaveEnabled()const;
         void SetEditorLayoutSaveFilename(const std::string& filename);
         void SetEditorLayoutAutoSaveInterval(float interval);
         float GetEditorLayoutAutoSaveInterval()const;
         void EnableDocking(bool enable);
-        bool IsDockingEnabled()const;
+        [[nodiscard]]bool IsDockingEnabled()const;
         void ResetLayout(const std::string& layout)const;
         void SetCanvas(Canvas& canvas);
         void RemoveCanvas();

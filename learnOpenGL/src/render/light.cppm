@@ -14,12 +14,12 @@ namespace Engine::inline Render{
     export class Light{
     public:
         Light(Transform& transform,LightType type):m_Transform(transform),m_Type(static_cast<float>(type)){}
-        glm::mat4 GenerateDataMatrix()const;
-        float GetEffectRange()const;
-        const Transform& GetTransform()const{
+        ~Light() = default;
+        [[nodiscard]]glm::mat4 GenerateDataMatrix()const;
+        [[nodiscard]]float GetEffectRange()const;
+        [[nodiscard]]const Transform& GetTransform()const{
             return m_Transform;
         }
-        ~Light() = default;
     public:
         glm::vec3 m_Color{1.f};
         glm::vec3 m_AttCoeff{1.f, 0.f, 0.f};

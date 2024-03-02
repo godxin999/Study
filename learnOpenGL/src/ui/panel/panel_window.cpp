@@ -30,13 +30,13 @@ namespace Engine::inline UI{
     void PanelWindow::Open(){
         if(!m_IsOpened){
             m_IsOpened=true;
-            openEvent.Invoke();        
+            OpenEvent.Invoke();        
         }
     }
     void PanelWindow::Close(){
         if(m_IsOpened){
             m_IsOpened=false;
-            closeEvent.Invoke();
+            CloseEvent.Invoke();
         }
     }
     void PanelWindow::Focus(){
@@ -46,10 +46,10 @@ namespace Engine::inline UI{
         if(isOpened!=m_IsOpened){
             m_IsOpened=isOpened;
             if(m_IsOpened){
-                openEvent.Invoke();
+                OpenEvent.Invoke();
             }
             else{
-                closeEvent.Invoke();
+                CloseEvent.Invoke();
             }
         }
     }
@@ -124,7 +124,7 @@ namespace Engine::inline UI{
             ImGui::End();
             
             if(!m_IsOpened){
-                closeEvent.Invoke();
+                CloseEvent.Invoke();
             }
         }
     }

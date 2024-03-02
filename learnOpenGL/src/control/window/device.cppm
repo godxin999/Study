@@ -24,12 +24,12 @@ namespace Engine::inline Window{
     public:
         Device();
         ~Device();
-        std::pair<uint16_t,uint16_t> GetMonitorSize()const;
-        GLFWcursor* GetCursorInstance(CursorShape shape)const;
-        bool HasVsync()const;
+        [[nodiscard]]std::pair<uint16_t,uint16_t> GetMonitorSize()const;
+        [[nodiscard]]GLFWcursor* GetCursorInstance(CursorShape shape)const;
+        [[nodiscard]]bool HasVsync()const;
         void SetVsync(bool vsync);
         void PollEvents()const;
-        float GetElapsedTime()const;
+        [[nodiscard]]float GetElapsedTime()const;
     public:
         inline static Event<DeviceError,std::string> ErrorEvent{};
     private:

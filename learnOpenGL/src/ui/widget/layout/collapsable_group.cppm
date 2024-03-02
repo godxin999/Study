@@ -17,8 +17,8 @@ namespace Engine::inline UI{
         std::string name{""};
         bool closable{false};
         bool isExpanded{false};
-        Event<> collapseEvent{};
-        Event<> expandEvent{};
+        Event<> CollapseEvent{};
+        Event<> ExpandEvent{};
     };
 }
 
@@ -36,10 +36,10 @@ namespace Engine::inline UI{
 
         if(previousState!=isExpanded){
             if(isExpanded){
-                expandEvent.Invoke();
+                ExpandEvent.Invoke();
             }
             else{
-                collapseEvent.Invoke();
+                CollapseEvent.Invoke();
             }
         }
     }

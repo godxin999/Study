@@ -15,9 +15,9 @@ namespace Engine::inline UI{
     public:
         bool IsEnabled{true};
     protected:
-        std::string m_PanelID{};
+        std::string m_PanelID{""};
     private:
-        inline static uint64_t PanelCounter{};
+        inline static uint64_t PanelCounter{0};
     };
 }
 

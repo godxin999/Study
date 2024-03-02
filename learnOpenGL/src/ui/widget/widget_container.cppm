@@ -32,7 +32,7 @@ namespace Engine::inline UI{
             return m_Widgets;
         }
     protected:
-        std::vector<std::pair<Widget*, MemoryMode>> m_Widgets;
+        std::vector<std::pair<Widget*, MemoryMode>> m_Widgets{};
         bool m_IsReverseDraw{false};
     };
 }

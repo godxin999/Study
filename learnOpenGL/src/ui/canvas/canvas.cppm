@@ -12,7 +12,7 @@ namespace Engine::inline UI{
         void RemovePanel(Panel& panel);
         void RemoveAllPanels();
         void MakeDockSpace(bool state);
-        bool IsDockSpace() const;
+        [[nodiscard]]bool IsDockSpace() const;
     private:
         std::vector<std::reference_wrapper<Panel>> m_Panels;
         bool m_IsDockSpace{false};

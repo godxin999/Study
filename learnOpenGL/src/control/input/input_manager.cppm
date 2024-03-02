@@ -11,13 +11,13 @@ namespace Engine::inline Input{
     public:
         InputManager(WindowManager& windowManager);
         ~InputManager();
-        KeyState GetKeyState(Key key) const;
-        MouseButtonState GetMouseButtonState(MouseButton button) const;
-        bool IsKeyPressed(Key key) const;
-        bool IsMouseButtonPressed(MouseButton button) const;
-        bool IsKeyReleased(Key key) const;
-        bool IsMouseButtonReleased(MouseButton button) const;
-        glm::vec2 GetMousePosition() const;
+        [[nodiscard]]KeyState GetKeyState(Key key) const;
+        [[nodiscard]]MouseButtonState GetMouseButtonState(MouseButton button) const;
+        [[nodiscard]]bool IsKeyPressed(Key key) const;
+        [[nodiscard]]bool IsMouseButtonPressed(MouseButton button) const;
+        [[nodiscard]]bool IsKeyReleased(Key key) const;
+        [[nodiscard]]bool IsMouseButtonReleased(MouseButton button) const;
+        [[nodiscard]]glm::vec2 GetMousePosition() const;
         void ClearStates();
     private:
         WindowManager& m_WindowManager;

@@ -3,18 +3,17 @@ export module data_widget;
 import stl;
 import widget;
 import plugin;
+import pluginable;
 import data_dispatcher;
 
 namespace Engine::inline UI{
     export template <typename T>
     class DataWidget : public Widget{
     public:
-        DataWidget(const T& data) : data(data) {
-
-        }
-        virtual void Draw()override;
+        DataWidget(const T& data);
+        void Draw()override;
         void NotifyChange();
-    private:
+    protected:
         T data;
     };
 }
@@ -22,6 +21,11 @@ namespace Engine::inline UI{
 module : private;
 
 namespace Engine::inline UI{
+    template <typename T>
+    DataWidget<T>::DataWidget(const T& data):data(data){
+    
+    }
+ 
     template <typename T>
     void DataWidget<T>::Draw(){
         if(m_IsEnabled){

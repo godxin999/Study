@@ -24,19 +24,21 @@ namespace Engine::inline UI{
     };
     export class PanelWindow:public PanelTransformable{
     public:
+        PanelWindow()=default;
         PanelWindow(const std::string& name="",bool isOpened=true,const PanelWindowSettings& settings=PanelWindowSettings{});
+        ~PanelWindow()=default;
         void Open();
         void Close();
         void Focus();
         void SetOpenState(bool isOpened);
-        bool IsOpened() const;
-        bool IsHovered() const;
-        bool IsFocused() const;
-        bool IsAppearing() const;
+        [[nodiscard]]bool IsOpened() const;
+        [[nodiscard]]bool IsHovered() const;
+        [[nodiscard]]bool IsFocused() const;
+        [[nodiscard]]bool IsAppearing() const;
         void ScrollToTop();
         void ScrollToBottom();
-        bool IsScrollToTop() const;
-        bool IsScrollToBottom() const;
+        [[nodiscard]]bool IsScrollToTop() const;
+        [[nodiscard]]bool IsScrollToBottom() const;
     protected:
         void DrawImpl() override;
     public:
@@ -59,8 +61,8 @@ namespace Engine::inline UI{
         bool allowInputs{true};
         bool titleBar{true};
 
-        Event<> openEvent;
-        Event<> closeEvent;
+        Event<> OpenEvent{};
+        Event<> CloseEvent{};
     private:
         bool m_IsOpened;
         bool m_IsHovered;
