@@ -26,6 +26,7 @@ namespace Engine::inline UI{
     Dummy::Dummy(const glm::vec2& size):size(size){
 
     }
+    
     void Dummy::DrawImpl(){
         ImGui::Dummy(Converter::ToImVec2(size));
     }

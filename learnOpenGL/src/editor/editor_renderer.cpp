@@ -6,7 +6,8 @@ namespace Engine::inline editor{
     EditorRenderer::EditorRenderer(Context& context):m_Context(context){
 
     }
+    
     void EditorRenderer::RenderUI(){
-        m_Context.m_UIManager->Render();
+        m_Context.uiManager->Render();
     }
 }

@@ -8,11 +8,11 @@ namespace Engine::inline UI{
     export class PanelTransformable:public Panel{
     public:
         PanelTransformable(
-            const glm::vec2& defaultPosition=glm::vec2(-1.f), 
-            const glm::vec2& defaultSize=glm::vec2(-1.f), 
-            const HorizontalAlignment& defaultHorizontalAlignment=HorizontalAlignment::LEFT, 
-            const VerticalAlignment& defaultVerticalAlignment=VerticalAlignment::TOP,
-            bool IsIgnoreConfigFile=false
+            const glm::vec2& p_defaultPosition=glm::vec2(-1.f), 
+            const glm::vec2& p_defaultSize=glm::vec2(-1.f), 
+            const HorizontalAlignment& p_defaultHorizontalAlignment=HorizontalAlignment::LEFT, 
+            const VerticalAlignment& p_defaultVerticalAlignment=VerticalAlignment::TOP,
+            bool p_isIgnoreConfigFile=false
         );
         ~PanelTransformable()=default;
         void SetPostion(const glm::vec2& position);
@@ -32,19 +32,19 @@ namespace Engine::inline UI{
     public:
         bool autoSize{true};
     protected:
-        glm::vec2 m_DefaultPosition;
-        glm::vec2 m_DefaultSize;
-        HorizontalAlignment m_DefaultHorizontalAlignment;
-        VerticalAlignment m_DefaultVerticalAlignment;
-        bool m_IsIgnoreConfigFile;
+        glm::vec2 defaultPosition;
+        glm::vec2 defaultSize;
+        HorizontalAlignment defaultHorizontalAlignment;
+        VerticalAlignment defaultVerticalAlignment;
+        bool isIgnoreConfigFile;
 
-        glm::vec2 m_Position{0.f};
-        glm::vec2 m_Size{0.f};
-        HorizontalAlignment m_HorizontalAlignment{HorizontalAlignment::LEFT};
-        VerticalAlignment m_VerticalAlignment{VerticalAlignment::TOP};
-        bool m_IsPositionChanged{false};
-        bool m_IsSizeChanged{false};
-        bool m_IsAlignmentChanged{false};
-        bool m_FirstFrame{true};
+        glm::vec2 position{0.f};
+        glm::vec2 size{0.f};
+        HorizontalAlignment horizontalAlignment{HorizontalAlignment::LEFT};
+        VerticalAlignment verticalAlignment{VerticalAlignment::TOP};
+        bool isPositionChanged{false};
+        bool isSizeChanged{false};
+        bool isAlignmentChanged{false};
+        bool firstFrame{true};
     };
 }

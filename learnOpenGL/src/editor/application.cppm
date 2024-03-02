@@ -85,12 +85,12 @@ Engine::Transform transform(glm::vec3(0.f,0.f,2.0f),glm::quat(),glm::vec3(1.f));
 
 void render(){
     auto& context=Engine::ServiceLocator::Get<Engine::Context>();
-    context.m_UBO->SetSubData(camera->GetViewMatrix(),0);
-    context.m_UBO->SetSubData(camera->GetProjMatrix(),sizeof(glm::mat4));
-    context.m_UBO->SetSubData(camera->GetPosition(),sizeof(glm::mat4)*2);
-    context.m_UBO->Bind();
+    context.ubo->SetSubData(camera->GetViewMatrix(),0);
+    context.ubo->SetSubData(camera->GetProjMatrix(),sizeof(glm::mat4));
+    context.ubo->SetSubData(camera->GetPosition(),sizeof(glm::mat4)*2);
+    context.ubo->Bind();
     LightingShader.Bind();
-    context.m_LightSSBO->Bind(0);
+    context.lightSSBO->Bind(0);
     glm::mat4 model=glm::mat4(1.f);
     diffuseMap.Bind(0);
     specularMap.Bind(1);
@@ -188,7 +188,7 @@ namespace Engine::inline editor{
             }
         }
         bool IsRunning()const{
-            return !m_Context.m_WindowManager->IsShouldClose();
+            return !m_Context.windowManager->IsShouldClose();
         }
     private:
         Context m_Context;

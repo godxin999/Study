@@ -1,1 +1,45 @@
 export module menu_list;
+
+import group;
+import stl;
+import imgui;
+import event;
+
+namespace Engine::inline UI{
+    export class MenuList:public Group{
+    public:
+        MenuList(const std::string& name,bool isLocked=false);
+        ~MenuList()=default;
+    protected:
+        void DrawImpl()override;
+    public:
+        std::string name{""};
+        bool isLocked{false};
+        Event<> ClickEvent{};
+    private:
+        bool m_IsOpened{false};
+    };
+}
+
+module : private;
+
+namespace Engine::inline UI{
+    MenuList::MenuList(const std::string& name,bool isLocked):name(name),isLocked(isLocked){
+
+    }
+
+    void MenuList::DrawImpl(){
+        if(ImGui::BeginMenu(name.c_str(),!isLocked)){
+            //成功打开菜单但是m_IsOpened为false，说明发生了点击事件
+            if(!m_IsOpened){
+                ClickEvent.Invoke();
+                m_IsOpened=true;
+            }
+            DrawWidgets();
+            ImGui::EndMenu();
+        }
+        else{
+            m_IsOpened=false;
+        }
+    }
+}

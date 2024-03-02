@@ -9,6 +9,6 @@ namespace Engine::inline Render{
         void Bind(uint32_t slot) const;
         void Unbind() const;
         ~Texture()=default;
-        uint32_t m_TextureID{0};
+        uint32_t textureID{0};
     };
 }

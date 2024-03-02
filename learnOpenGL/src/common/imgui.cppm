@@ -57,5 +57,7 @@ export namespace ImGui{
     using ImGui::GetTreeNodeToLabelSpacing;
     using ImGui::IsMouseDoubleClicked;
     using ImGui::TreePop;
-
+    using ImGui::BeginMenu;
+    using ImGui::EndMenu;
+    using ImGui::MenuItem;
 }

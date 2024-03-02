@@ -24,6 +24,7 @@ namespace Engine::inline UI{
     Spacing::Spacing(uint16_t spaces):spaces(spaces){
 
     }
+    
     void Spacing::DrawImpl(){
         for(auto i:std::views::iota(0,spaces-1)){
             ImGui::Spacing();

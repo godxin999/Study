@@ -23,7 +23,7 @@ namespace Engine::inline UI{
         auto previousMinSize=style.WindowMinSize;
         style.WindowPadding={0,0};
         style.WindowMinSize={0,0};
-        if(ImGui::Begin(m_PanelID.c_str(),nullptr,CollectFlags())){
+        if(ImGui::Begin(panelID.c_str(),nullptr,CollectFlags())){
             style.WindowPadding=previousPadding;
             style.WindowMinSize=previousMinSize;
             Update();

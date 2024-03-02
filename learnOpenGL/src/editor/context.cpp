@@ -13,35 +13,35 @@ import gl_enum;
 
 namespace Engine::inline editor{
     Context::Context(){
-        m_LogManager=std::make_unique<LogManager>();
-        ServiceLocator::Register<LogManager>(*m_LogManager);
-        m_Device=std::make_unique<Device>();
-        m_WindowManager=std::make_unique<WindowManager>(*m_Device);
-        m_InputManager=std::make_unique<InputManager>(*m_WindowManager);
+        logManager=std::make_unique<LogManager>();
+        ServiceLocator::Register<LogManager>(*logManager);
+        device=std::make_unique<Device>();
+        windowManager=std::make_unique<WindowManager>(*device);
+        inputManager=std::make_unique<InputManager>(*windowManager);
 
-        m_WindowManager->MakeCurrentContext();
-        m_WindowManager->LoadGlad();
+        windowManager->MakeCurrentContext();
+        windowManager->LoadGlad();
         
 
-        auto [monitorWidth,monitorHeight]=m_Device->GetMonitorSize();
-        auto [windowWidth,windowHeight]=m_WindowManager->GetSize();
-        m_WindowManager->SetPosition((monitorWidth-windowWidth)/2,(monitorHeight-windowHeight)/2);
+        auto [monitorWidth,monitorHeight]=device->GetMonitorSize();
+        auto [windowWidth,windowHeight]=windowManager->GetSize();
+        windowManager->SetPosition((monitorWidth-windowWidth)/2,(monitorHeight-windowHeight)/2);
 
-        m_Device->SetVsync(true);
+        device->SetVsync(true);
 
-        m_UIManager=std::make_unique<UIManager>(m_WindowManager->GetGlfwWindow());
-        m_UIManager->SetEditorLayoutAutoSaveInterval(60.f);
-        m_UIManager->EnableEditorLayoutSave(true);
-        m_UIManager->EnableDocking(true);
+        uiManager=std::make_unique<UIManager>(windowManager->GetGlfwWindow());
+        uiManager->SetEditorLayoutAutoSaveInterval(60.f);
+        uiManager->EnableEditorLayoutSave(true);
+        uiManager->EnableDocking(true);
 
-        ServiceLocator::Register<WindowManager>(*m_WindowManager);
-        ServiceLocator::Register<InputManager>(*m_InputManager);
+        ServiceLocator::Register<WindowManager>(*windowManager);
+        ServiceLocator::Register<InputManager>(*inputManager);
 
 
-        m_UBO=std::make_unique<UniformBuffer>(
+        ubo=std::make_unique<UniformBuffer>(
             sizeof(glm::mat4)*2+sizeof(glm::vec4),0,0,AccessSpecifier::STREAM_DRAW
         );
-        m_LightSSBO=std::make_unique<ShaderStorageBuffer>(AccessSpecifier::STREAM_DRAW);
+        lightSSBO=std::make_unique<ShaderStorageBuffer>(AccessSpecifier::STREAM_DRAW);
 
         Transform lightTransform;
         Transform spotLightTransform;
@@ -56,9 +56,9 @@ namespace Engine::inline editor{
         spotLightTransform.SetWorldRotation(glm::angleAxis(glm::radians(180.f),glm::vec3(0.f,1.f,0.f)));
         spotLightTransform.SetWorldPosition(glm::vec3(0.f,0.f,2.0f));
         Light spotLight(spotLightTransform,LightType::Spot);
-        spotLight.m_AttCoeff=glm::vec3(1.f,0.09f,0.032f);
-        spotLight.m_Cutoff=15.f;
-        spotLight.m_OuterCutoff=22.5f;
+        spotLight.attCoeff=glm::vec3(1.f,0.09f,0.032f);
+        spotLight.cutoff=15.f;
+        spotLight.outerCutoff=22.5f;
         lightData.push_back(spotLight.GenerateDataMatrix());
 
         pointLightTransform.SetWorldPosition(glm::vec3(5.f,0.f,-5.0f));
@@ -67,15 +67,16 @@ namespace Engine::inline editor{
 
         ambientSphereLightTransform.SetWorldPosition(glm::vec3(0.f,0.f,0.f));
         Light ambientSphereLight(ambientSphereLightTransform,LightType::AmbientSphere);
-        ambientSphereLight.m_AttCoeff=glm::vec3(1000.f);
-        ambientSphereLight.m_Color=glm::vec3(0.5f);
+        ambientSphereLight.attCoeff=glm::vec3(1000.f);
+        ambientSphereLight.color=glm::vec3(0.5f);
         lightData.push_back(ambientSphereLight.GenerateDataMatrix());
 
-        m_LightSSBO->SendBlocks(lightData.data(),lightData.size()*sizeof(glm::mat4));
+        lightSSBO->SendBlocks(lightData.data(),lightData.size()*sizeof(glm::mat4));
         
         ServiceLocator::Register<Context>(*this);
-        m_LogManager->Log(LogLevel::info,"Context initialized");
+        logManager->Log(LogLevel::info,"Context initialized");
     }
+    
     Context::~Context(){
 
     }

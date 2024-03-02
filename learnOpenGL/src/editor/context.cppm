@@ -14,17 +14,17 @@ namespace Engine::inline editor{
         Context();
         ~Context();
     public:
-        const std::string m_ProjectPath;
-        const std::string m_ProjectName;
-        const std::string m_ProjectAssetsPath;
+        const std::string projectPath;
+        const std::string projectName;
+        const std::string projectAssetsPath;
 
-        std::unique_ptr<Device> m_Device{nullptr};
-        std::unique_ptr<WindowManager> m_WindowManager{nullptr};
-        std::unique_ptr<InputManager> m_InputManager{nullptr};
-        std::unique_ptr<LogManager> m_LogManager{nullptr};
-        std::unique_ptr<UIManager> m_UIManager{nullptr};
+        std::unique_ptr<Device> device{nullptr};
+        std::unique_ptr<WindowManager> windowManager{nullptr};
+        std::unique_ptr<InputManager> inputManager{nullptr};
+        std::unique_ptr<LogManager> logManager{nullptr};
+        std::unique_ptr<UIManager> uiManager{nullptr};
 
-        std::unique_ptr<UniformBuffer> m_UBO{nullptr};
-        std::unique_ptr<ShaderStorageBuffer> m_LightSSBO{nullptr};
+        std::unique_ptr<UniformBuffer> ubo{nullptr};
+        std::unique_ptr<ShaderStorageBuffer> lightSSBO{nullptr};
     };
 };

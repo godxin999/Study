@@ -27,21 +27,25 @@ namespace Engine::inline UI{
         m_IsOpened(isOpened){
         autoSize=settings.autoSize;
     }
+
     void PanelWindow::Open(){
         if(!m_IsOpened){
             m_IsOpened=true;
             OpenEvent.Invoke();        
         }
     }
+
     void PanelWindow::Close(){
         if(m_IsOpened){
             m_IsOpened=false;
             CloseEvent.Invoke();
         }
     }
+
     void PanelWindow::Focus(){
-        ImGui::SetWindowFocus((name+m_PanelID).c_str());
+        ImGui::SetWindowFocus((name+panelID).c_str());
     }
+
     void PanelWindow::SetOpenState(bool isOpened){
         if(isOpened!=m_IsOpened){
             m_IsOpened=isOpened;
@@ -53,35 +57,44 @@ namespace Engine::inline UI{
             }
         }
     }
+
     bool PanelWindow::IsOpened() const{
         return m_IsOpened;
     }
+
     bool PanelWindow::IsHovered() const{
         return m_IsHovered;
     }
+
     bool PanelWindow::IsFocused() const{
         return m_IsFocused;
     }
+
     bool PanelWindow::IsAppearing() const{
-        if(auto window=ImGui::FindWindowByName((name+m_PanelID).c_str())){
+        if(auto window=ImGui::FindWindowByName((name+panelID).c_str())){
             return window->Appearing;
         }
         else{
             return false;
         }
     }
+
     void PanelWindow::ScrollToTop(){
         m_MustScrollToTop=true;
     }
+
     void PanelWindow::ScrollToBottom(){
         m_MustScrollToBottom=true;
     }
+
     bool PanelWindow::IsScrollToTop() const{
         return m_ScrolledToTop;
     }
+
     bool PanelWindow::IsScrollToBottom() const{
         return m_ScrolledToBottom;
     }
+
     void PanelWindow::DrawImpl(){
         if(m_IsOpened){
             int windowFlags=ImGuiWindowFlags_None;
@@ -100,7 +113,7 @@ namespace Engine::inline UI{
 
             ImGui::SetNextWindowSizeConstraints(Converter::ToImVec2(minSize),Converter::ToImVec2(maxSize));
 
-            if(ImGui::Begin((name+m_PanelID).c_str(),(closable?&m_IsOpened:nullptr),windowFlags)){
+            if(ImGui::Begin((name+panelID).c_str(),(closable?&m_IsOpened:nullptr),windowFlags)){
                 m_IsHovered=ImGui::IsWindowHovered();
                 m_IsFocused=ImGui::IsWindowFocused();
 

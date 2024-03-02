@@ -30,6 +30,7 @@ namespace Engine::inline Input{
         m_WindowManager.MouseButtonReleasedEvent.RemoveListener(m_MouseButtonReleasedListener);
     }
 
+    
     KeyState InputManager::GetKeyState(Key key) const{
         switch(glfwGetKey(m_WindowManager.GetGlfwWindow(),static_cast<int>(key))){
             case GLFW_PRESS: return KeyState::KEY_PRESS;
@@ -37,6 +38,7 @@ namespace Engine::inline Input{
         }
         return KeyState::KEY_RELEASE;
     }
+    
     MouseButtonState InputManager::GetMouseButtonState(MouseButton button) const{
         switch(glfwGetMouseButton(m_WindowManager.GetGlfwWindow(),static_cast<int>(button))){
             case GLFW_PRESS: return MouseButtonState::MOUSE_BUTTON_PRESS;
@@ -44,23 +46,29 @@ namespace Engine::inline Input{
         }
         return MouseButtonState::MOUSE_BUTTON_RELEASE;
     }
+    
     bool InputManager::IsKeyPressed(Key key) const{
         return m_KeyStates.find(key)!=m_KeyStates.end()&&m_KeyStates.at(key)==KeyState::KEY_PRESS;
     }
+    
     bool InputManager::IsMouseButtonPressed(MouseButton button) const{
         return m_MouseButtonStates.find(button)!=m_MouseButtonStates.end()&&m_MouseButtonStates.at(button)==MouseButtonState::MOUSE_BUTTON_PRESS;
     }
+    
     bool InputManager::IsKeyReleased(Key key) const{
         return m_KeyStates.find(key)!=m_KeyStates.end()&&m_KeyStates.at(key)==KeyState::KEY_RELEASE;
     }
+    
     bool InputManager::IsMouseButtonReleased(MouseButton button) const{
         return m_MouseButtonStates.find(button)!=m_MouseButtonStates.end()&&m_MouseButtonStates.at(button)==MouseButtonState::MOUSE_BUTTON_RELEASE;
     }
+    
     glm::vec2 InputManager::GetMousePosition() const{
         double x,y;
         glfwGetCursorPos(m_WindowManager.GetGlfwWindow(),&x,&y);
         return {static_cast<float>(x),static_cast<float>(y)};
     }
+    
     void InputManager::ClearStates(){
         m_KeyStates.clear();
         m_MouseButtonStates.clear();

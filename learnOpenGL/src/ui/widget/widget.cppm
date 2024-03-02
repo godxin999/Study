@@ -12,7 +12,7 @@ namespace Engine::inline UI{
         virtual ~Widget()=default;
         void Draw() override;
         void LinkTo(const Widget& widget){
-            m_WidgetID=widget.m_WidgetID;
+            widgetID=widget.widgetID;
         }
         void Destroy(){
             m_IsDestroyed=true;
@@ -21,23 +21,23 @@ namespace Engine::inline UI{
             return m_IsDestroyed;
         }
         WidgetContainer* GetParent() const{
-            return m_Parent;
+            return parent;
         }
-        void SetParent(WidgetContainer* parent){
-            m_Parent=parent;
+        void SetParent(WidgetContainer* p_parent){
+            parent=p_parent;
         }
         bool HasParent() const{
-            return m_Parent;
+            return parent;
         }
     protected:
         virtual void DrawImpl()=0;
     public:
-        bool m_IsEnabled{true};
-        bool m_IsLineBreak{true};
+        bool enable{true};
+        bool isLineBreak{true};
     protected:
-        std::string m_WidgetID{};
-        WidgetContainer* m_Parent{nullptr};
-        bool m_IsAutoExecutePlugins{true};
+        std::string widgetID{};
+        WidgetContainer* parent{nullptr};
+        bool isAutoExecutePlugins{true};
     private:
         inline static uint64_t WidgetCounter{0};
         bool m_IsDestroyed{false};
@@ -49,18 +49,18 @@ module : private;
 namespace Engine::inline UI{
     Widget::Widget(){
         //imgui会隐藏##开头的名称
-        m_WidgetID="##"+std::to_string(WidgetCounter++);
+        widgetID="##"+std::to_string(WidgetCounter++);
     }
     
     void Widget::Draw(){
-        if(m_IsEnabled){
+        if(enable){
             DrawImpl();
 
-            if(m_IsAutoExecutePlugins){
+            if(isAutoExecutePlugins){
                 ExecutePlugins();
             }
 
-            if(m_IsLineBreak){
+            if(isLineBreak){
                 ImGui::SameLine();
             }
         }

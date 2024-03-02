@@ -11,12 +11,15 @@ namespace Engine::inline editor{
     Editor::Editor(Context& context):m_Context(context),m_EditorRenderer(context),m_PanelManager(m_Canvas){
         SetupUI();
     }
+    
     Editor::~Editor(){
 
     }
+    
     void Editor::PreUpdate(){
-        m_Context.m_Device->PollEvents();
+        m_Context.device->PollEvents();
     }
+    
     void Editor::Update(float deltaTime){
         HandleGlobalShortcuts();
         UpdateCurrentEditorMode(deltaTime);
@@ -25,34 +28,44 @@ namespace Engine::inline editor{
         UpdateEditorPanels(deltaTime);
         RenderEditorUI();
     }
+    
     void Editor::PostUpdate(){
-        m_Context.m_WindowManager->SwapBuffers();
-        m_Context.m_InputManager->ClearStates();
+        m_Context.windowManager->SwapBuffers();
+        m_Context.inputManager->ClearStates();
     }
+    
     void Editor::SetupUI(){
 
     }
+    
     void Editor::HandleGlobalShortcuts(){
 
     }
+    
     void Editor::UpdateCurrentEditorMode(float deltaTime){
 
     }
+    
     void Editor::UpdateEditorPanels(float deltaTime){
 
     }
+    
     void Editor::PrepareRendering(float deltaTime){
 
     }
+    
     void Editor::RenderViews(float deltaTime){
 
     }
+    
     void Editor::RenderEditorUI(){
         m_EditorRenderer.RenderUI();
     }
+    
     void Editor::UpdatePlayMode(float deltaTime){
 
     }
+    
     void Editor::UpdateEditMode(float deltaTime){
 
     }

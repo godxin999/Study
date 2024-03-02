@@ -12,15 +12,16 @@ namespace Engine::inline UI{
     export class TreeNode : public WidgetContainer, public DataWidget<std::string>{
     public:
         TreeNode()=default;
-        TreeNode(const std::string& name="",bool isClickArrowToOpen=false);
+        TreeNode(const std::string& p_name="",bool isClickArrowToOpen=false);
         void Close();
         void Open();
         [[nodiscard]]bool IsOpened()const;
     protected:
         void DrawImpl()override;
     public:
-        bool IsSelected{false};
-        bool IsLeafNode{false};
+        std::string name{""};
+        bool isSelected{false};
+        bool isLeafNode{false};
 
         Event<> ClickEvent{};
         Event<> DoubleClickEvent{};
@@ -37,8 +38,8 @@ namespace Engine::inline UI{
 module : private;
 
 namespace Engine::inline UI{
-    TreeNode::TreeNode(const std::string& name,bool isClickArrowToOpen):DataWidget(name),m_IsClickArrowToOpen(isClickArrowToOpen){
-        m_IsAutoExecutePlugins=false;
+    TreeNode::TreeNode(const std::string& p_name,bool isClickArrowToOpen):DataWidget(name),name(p_name),m_IsClickArrowToOpen(isClickArrowToOpen){
+        isAutoExecutePlugins=false;
     }
 
     void TreeNode::DrawImpl(){
@@ -56,10 +57,10 @@ namespace Engine::inline UI{
         int flags=ImGuiTreeNodeFlags_None;
         //设置是否点击箭头展开
         if(m_IsClickArrowToOpen) flags|=ImGuiTreeNodeFlags_OpenOnArrow;
-        if(IsLeafNode) flags|=ImGuiTreeNodeFlags_Leaf;
-        if(IsSelected) flags|=ImGuiTreeNodeFlags_Selected;
+        if(isLeafNode) flags|=ImGuiTreeNodeFlags_Leaf;
+        if(isSelected) flags|=ImGuiTreeNodeFlags_Selected;
 
-        bool opened=ImGui::TreeNodeEx((data+m_WidgetID).c_str(),flags);
+        bool opened=ImGui::TreeNodeEx((data+widgetID).c_str(),flags);
         //计算是否点击到标签
         if(ImGui::IsItemClicked()&&(ImGui::GetMousePos().x-ImGui::GetItemRectMin().x)>ImGui::GetTreeNodeToLabelSpacing()){
             //检测是否为左键

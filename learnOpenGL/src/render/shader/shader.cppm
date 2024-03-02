@@ -22,7 +22,7 @@ public:
     void SetMat3(const std::string& name,const glm::mat3& value)const;
     void SetMat4(const std::string& name,const glm::mat4& value)const;
     ~Shader()=default;
-    uint32_t m_ShaderID{0};
+    uint32_t shaderID{0};
 private:
     void CheckCompileErrors(uint32_t shader,const std::string& type);
 };

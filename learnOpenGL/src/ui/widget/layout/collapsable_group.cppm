@@ -28,6 +28,7 @@ namespace Engine::inline UI{
     CollapsableGroup::CollapsableGroup(const std::string& name):name(name){
 
     }
+    
     void CollapsableGroup::DrawImpl(){
         bool previousState=isExpanded;
         if(ImGui::CollapsingHeader(name.c_str(),closable?&isExpanded:nullptr)){

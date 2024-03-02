@@ -10,11 +10,11 @@ namespace Engine::inline UI{
     export template <typename T>
     class DataWidget : public Widget{
     public:
-        DataWidget(const T& data);
+        DataWidget(T& data);
         void Draw()override;
         void NotifyChange();
     protected:
-        T data;
+        T& data;
     };
 }
 
@@ -22,13 +22,13 @@ module : private;
 
 namespace Engine::inline UI{
     template <typename T>
-    DataWidget<T>::DataWidget(const T& data):data(data){
+    DataWidget<T>::DataWidget(T& data):data(data){
     
     }
  
     template <typename T>
     void DataWidget<T>::Draw(){
-        if(m_IsEnabled){
+        if(enable){
             if(auto plugin=GetPlugin<DataDispatcher<T>>()){
                 auto value=plugin->Gather();
                 Widget::Draw();

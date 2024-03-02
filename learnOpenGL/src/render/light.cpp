@@ -20,21 +20,22 @@ namespace Engine::inline Render{
     glm::mat4 Light::GenerateDataMatrix()const{
         glm::mat4 result;
         auto position=m_Transform.GetWorldPosition();
-        result[0]=glm::vec4(position,m_Type);
+        result[0]=glm::vec4(position,type);
         auto forward=m_Transform.GetWorldForward();
-        result[1]=glm::vec4(forward,m_Cutoff);
-        result[2]=glm::vec4(m_Color,m_OuterCutoff);
-        result[3]=glm::vec4(m_AttCoeff,m_Intensity);
+        result[1]=glm::vec4(forward,cutoff);
+        result[2]=glm::vec4(color,outerCutoff);
+        result[3]=glm::vec4(attCoeff,intensity);
         return result;
     }
+
     float Light::GetEffectRange()const{
-        switch(static_cast<LightType>(static_cast<int>(m_Type))){
+        switch(static_cast<LightType>(static_cast<int>(type))){
             case LightType::Spot:
                 [[fallthrough]];
             case LightType::Point:
-                return CalculatePointLightRange(m_Intensity,m_AttCoeff);
+                return CalculatePointLightRange(intensity,attCoeff);
             case LightType::AmbientSphere:
-                return m_AttCoeff.x;
+                return attCoeff.x;
             default:
                 return std::numeric_limits<float>::infinity();
         }

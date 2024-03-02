@@ -6,9 +6,9 @@ import stl;
 namespace Engine::inline Core{
     export class Component{
     public:
-        Component(Actor& owner):m_Owner(owner){}
+        Component(Actor& p_owner):owner(p_owner){}
         virtual ~Component(){
-            if(m_Owner.IsActive()){
+            if(owner.IsActive()){
                 OnDisable();
                 OnDestroy();
             }
@@ -21,6 +21,6 @@ namespace Engine::inline Core{
         virtual void OnDisable(){}
         virtual std::string GetName()const = 0;
     public:
-        Actor& m_Owner;
+        Actor& owner;
     };
 }
