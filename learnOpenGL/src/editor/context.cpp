@@ -10,6 +10,7 @@ import light;
 import glm;
 import buffer;
 import gl_enum;
+import service_locator;
 
 namespace Engine::inline editor{
     Context::Context(){
@@ -30,6 +31,10 @@ namespace Engine::inline editor{
         device->SetVsync(true);
 
         uiManager=std::make_unique<UIManager>(windowManager->GetGlfwWindow());
+        uiManager->LoadFont("LXGWBrightGB-Regular_Big","../../../../assets/fonts/LXGWBrightGB-Regular.ttf",35.f);
+        uiManager->LoadFont("LXGWBrightGB-Regular_Medium","../../../../assets/fonts/LXGWBrightGB-Regular.ttf",30.f);
+        uiManager->LoadFont("LXGWBrightGB-Regular_Small","../../../../assets/fonts/LXGWBrightGB-Regular.ttf",25.f);
+        uiManager->UseFont("LXGWBrightGB-Regular_Medium");
         uiManager->SetEditorLayoutAutoSaveInterval(60.f);
         uiManager->EnableEditorLayoutSave(true);
         uiManager->EnableDocking(true);

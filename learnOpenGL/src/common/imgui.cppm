@@ -60,4 +60,5 @@ export namespace ImGui{
     using ImGui::BeginMenu;
     using ImGui::EndMenu;
     using ImGui::MenuItem;
+    using ImGui::Separator;
 }

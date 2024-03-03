@@ -7,6 +7,8 @@ import panel;
 namespace Engine::inline UI{
     export class Canvas: public Drawable{
     public:
+        Canvas()=default;
+        ~Canvas()=default;
         void Draw() override;
         void AddPanel(Panel& panel);
         void RemovePanel(Panel& panel);
@@ -14,7 +16,7 @@ namespace Engine::inline UI{
         void MakeDockSpace(bool state);
         [[nodiscard]]bool IsDockSpace() const;
     private:
-        std::vector<std::reference_wrapper<Panel>> m_Panels;
+        std::vector<std::reference_wrapper<Panel>> m_Panels{};
         bool m_IsDockSpace{false};
     };
 }

@@ -60,7 +60,7 @@ namespace Engine::inline UI{
                 ExecutePlugins();
             }
 
-            if(isLineBreak){
+            if(!isLineBreak){
                 ImGui::SameLine();
             }
         }

@@ -39,7 +39,8 @@ namespace Engine::inline UI{
     }
     bool UIManager::LoadFont(const std::string& name, const std::string& path, float size){
         if(m_Fonts.find(name)==m_Fonts.end()){
-            ImFont* font=ImGui::GetIO().Fonts->AddFontFromFileTTF(path.c_str(),size);
+            auto& io=ImGui::GetIO();
+            ImFont* font=io.Fonts->AddFontFromFileTTF(path.c_str(),size,nullptr,io.Fonts->GetGlyphRangesChineseFull());
             if(font){
                 m_Fonts.insert({name,font});
                 return true;

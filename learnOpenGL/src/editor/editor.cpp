@@ -2,6 +2,7 @@ module editor;
 
 import stl;
 import canvas;
+import menu_bar;
 import panel_manager;
 import editor_renderer;
 import context;
@@ -35,7 +36,9 @@ namespace Engine::inline editor{
     }
     
     void Editor::SetupUI(){
-
+        m_PanelManager.CreatePanel<MenuBar>("Menu Bar");
+        m_Canvas.MakeDockSpace(true);
+        m_Context.uiManager->SetCanvas(m_Canvas);
     }
     
     void Editor::HandleGlobalShortcuts(){
