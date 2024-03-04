@@ -9,17 +9,17 @@ import pluginable;
 
 
 namespace Engine::inline UI{
-    export class TreeNode : public WidgetContainer, public DataWidget<std::string>{
+    export class TreeNode : public WidgetContainer, public DataWidget<std::u8string>{
     public:
         TreeNode()=default;
-        TreeNode(const std::string& p_name="",bool isClickArrowToOpen=false);
+        TreeNode(const std::u8string& p_name=u8"",bool isClickArrowToOpen=false);
         void Close();
         void Open();
         [[nodiscard]]bool IsOpened()const;
     protected:
         void DrawImpl()override;
     public:
-        std::string name{""};
+        std::u8string name{};
         bool isSelected{false};
         bool isLeafNode{false};
 
@@ -38,7 +38,7 @@ namespace Engine::inline UI{
 module : private;
 
 namespace Engine::inline UI{
-    TreeNode::TreeNode(const std::string& p_name,bool isClickArrowToOpen):DataWidget(name),name(p_name),m_IsClickArrowToOpen(isClickArrowToOpen){
+    TreeNode::TreeNode(const std::u8string& p_name,bool isClickArrowToOpen):DataWidget(name),name(p_name),m_IsClickArrowToOpen(isClickArrowToOpen){
         isAutoExecutePlugins=false;
     }
 
@@ -60,7 +60,7 @@ namespace Engine::inline UI{
         if(isLeafNode) flags|=ImGuiTreeNodeFlags_Leaf;
         if(isSelected) flags|=ImGuiTreeNodeFlags_Selected;
 
-        bool opened=ImGui::TreeNodeEx((data+widgetID).c_str(),flags);
+        bool opened=ImGui::TreeNodeEx(reinterpret_cast<const char*>((data+widgetID).c_str()),flags);
         //计算是否点击到标签
         if(ImGui::IsItemClicked()&&(ImGui::GetMousePos().x-ImGui::GetItemRectMin().x)>ImGui::GetTreeNodeToLabelSpacing()){
             //检测是否为左键

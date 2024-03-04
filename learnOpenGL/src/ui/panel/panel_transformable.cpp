@@ -1,11 +1,10 @@
-module;
-#include <imgui.h>
 module panel_transformable;
 
 import glm;
 import alignment;
 import panel;
 import converter;
+import imgui;
 
 namespace Engine::inline UI{
     PanelTransformable::PanelTransformable(

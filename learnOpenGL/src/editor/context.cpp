@@ -31,10 +31,10 @@ namespace Engine::inline editor{
         device->SetVsync(true);
 
         uiManager=std::make_unique<UIManager>(windowManager->GetGlfwWindow());
-        uiManager->LoadFont("LXGWBrightGB-Regular_Big","../../../../assets/fonts/LXGWBrightGB-Regular.ttf",35.f);
-        uiManager->LoadFont("LXGWBrightGB-Regular_Medium","../../../../assets/fonts/LXGWBrightGB-Regular.ttf",30.f);
-        uiManager->LoadFont("LXGWBrightGB-Regular_Small","../../../../assets/fonts/LXGWBrightGB-Regular.ttf",25.f);
-        uiManager->UseFont("LXGWBrightGB-Regular_Medium");
+        uiManager->LoadFont(u8"LXGWBrightGB-Regular_Big",u8"../../../../assets/fonts/LXGWBrightGB-Regular.ttf",35.f);
+        uiManager->LoadFont(u8"LXGWBrightGB-Regular_Medium",u8"../../../../assets/fonts/LXGWBrightGB-Regular.ttf",30.f);
+        uiManager->LoadFont(u8"LXGWBrightGB-Regular_Small",u8"../../../../assets/fonts/LXGWBrightGB-Regular.ttf",25.f);
+        uiManager->UseFont(u8"LXGWBrightGB-Regular_Medium");
         uiManager->SetEditorLayoutAutoSaveInterval(60.f);
         uiManager->EnableEditorLayoutSave(true);
         uiManager->EnableDocking(true);

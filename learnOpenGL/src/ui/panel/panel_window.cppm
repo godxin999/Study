@@ -25,7 +25,7 @@ namespace Engine::inline UI{
     export class PanelWindow:public PanelTransformable{
     public:
         PanelWindow()=default;
-        PanelWindow(const std::string& name="",bool isOpened=true,const PanelWindowSettings& settings=PanelWindowSettings{});
+        PanelWindow(const std::u8string& name=u8"",bool isOpened=true,const PanelWindowSettings& settings=PanelWindowSettings{});
         ~PanelWindow()=default;
         void Open();
         void Close();
@@ -42,7 +42,7 @@ namespace Engine::inline UI{
     protected:
         void DrawImpl() override;
     public:
-        std::string name{""};
+        std::u8string name{};
 
         glm::vec2 minSize{0.f};
         glm::vec2 maxSize{10000.f};

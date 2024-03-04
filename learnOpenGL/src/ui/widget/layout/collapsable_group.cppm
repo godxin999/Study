@@ -10,11 +10,11 @@ namespace Engine::inline UI{
     public:
         CollapsableGroup()=default;
         ~CollapsableGroup()=default;
-        CollapsableGroup(const std::string& name);
+        CollapsableGroup(const std::u8string& name);
     protected:
         void DrawImpl() override;
     public:
-        std::string name{""};
+        std::u8string name{};
         bool closable{false};
         bool isExpanded{false};
         Event<> CollapseEvent{};
@@ -25,13 +25,13 @@ namespace Engine::inline UI{
 module : private;
 
 namespace Engine::inline UI{
-    CollapsableGroup::CollapsableGroup(const std::string& name):name(name){
+    CollapsableGroup::CollapsableGroup(const std::u8string& name):name(name){
 
     }
     
     void CollapsableGroup::DrawImpl(){
         bool previousState=isExpanded;
-        if(ImGui::CollapsingHeader(name.c_str(),closable?&isExpanded:nullptr)){
+        if(ImGui::CollapsingHeader(reinterpret_cast<const char*>(name.c_str()),closable?&isExpanded:nullptr)){
             DrawWidgets();
         }
 

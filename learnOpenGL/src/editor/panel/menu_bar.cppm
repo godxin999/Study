@@ -9,11 +9,11 @@ import menu_item;
 namespace Engine::inline editor{
     export class MenuBar:public PanelMenuBar{
     public:
-        using panelMap=std::unordered_map<std::string,std::pair<std::reference_wrapper<PanelWindow>,std::reference_wrapper<MenuItem>>>;
+        using panelMap=std::unordered_map<std::u8string,std::pair<std::reference_wrapper<PanelWindow>,std::reference_wrapper<MenuItem>>>;
         MenuBar();
         ~MenuBar()=default;
         void HandleShortcuts(float deltaTime);
-        void RegisterPanel(const std::string& name,PanelWindow& panel);
+        void RegisterPanel(const std::u8string& name,PanelWindow& panel);
     private:
         void CreateFileMenu();
         void CreateWindowMenu();

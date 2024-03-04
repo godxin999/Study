@@ -1,9 +1,8 @@
-module;
-#include <imgui.h>
 export module panel_undecorated;
 
 import panel_transformable;
 import stl;
+import imgui;
 
 namespace Engine::inline UI{
     export class PanelUndecorated : public PanelTransformable{
@@ -23,7 +22,7 @@ namespace Engine::inline UI{
         auto previousMinSize=style.WindowMinSize;
         style.WindowPadding={0,0};
         style.WindowMinSize={0,0};
-        if(ImGui::Begin(panelID.c_str(),nullptr,CollectFlags())){
+        if(ImGui::Begin(reinterpret_cast<const char*>(panelID.c_str()),nullptr,CollectFlags())){
             style.WindowPadding=previousPadding;
             style.WindowMinSize=previousMinSize;
             Update();

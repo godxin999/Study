@@ -20,9 +20,9 @@ namespace Engine::inline editor{
 
     }
 
-    void MenuBar::RegisterPanel(const std::string& name,PanelWindow& panel){
+    void MenuBar::RegisterPanel(const std::u8string& name,PanelWindow& panel){
         //创建panelwindow对应的菜单项
-        auto& menuItem=m_WindowMenu->CreateWidget<MenuItem>(name,"",true,true);
+        auto& menuItem=m_WindowMenu->CreateWidget<MenuItem>(name,u8"",true,true);
         //如果菜单项被点击，那么就会触发panelwindow的打开或关闭
         menuItem.ValueChangeEvent+=[&panel](bool value){
             panel.SetOpenState(value);
@@ -31,23 +31,23 @@ namespace Engine::inline editor{
     }
     
     void MenuBar::CreateFileMenu(){
-        auto& fileMenu=CreateWidget<MenuList>("文件");
-        fileMenu.CreateWidget<MenuItem>("新建","Ctrl + N");
-        fileMenu.CreateWidget<MenuItem>("保存","Ctrl + S");
-        fileMenu.CreateWidget<MenuItem>("另存为","Ctrl + Shift + S");
-        fileMenu.CreateWidget<MenuItem>("退出","Alt + F4").ClickEvent+=[](){
+        auto& fileMenu=CreateWidget<MenuList>(u8"文件");
+        fileMenu.CreateWidget<MenuItem>(u8"新建",u8"Ctrl + N");
+        fileMenu.CreateWidget<MenuItem>(u8"保存",u8"Ctrl + S");
+        fileMenu.CreateWidget<MenuItem>(u8"另存为",u8"Ctrl + Shift + S");
+        fileMenu.CreateWidget<MenuItem>(u8"退出",u8"Alt + F4").ClickEvent+=[](){
             ServiceLocator::Get<WindowManager>().SetShouldClose(true);
             ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Exit The Editor");
         };
     }
 
     void MenuBar::CreateWindowMenu(){
-        m_WindowMenu=&CreateWidget<MenuList>("窗口");
-        m_WindowMenu->CreateWidget<MenuItem>("关闭所有").ClickEvent+=[this](){
+        m_WindowMenu=&CreateWidget<MenuList>(u8"窗口");
+        m_WindowMenu->CreateWidget<MenuItem>(u8"关闭所有").ClickEvent+=[this](){
             SetEveryWindowOpenState(false);
             ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Close All PanelWindows");
         };
-        m_WindowMenu->CreateWidget<MenuItem>("打开所有").ClickEvent+=[this](){
+        m_WindowMenu->CreateWidget<MenuItem>(u8"打开所有").ClickEvent+=[this](){
             SetEveryWindowOpenState(true);
             ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Open All PanelWindows");
         };

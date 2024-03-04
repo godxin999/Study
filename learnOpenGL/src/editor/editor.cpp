@@ -36,7 +36,7 @@ namespace Engine::inline editor{
     }
     
     void Editor::SetupUI(){
-        m_PanelManager.CreatePanel<MenuBar>("Menu Bar");
+        m_PanelManager.CreatePanel<MenuBar>(u8"Menu Bar");
         m_Canvas.MakeDockSpace(true);
         m_Context.uiManager->SetCanvas(m_Canvas);
     }

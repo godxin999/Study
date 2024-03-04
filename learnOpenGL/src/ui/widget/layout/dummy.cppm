@@ -1,10 +1,9 @@
-module;
-#include <imgui.h>
 export module dummy;
 
 import converter;
 import glm;
 import widget;
+import imgui;
 
 namespace Engine::inline UI{
     //Dummy是可指定大小的空白控件

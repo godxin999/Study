@@ -6,11 +6,14 @@ export module imgui;
 export ImGuiViewport;
 export ImGuiID;
 export ImVec2;
+export ImVec4;
 export ImGuiWindowFlags_;
 export ImGuiStyleVar_;
 export ImGuiDockNodeFlags_;
 export ImFont;
 export ImGuiTreeNodeFlags_;
+export ImTextureID;
+export ImGuiCond_;
 
 export namespace ImGui{
     using ImGui::SameLine;
@@ -61,4 +64,13 @@ export namespace ImGui{
     using ImGui::EndMenu;
     using ImGui::MenuItem;
     using ImGui::Separator;
+    using ImGui::Image;
+    using ImGui::IsWindowFocused;
+    using ImGui::IsWindowHovered;
+    using ImGui::SetNextWindowSizeConstraints;
+    using ImGui::SetWindowFocus;
+    using ImGui::GetScrollY;
+    using ImGui::GetScrollMaxY;
+    using ImGui::SetScrollY;
+    using ImGui::FindWindowByName;
 }

@@ -14,9 +14,9 @@ namespace Engine::inline editor{
         Context();
         ~Context();
     public:
-        const std::string projectPath;
-        const std::string projectName;
-        const std::string projectAssetsPath;
+        const std::u8string projectPath;
+        const std::u8string projectName;
+        const std::u8string projectAssetsPath;
 
         std::unique_ptr<Device> device{nullptr};
         std::unique_ptr<WindowManager> windowManager{nullptr};

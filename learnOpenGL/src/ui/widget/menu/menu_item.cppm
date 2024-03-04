@@ -9,13 +9,13 @@ import data_widget;
 namespace Engine::inline UI{
     export class MenuItem:public DataWidget<bool>{
     public:
-        MenuItem(const std::string& name,const std::string& shortcut="",bool checkable=false,bool p_isChecked=false);
+        MenuItem(const std::u8string& name,const std::u8string& shortcut=u8"",bool checkable=false,bool p_isChecked=false);
         ~MenuItem()=default; 
     protected:
         void DrawImpl()override;
     public:
-        std::string name{""};
-        std::string shortcut{""};
+        std::u8string name{};
+        std::u8string shortcut{};
         bool checkable{false};
         bool isChecked{false};
         Event<> ClickEvent{};
@@ -26,13 +26,13 @@ namespace Engine::inline UI{
 module : private;
 
 namespace Engine::inline UI{
-    MenuItem::MenuItem(const std::string& name,const std::string& shortcut,bool checkable,bool p_isChecked):DataWidget(isChecked),name(name),shortcut(shortcut),checkable(checkable),isChecked(p_isChecked){
+    MenuItem::MenuItem(const std::u8string& name,const std::u8string& shortcut,bool checkable,bool p_isChecked):DataWidget(isChecked),name(name),shortcut(shortcut),checkable(checkable),isChecked(p_isChecked){
         
     }
 
     void MenuItem::DrawImpl(){
         bool previousValue=isChecked;
-        if(ImGui::MenuItem((name+widgetID).c_str(),shortcut.c_str(),checkable?std::addressof(isChecked):nullptr,enable)){
+        if(ImGui::MenuItem(reinterpret_cast<const char*>((name+widgetID).c_str()),reinterpret_cast<const char*>(shortcut.c_str()),checkable?std::addressof(isChecked):nullptr,enable)){
             ClickEvent.Invoke();
         }
         if(previousValue!=isChecked){

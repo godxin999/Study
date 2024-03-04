@@ -8,12 +8,12 @@ import event;
 namespace Engine::inline UI{
     export class MenuList:public Group{
     public:
-        MenuList(const std::string& name,bool isLocked=false);
+        MenuList(const std::u8string& name,bool isLocked=false);
         ~MenuList()=default;
     protected:
         void DrawImpl()override;
     public:
-        std::string name{""};
+        std::u8string name{};
         bool isLocked{false};
         Event<> ClickEvent{};
     private:
@@ -24,12 +24,12 @@ namespace Engine::inline UI{
 module : private;
 
 namespace Engine::inline UI{
-    MenuList::MenuList(const std::string& name,bool isLocked):name(name),isLocked(isLocked){
+    MenuList::MenuList(const std::u8string& name,bool isLocked):name(name),isLocked(isLocked){
 
     }
 
     void MenuList::DrawImpl(){
-        if(ImGui::BeginMenu(name.c_str(),!isLocked)){
+        if(ImGui::BeginMenu(reinterpret_cast<const char*>(name.c_str()),!isLocked)){
             //成功打开菜单但是m_IsOpened为false，说明发生了点击事件
             if(!m_IsOpened){
                 ClickEvent.Invoke();

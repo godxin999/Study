@@ -13,9 +13,9 @@ namespace Engine::inline Window{
         WindowManager(const Device& device);
         ~WindowManager();
 
-        void SetIcon(const std::string& path);
+        void SetIcon(const std::u8string& path);
         void SetIconFromMemory(uint8_t* data,uint32_t width,uint32_t height);
-        void SetTitle(const std::string& title);
+        void SetTitle(const std::u8string& title);
         void SetSize(uint16_t width,uint16_t height);
         void SetPosition(int16_t x,int16_t y);
         void SetMinimumSize(int16_t width,int16_t height);
@@ -91,8 +91,8 @@ namespace Engine::inline Window{
     private:
         const Device& m_Device;
         GLFWwindow* m_Window{nullptr};
-        std::string m_Title{"Window"};
-        std::pair<uint16_t,uint16_t> m_Size{800,600};
+        std::u8string m_Title{u8"莫名其妙的窗口"};
+        std::pair<uint16_t,uint16_t> m_Size{1600,900};
         std::pair<int16_t,int16_t> m_Position{0,0};
         std::pair<int16_t,int16_t> m_MinimumSize{-1,-1};
         std::pair<int16_t,int16_t> m_MaximumSize{-1,-1};

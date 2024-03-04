@@ -35,7 +35,7 @@ namespace Engine::inline UI{
         bool enable{true};
         bool isLineBreak{true};
     protected:
-        std::string widgetID{};
+        std::u8string widgetID{};
         WidgetContainer* parent{nullptr};
         bool isAutoExecutePlugins{true};
     private:
@@ -49,7 +49,7 @@ module : private;
 namespace Engine::inline UI{
     Widget::Widget(){
         //imgui会隐藏##开头的名称
-        widgetID="##"+std::to_string(WidgetCounter++);
+        widgetID=u8"##"+std::u8string(reinterpret_cast<const char8_t*>(std::to_string(WidgetCounter++).c_str()));
     }
     
     void Widget::Draw(){

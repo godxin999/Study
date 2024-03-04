@@ -23,4 +23,3 @@ export import <type_traits>;
 export import <chrono>;
 export import <array>;
 export import <optional>;
-export import <variant>;

@@ -19,7 +19,7 @@ namespace Engine::inline Core{
         virtual void OnDestroy(){}
         virtual void OnEnable(){}
         virtual void OnDisable(){}
-        virtual std::string GetName()const = 0;
+        virtual std::u8string GetName()const = 0;
     public:
         Actor& owner;
     };

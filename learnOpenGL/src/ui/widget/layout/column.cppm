@@ -28,7 +28,7 @@ namespace Engine::inline UI{
     template <size_t N>
     void Column<N>::DrawImpl(){
         //列数量，名称，是否保留上次的设置
-        ImGui::Columns(static_cast<int>(N),("##"+widgetID).c_str(),false);
+        ImGui::Columns(static_cast<int>(N),reinterpret_cast<const char*>((u8"##"+widgetID).c_str()),false);
         
         CollectGarbage();
         

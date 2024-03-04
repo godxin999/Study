@@ -37,10 +37,10 @@ namespace Engine::inline UI{
                 break;
         }
     }
-    bool UIManager::LoadFont(const std::string& name, const std::string& path, float size){
+    bool UIManager::LoadFont(const std::u8string& name, const std::u8string& path, float size){
         if(m_Fonts.find(name)==m_Fonts.end()){
             auto& io=ImGui::GetIO();
-            ImFont* font=io.Fonts->AddFontFromFileTTF(path.c_str(),size,nullptr,io.Fonts->GetGlyphRangesChineseFull());
+            ImFont* font=io.Fonts->AddFontFromFileTTF(reinterpret_cast<const char*>(path.c_str()),size,nullptr,io.Fonts->GetGlyphRangesChineseFull());
             if(font){
                 m_Fonts.insert({name,font});
                 return true;
@@ -48,14 +48,14 @@ namespace Engine::inline UI{
         }
         return false;
     }
-    bool UIManager::UnloadFont(const std::string& name){
+    bool UIManager::UnloadFont(const std::u8string& name){
         if(m_Fonts.find(name)!=m_Fonts.end()){
             m_Fonts.erase(name);
             return true;
         }
         return false;
     }
-    bool UIManager::UseFont(const std::string& name){
+    bool UIManager::UseFont(const std::u8string& name){
         if(m_Fonts.find(name)!=m_Fonts.end()){
             ImGui::GetIO().FontDefault=m_Fonts[name];
             return true;
@@ -67,7 +67,7 @@ namespace Engine::inline UI{
     }
     void UIManager::EnableEditorLayoutSave(bool enable){
         if(enable){
-            ImGui::GetIO().IniFilename=m_LayoutSaveFilename.c_str();
+            ImGui::GetIO().IniFilename=reinterpret_cast<const char*>(m_LayoutSaveFilename.c_str());
         }
         else{
             ImGui::GetIO().IniFilename=nullptr;
@@ -76,7 +76,7 @@ namespace Engine::inline UI{
     bool UIManager::IsEditorLayoutSaveEnabled()const{
         return ImGui::GetIO().IniFilename;
     }
-    void UIManager::SetEditorLayoutSaveFilename(const std::string& filename){
+    void UIManager::SetEditorLayoutSaveFilename(const std::u8string& filename){
         m_LayoutSaveFilename=filename;
     }
     void UIManager::SetEditorLayoutAutoSaveInterval(float interval){
@@ -97,8 +97,8 @@ namespace Engine::inline UI{
     bool UIManager::IsDockingEnabled()const{
         return m_DockingState;
     }
-    void UIManager::ResetLayout(const std::string& layout)const{
-        ImGui::LoadIniSettingsFromDisk(layout.c_str());
+    void UIManager::ResetLayout(const std::u8string& layout)const{
+        ImGui::LoadIniSettingsFromDisk(reinterpret_cast<const char*>(layout.c_str()));
     }
     void UIManager::SetCanvas(Canvas& canvas){
         RemoveCanvas();

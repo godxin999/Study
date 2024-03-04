@@ -1,8 +1,7 @@
-module;
-#include <imgui.h>
 export module converter;
 
 import glm;
+import imgui;
 
 namespace Engine::inline UI{
     export class Converter{

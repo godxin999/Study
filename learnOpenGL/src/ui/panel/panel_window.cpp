@@ -1,5 +1,3 @@
-module;
-#include <imgui_internal.h>
 module panel_window;
 
 import panel_transformable;
@@ -7,9 +5,10 @@ import event;
 import stl;
 import glm;
 import converter;
+import imgui;
 
 namespace Engine::inline UI{
-    PanelWindow::PanelWindow(const std::string& name,bool isOpened,const PanelWindowSettings& settings):
+    PanelWindow::PanelWindow(const std::u8string& name,bool isOpened,const PanelWindowSettings& settings):
         name(name),
         closable(settings.closable),
         resizable(settings.resizable),
@@ -43,7 +42,7 @@ namespace Engine::inline UI{
     }
 
     void PanelWindow::Focus(){
-        ImGui::SetWindowFocus((name+panelID).c_str());
+        ImGui::SetWindowFocus(reinterpret_cast<const char*>((name+panelID).c_str()));
     }
 
     void PanelWindow::SetOpenState(bool isOpened){
@@ -71,7 +70,7 @@ namespace Engine::inline UI{
     }
 
     bool PanelWindow::IsAppearing() const{
-        if(auto window=ImGui::FindWindowByName((name+panelID).c_str())){
+        if(auto window=ImGui::FindWindowByName(reinterpret_cast<const char*>((name+panelID).c_str()))){
             return window->Appearing;
         }
         else{
@@ -113,7 +112,7 @@ namespace Engine::inline UI{
 
             ImGui::SetNextWindowSizeConstraints(Converter::ToImVec2(minSize),Converter::ToImVec2(maxSize));
 
-            if(ImGui::Begin((name+panelID).c_str(),(closable?&m_IsOpened:nullptr),windowFlags)){
+            if(ImGui::Begin(reinterpret_cast<const char*>((name+panelID).c_str()),(closable?&m_IsOpened:nullptr),windowFlags)){
                 m_IsHovered=ImGui::IsWindowHovered();
                 m_IsFocused=ImGui::IsWindowFocused();
 

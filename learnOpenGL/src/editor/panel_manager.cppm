@@ -14,7 +14,7 @@ namespace Engine::inline editor{
         }
         ~PanelManager()=default;
         template <typename T,typename... Args>
-        void CreatePanel(const std::string& name,Args&&... args){
+        void CreatePanel(const std::u8string& name,Args&&... args){
             //如果是PanelWindow的派生类，那么需要注册到菜单栏
             if constexpr (std::derived_from<T,PanelWindow>){
                 m_Panels.emplace(name,std::make_unique<T>(std::forward<Args>(args)...));
@@ -27,11 +27,11 @@ namespace Engine::inline editor{
             m_Canvas.AddPanel(*m_Panels[name]);
         }
         template <typename T>
-        T& GetPanel(const std::string& name){
+        T& GetPanel(const std::u8string& name){
             return *dynamic_cast<T*>(m_Panels[name].get());
         }
     private:
-        std::unordered_map<std::string,std::unique_ptr<Panel>> m_Panels;
+        std::unordered_map<std::u8string,std::unique_ptr<Panel>> m_Panels;
         Canvas& m_Canvas;
     };
 }

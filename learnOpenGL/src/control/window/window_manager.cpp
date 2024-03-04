@@ -54,13 +54,13 @@ namespace Engine::inline Window{
         glfwDestroyWindow(m_Window);
     }
     
-    void WindowManager::SetIcon(const std::string& path){}
+    void WindowManager::SetIcon(const std::u8string& path){}
     
     void WindowManager::SetIconFromMemory(uint8_t* data,uint32_t width,uint32_t height){}
     
-    void WindowManager::SetTitle(const std::string& title){
+    void WindowManager::SetTitle(const std::u8string& title){
         m_Title=title;
-        glfwSetWindowTitle(m_Window,m_Title.c_str());
+        glfwSetWindowTitle(m_Window,reinterpret_cast<const char*>(m_Title.c_str()));
     }
     
     void WindowManager::SetSize(uint16_t width,uint16_t height){
@@ -205,7 +205,7 @@ namespace Engine::inline Window{
         glfwWindowHint(GLFW_SAMPLES,4);
         
 
-        m_Window=glfwCreateWindow(m_Size.first,m_Size.second,m_Title.c_str(),monitor,nullptr);
+        m_Window=glfwCreateWindow(m_Size.first,m_Size.second,reinterpret_cast<const char*>(m_Title.c_str()),monitor,nullptr);
         if(!m_Window){
             throw std::runtime_error("Failed to create window");
         }
