@@ -13,7 +13,7 @@ import service_locator;
 import device;
 
 namespace Engine::inline Window{
-    WindowManager::WindowManager(const Device& device):m_Device(device){
+    WindowManager::WindowManager(const Device& device):m_device(device){
         CreateGlfwWindow();
         SetCursorMode(CursorMode::NORMAL);
         SetCursorShape(CursorShape::ARROW);
@@ -29,8 +29,8 @@ namespace Engine::inline Window{
         BindCloseCallback();
 
         ResizeEvent+=[this](uint16_t width,uint16_t height){
-            m_Size.first=width;
-            m_Size.second=height;
+            m_size.first=width;
+            m_size.second=height;
             ServiceLocator::Get<LogManager>().Log(LogLevel::info,std::format("Window resized to {}x{}",width,height));
         };
         FrameBufferResizeEvent+=[this](uint16_t width,uint16_t height){
@@ -38,9 +38,9 @@ namespace Engine::inline Window{
             ServiceLocator::Get<LogManager>().Log(LogLevel::info,std::format("Framebuffer resized to {}x{}",width,height));
         };
         MoveEvent+=[this](int16_t x,int16_t y){
-            if(!m_IsFullscreen){
-                m_Position.first=x;
-                m_Position.second=y;
+            if(!m_isFullscreen){
+                m_position.first=x;
+                m_position.second=y;
             }
             ServiceLocator::Get<LogManager>().Log(LogLevel::info,std::format("Window moved to ({},{})",x,y));
         };
@@ -50,8 +50,8 @@ namespace Engine::inline Window{
     }
     
     WindowManager::~WindowManager(){
-        Windows.erase(m_Window);
-        glfwDestroyWindow(m_Window);
+        Windows.erase(m_window);
+        glfwDestroyWindow(m_window);
     }
     
     void WindowManager::SetIcon(const std::u8string& path){}
@@ -59,128 +59,128 @@ namespace Engine::inline Window{
     void WindowManager::SetIconFromMemory(uint8_t* data,uint32_t width,uint32_t height){}
     
     void WindowManager::SetTitle(const std::u8string& title){
-        m_Title=title;
-        glfwSetWindowTitle(m_Window,reinterpret_cast<const char*>(m_Title.c_str()));
+        m_title=title;
+        glfwSetWindowTitle(m_window,reinterpret_cast<const char*>(m_title.c_str()));
     }
     
     void WindowManager::SetSize(uint16_t width,uint16_t height){
-        glfwSetWindowSize(m_Window,static_cast<int>(width),static_cast<int>(height));
+        glfwSetWindowSize(m_window,static_cast<int>(width),static_cast<int>(height));
     }
     
     void WindowManager::SetPosition(int16_t x,int16_t y){
-        glfwSetWindowPos(m_Window,static_cast<int>(x),static_cast<int>(y));
+        glfwSetWindowPos(m_window,static_cast<int>(x),static_cast<int>(y));
     }
     
     void WindowManager::SetMinimumSize(int16_t width,int16_t height){
-        m_MinimumSize.first=width;
-        m_MinimumSize.second=height;
+        m_minimumSize.first=width;
+        m_minimumSize.second=height;
         UpdateSizeLimit();
     }
     
     void WindowManager::SetMaximumSize(int16_t width,int16_t height){
-        m_MaximumSize.first=width;
-        m_MaximumSize.second=height;
+        m_maximumSize.first=width;
+        m_maximumSize.second=height;
         UpdateSizeLimit();
     }
     
     void WindowManager::SetFullscreen(bool fullscreen){
-        m_IsFullscreen=fullscreen;
-        glfwSetWindowMonitor(m_Window,m_IsFullscreen?glfwGetPrimaryMonitor():nullptr,static_cast<int>(m_Position.first),static_cast<int>(m_Position.second),static_cast<int>(m_Size.first),static_cast<int>(m_Size.second),m_RefreshRate);   
+        m_isFullscreen=fullscreen;
+        glfwSetWindowMonitor(m_window,m_isFullscreen?glfwGetPrimaryMonitor():nullptr,static_cast<int>(m_position.first),static_cast<int>(m_position.second),static_cast<int>(m_size.first),static_cast<int>(m_size.second),m_refreshRate);   
     }
     
     void WindowManager::SetCursorMode(CursorMode mode){
-        m_CursorMode=mode;
-        glfwSetInputMode(m_Window,GLFW_CURSOR,static_cast<int>(m_CursorMode));
+        m_cursorMode=mode;
+        glfwSetInputMode(m_window,GLFW_CURSOR,static_cast<int>(m_cursorMode));
     }
     
     void WindowManager::SetCursorShape(CursorShape shape){
-        m_CursorShape=shape;
-        glfwSetCursor(m_Window,m_Device.GetCursorInstance(m_CursorShape));
+        m_cursorShape=shape;
+        glfwSetCursor(m_window,m_device.GetCursorInstance(m_cursorShape));
     }
     
     void WindowManager::SetShouldClose(bool shouldClose)const{
-        glfwSetWindowShouldClose(m_Window,shouldClose);
+        glfwSetWindowShouldClose(m_window,shouldClose);
     }
     
     void WindowManager::Minimize()const{
-        glfwIconifyWindow(m_Window);
+        glfwIconifyWindow(m_window);
     }
     
     void WindowManager::Maximize()const{
-        glfwMaximizeWindow(m_Window);
+        glfwMaximizeWindow(m_window);
     }
     
     void WindowManager::Restore()const{
-        glfwRestoreWindow(m_Window);
+        glfwRestoreWindow(m_window);
     }
     
     void WindowManager::Focus()const{
-        glfwFocusWindow(m_Window);
+        glfwFocusWindow(m_window);
     }
     
     void WindowManager::Hide()const{
-        glfwHideWindow(m_Window);
+        glfwHideWindow(m_window);
     }
     
     void WindowManager::Show()const{
-        glfwShowWindow(m_Window);
+        glfwShowWindow(m_window);
     }
     
     void WindowManager::ToggleFullscreen(){
-        SetFullscreen(!m_IsFullscreen);
+        SetFullscreen(!m_isFullscreen);
     }
     
     bool WindowManager::IsShouldClose()const{
-        return glfwWindowShouldClose(m_Window);
+        return glfwWindowShouldClose(m_window);
     }
     
     bool WindowManager::IsMinimized()const{
-        return glfwGetWindowAttrib(m_Window,GLFW_ICONIFIED);
+        return glfwGetWindowAttrib(m_window,GLFW_ICONIFIED);
     }
     
     bool WindowManager::IsMaximized()const{
-        return glfwGetWindowAttrib(m_Window,GLFW_MAXIMIZED);
+        return glfwGetWindowAttrib(m_window,GLFW_MAXIMIZED);
     }
     
     bool WindowManager::IsFocused()const{
-        return glfwGetWindowAttrib(m_Window,GLFW_FOCUSED);
+        return glfwGetWindowAttrib(m_window,GLFW_FOCUSED);
     }
     
     bool WindowManager::IsVisible()const{
-        return glfwGetWindowAttrib(m_Window,GLFW_VISIBLE);
+        return glfwGetWindowAttrib(m_window,GLFW_VISIBLE);
     }
     
     bool WindowManager::IsResizable()const{
-        return glfwGetWindowAttrib(m_Window,GLFW_RESIZABLE);
+        return glfwGetWindowAttrib(m_window,GLFW_RESIZABLE);
     }
     
     bool WindowManager::IsDecorated()const{
-        return glfwGetWindowAttrib(m_Window,GLFW_DECORATED);
+        return glfwGetWindowAttrib(m_window,GLFW_DECORATED);
     }
     
     void WindowManager::MakeCurrentContext()const{
-        glfwMakeContextCurrent(m_Window);
+        glfwMakeContextCurrent(m_window);
     }
     
     void WindowManager::SwapBuffers()const{
-        glfwSwapBuffers(m_Window);
+        glfwSwapBuffers(m_window);
     }
     
     std::pair<uint16_t,uint16_t> WindowManager::GetFramebufferSize()const{
         int width,height;
-        glfwGetFramebufferSize(m_Window,&width,&height);
+        glfwGetFramebufferSize(m_window,&width,&height);
         return {static_cast<uint16_t>(width),static_cast<uint16_t>(height)};
     }
     
     std::pair<uint16_t,uint16_t> WindowManager::GetSize()const{
         int width,height;
-        glfwGetWindowSize(m_Window,&width,&height);
+        glfwGetWindowSize(m_window,&width,&height);
         return {static_cast<uint16_t>(width),static_cast<uint16_t>(height)};
     }
     
     std::pair<int16_t,int16_t> WindowManager::GetPosition()const{
         int x,y;
-        glfwGetWindowPos(m_Window,&x,&y);
+        glfwGetWindowPos(m_window,&x,&y);
         return {static_cast<int16_t>(x),static_cast<int16_t>(y)};
     }
     
@@ -190,7 +190,7 @@ namespace Engine::inline Window{
     
     void WindowManager::CreateGlfwWindow(){
         GLFWmonitor* monitor=nullptr;
-        if(m_IsFullscreen){
+        if(m_isFullscreen){
             monitor=glfwGetPrimaryMonitor();
         }
 
@@ -205,13 +205,13 @@ namespace Engine::inline Window{
         glfwWindowHint(GLFW_SAMPLES,4);
         
 
-        m_Window=glfwCreateWindow(m_Size.first,m_Size.second,reinterpret_cast<const char*>(m_Title.c_str()),monitor,nullptr);
-        if(!m_Window){
+        m_window=glfwCreateWindow(m_size.first,m_size.second,reinterpret_cast<const char*>(m_title.c_str()),monitor,nullptr);
+        if(!m_window){
             throw std::runtime_error("Failed to create window");
         }
         UpdateSizeLimit();
-        m_Position=GetPosition();
-        Windows[m_Window]=this;
+        m_position=GetPosition();
+        Windows[m_window]=this;
     }
     
     void WindowManager::LoadGlad()const{
@@ -222,7 +222,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindKeyCallback()const{
-        glfwSetKeyCallback(m_Window,[](GLFWwindow* window,int key,int scancode,int action,int mods){
+        glfwSetKeyCallback(m_window,[](GLFWwindow* window,int key,int scancode,int action,int mods){
             if(WindowManager* manager=FindWindowManager(window)){
                 if(action==GLFW_PRESS){
                     manager->KeyPressedEvent.Invoke(static_cast<Key>(key));
@@ -235,7 +235,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindMouseCallback()const{
-        glfwSetMouseButtonCallback(m_Window,[](GLFWwindow* window,int button,int action,int mods){
+        glfwSetMouseButtonCallback(m_window,[](GLFWwindow* window,int button,int action,int mods){
             if(WindowManager* manager=FindWindowManager(window)){
                 if(action==GLFW_PRESS){
                     manager->MouseButtonPressedEvent.Invoke(static_cast<MouseButton>(button));
@@ -248,7 +248,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindResizeCallback()const{
-        glfwSetWindowSizeCallback(m_Window,[](GLFWwindow* window,int width,int height){
+        glfwSetWindowSizeCallback(m_window,[](GLFWwindow* window,int width,int height){
             if(WindowManager* manager=FindWindowManager(window)){
                 manager->ResizeEvent.Invoke(static_cast<uint16_t>(width),static_cast<uint16_t>(height));
             }
@@ -256,7 +256,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindFrameBufferResizeCallback()const{
-        glfwSetFramebufferSizeCallback(m_Window,[](GLFWwindow* window,int width,int height){
+        glfwSetFramebufferSizeCallback(m_window,[](GLFWwindow* window,int width,int height){
             if(WindowManager* manager=FindWindowManager(window)){
                 manager->FrameBufferResizeEvent.Invoke(static_cast<uint16_t>(width),static_cast<uint16_t>(height));
             }
@@ -264,7 +264,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindMoveCallback()const{
-        glfwSetWindowPosCallback(m_Window,[](GLFWwindow* window,int x,int y){
+        glfwSetWindowPosCallback(m_window,[](GLFWwindow* window,int x,int y){
             if(WindowManager* manager=FindWindowManager(window)){
                 manager->MoveEvent.Invoke(static_cast<int16_t>(x),static_cast<int16_t>(y));
             }
@@ -272,7 +272,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindCursorMoveCallback()const{
-        glfwSetCursorPosCallback(m_Window,[](GLFWwindow* window,double x,double y){
+        glfwSetCursorPosCallback(m_window,[](GLFWwindow* window,double x,double y){
             if(WindowManager* manager=FindWindowManager(window)){
                 manager->CursorMoveEvent.Invoke(static_cast<int16_t>(x),static_cast<int16_t>(y));
             }
@@ -280,7 +280,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindIconifyCallback()const{
-        glfwSetWindowIconifyCallback(m_Window,[](GLFWwindow* window,int iconified){
+        glfwSetWindowIconifyCallback(m_window,[](GLFWwindow* window,int iconified){
             if(WindowManager* manager=FindWindowManager(window)){
                 if(iconified){
                     manager->MinimizeEvent.Invoke();
@@ -293,7 +293,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindFocusCallback()const{
-        glfwSetWindowFocusCallback(m_Window,[](GLFWwindow* window,int focused){
+        glfwSetWindowFocusCallback(m_window,[](GLFWwindow* window,int focused){
             if(WindowManager* manager=FindWindowManager(window)){
                 if(focused){
                     manager->GainFocusEvent.Invoke();
@@ -306,7 +306,7 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::BindCloseCallback()const{
-        glfwSetWindowCloseCallback(m_Window,[](GLFWwindow* window){
+        glfwSetWindowCloseCallback(m_window,[](GLFWwindow* window){
             if(WindowManager* manager=FindWindowManager(window)){
                 manager->CloseEvent.Invoke();
             }
@@ -314,6 +314,6 @@ namespace Engine::inline Window{
     }
     
     void WindowManager::UpdateSizeLimit()const{
-        glfwSetWindowSizeLimits(m_Window,static_cast<int>(m_MinimumSize.first),static_cast<int>(m_MinimumSize.second),static_cast<int>(m_MaximumSize.first),static_cast<int>(m_MaximumSize.second));
+        glfwSetWindowSizeLimits(m_window,static_cast<int>(m_minimumSize.first),static_cast<int>(m_minimumSize.second),static_cast<int>(m_maximumSize.first),static_cast<int>(m_maximumSize.second));
     }
 };

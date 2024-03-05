@@ -32,7 +32,7 @@ namespace Engine::inline UI{
         
         CollectGarbage();
         
-        for(auto&& [index,widget] : m_Widgets|std::views::enumerate){
+        for(auto&& [index,widget] : m_widgets|std::views::enumerate){
             widget.first->Draw();
             if(widths[index]!=-1.f){
                 //设置列宽

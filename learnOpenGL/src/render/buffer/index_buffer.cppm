@@ -11,9 +11,9 @@ namespace Engine::inline Render{
         void Bind() const;
         void Unbind() const;
         uint32_t GetID()const{
-            return m_BufferID;
+            return m_bufferID;
         }
     private:
-        uint32_t m_BufferID;
+        uint32_t m_bufferID;
     };
 }

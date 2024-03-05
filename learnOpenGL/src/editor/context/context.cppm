@@ -6,6 +6,7 @@ import window_manager;
 import input_manager;
 import log_manager;
 import device;
+import renderer;
 
 
 namespace Engine::inline editor{
@@ -22,6 +23,7 @@ namespace Engine::inline editor{
         std::unique_ptr<WindowManager> windowManager{nullptr};
         std::unique_ptr<InputManager> inputManager{nullptr};
         std::unique_ptr<LogManager> logManager{nullptr};
+        std::unique_ptr<Renderer> renderer{nullptr};
         std::unique_ptr<UIManager> uiManager{nullptr};
 
         std::unique_ptr<UniformBuffer> ubo{nullptr};

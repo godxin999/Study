@@ -162,7 +162,7 @@ void init(){
 namespace Engine::inline editor{
     export class Application{
     public:
-        Application():m_Context(),m_Editor(m_Context){
+        Application():m_context(),m_editor(m_context){
 
         }
         ~Application()=default;
@@ -176,22 +176,22 @@ namespace Engine::inline editor{
                 
                 render();
 
-                glfwSwapBuffers(m_Context.m_WindowManager->GetGlfwWindow());//交换颜色缓冲
+                glfwSwapBuffers(m_context.m_windowManager->GetGlfwWindow());//交换颜色缓冲
                 glfwPollEvents();//检查是否触发事件并调用对应的回调函数
             }*/
             Clock clock;
             while(IsRunning()){
-                m_Editor.PreUpdate();
-                m_Editor.Update(clock.GetDeltaTime());
-                m_Editor.PostUpdate();
+                m_editor.PreUpdate();
+                m_editor.Update(clock.GetDeltaTime());
+                m_editor.PostUpdate();
                 clock.Update();
             }
         }
         bool IsRunning()const{
-            return !m_Context.windowManager->IsShouldClose();
+            return !m_context.windowManager->IsShouldClose();
         }
     private:
-        Context m_Context;
-        Editor m_Editor;
+        Context m_context;
+        Editor m_editor;
     };
 };

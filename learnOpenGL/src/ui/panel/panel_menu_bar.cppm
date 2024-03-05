@@ -15,7 +15,7 @@ module : private;
 
 namespace Engine::inline UI{
     void PanelMenuBar::DrawImpl(){
-        if(!m_Widgets.empty()&&ImGui::BeginMainMenuBar()){
+        if(!m_widgets.empty()&&ImGui::BeginMainMenuBar()){
             DrawWidgets();
             ImGui::EndMainMenuBar();
         }

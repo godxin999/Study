@@ -29,9 +29,9 @@ namespace Engine::inline UI{
         void RemoveCanvas();
         void Render();
     private:
-        bool m_DockingState{false};
-        Canvas* m_Canvas{nullptr};
-        std::unordered_map<std::u8string,ImFont*> m_Fonts;
-        std::u8string m_LayoutSaveFilename{u8"imgui.ini"};
+        bool m_dockingState{false};
+        Canvas* m_canvas{nullptr};
+        std::unordered_map<std::u8string,ImFont*> m_fonts;
+        std::u8string m_layoutSaveFilename{u8"imgui.ini"};
     };
 }

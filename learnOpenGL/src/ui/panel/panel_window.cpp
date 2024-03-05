@@ -23,20 +23,20 @@ namespace Engine::inline UI{
         collapsable(settings.collapsable),
         allowInputs(settings.allowInputs),
         titleBar(settings.titleBar),
-        m_IsOpened(isOpened){
+        m_isOpened(isOpened){
         autoSize=settings.autoSize;
     }
 
     void PanelWindow::Open(){
-        if(!m_IsOpened){
-            m_IsOpened=true;
+        if(!m_isOpened){
+            m_isOpened=true;
             OpenEvent.Invoke();        
         }
     }
 
     void PanelWindow::Close(){
-        if(m_IsOpened){
-            m_IsOpened=false;
+        if(m_isOpened){
+            m_isOpened=false;
             CloseEvent.Invoke();
         }
     }
@@ -46,9 +46,9 @@ namespace Engine::inline UI{
     }
 
     void PanelWindow::SetOpenState(bool isOpened){
-        if(isOpened!=m_IsOpened){
-            m_IsOpened=isOpened;
-            if(m_IsOpened){
+        if(isOpened!=m_isOpened){
+            m_isOpened=isOpened;
+            if(m_isOpened){
                 OpenEvent.Invoke();
             }
             else{
@@ -58,15 +58,15 @@ namespace Engine::inline UI{
     }
 
     bool PanelWindow::IsOpened() const{
-        return m_IsOpened;
+        return m_isOpened;
     }
 
     bool PanelWindow::IsHovered() const{
-        return m_IsHovered;
+        return m_isHovered;
     }
 
     bool PanelWindow::IsFocused() const{
-        return m_IsFocused;
+        return m_isFocused;
     }
 
     bool PanelWindow::IsAppearing() const{
@@ -79,23 +79,23 @@ namespace Engine::inline UI{
     }
 
     void PanelWindow::ScrollToTop(){
-        m_MustScrollToTop=true;
+        m_mustScrollToTop=true;
     }
 
     void PanelWindow::ScrollToBottom(){
-        m_MustScrollToBottom=true;
+        m_mustScrollToBottom=true;
     }
 
     bool PanelWindow::IsScrollToTop() const{
-        return m_ScrolledToTop;
+        return m_scrolledToTop;
     }
 
     bool PanelWindow::IsScrollToBottom() const{
-        return m_ScrolledToBottom;
+        return m_scrolledToBottom;
     }
 
     void PanelWindow::DrawImpl(){
-        if(m_IsOpened){
+        if(m_isOpened){
             int windowFlags=ImGuiWindowFlags_None;
             if(!resizable)windowFlags|=ImGuiWindowFlags_NoResize;
             if(!movable)windowFlags|=ImGuiWindowFlags_NoMove;
@@ -112,30 +112,30 @@ namespace Engine::inline UI{
 
             ImGui::SetNextWindowSizeConstraints(Converter::ToImVec2(minSize),Converter::ToImVec2(maxSize));
 
-            if(ImGui::Begin(reinterpret_cast<const char*>((name+panelID).c_str()),(closable?&m_IsOpened:nullptr),windowFlags)){
-                m_IsHovered=ImGui::IsWindowHovered();
-                m_IsFocused=ImGui::IsWindowFocused();
+            if(ImGui::Begin(reinterpret_cast<const char*>((name+panelID).c_str()),(closable?&m_isOpened:nullptr),windowFlags)){
+                m_isHovered=ImGui::IsWindowHovered();
+                m_isFocused=ImGui::IsWindowFocused();
 
                 auto scrollY=ImGui::GetScrollY();
 
-                m_ScrolledToTop=(scrollY==ImGui::GetScrollMaxY());
-                m_ScrolledToBottom=(scrollY==0.f);
+                m_scrolledToTop=(scrollY==ImGui::GetScrollMaxY());
+                m_scrolledToBottom=(scrollY==0.f);
 
                 Update();
 
-                if(m_MustScrollToTop){
+                if(m_mustScrollToTop){
                     ImGui::SetScrollY(0.f);
-                    m_MustScrollToTop=false;
+                    m_mustScrollToTop=false;
                 }
-                if(m_MustScrollToBottom){
+                if(m_mustScrollToBottom){
                     ImGui::SetScrollY(ImGui::GetScrollMaxY());
-                    m_MustScrollToBottom=false;
+                    m_mustScrollToBottom=false;
                 }
                 DrawWidgets();
             }
             ImGui::End();
             
-            if(!m_IsOpened){
+            if(!m_isOpened){
                 CloseEvent.Invoke();
             }
         }

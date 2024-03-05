@@ -24,7 +24,7 @@ namespace Engine::inline Window{
         void SetCursorMode(CursorMode mode);
         void SetCursorShape(CursorShape shape);
         void SetShouldClose(bool shouldClose)const;
-        void SetRefreshRate(int32_t refreshRate){m_RefreshRate=refreshRate;}
+        void SetRefreshRate(int32_t refreshRate){m_refreshRate=refreshRate;}
         
         void Minimize()const;
         void Maximize()const;
@@ -40,7 +40,7 @@ namespace Engine::inline Window{
         bool IsVisible()const;
         bool IsResizable()const;
         bool IsDecorated()const;
-        bool IsFullscreen()const{return m_IsFullscreen;}
+        bool IsFullscreen()const{return m_isFullscreen;}
         
         void MakeCurrentContext()const;
         void LoadGlad()const;
@@ -50,12 +50,12 @@ namespace Engine::inline Window{
         std::pair<uint16_t,uint16_t> GetFramebufferSize()const;
         std::pair<uint16_t,uint16_t> GetSize()const;
         std::pair<int16_t,int16_t> GetPosition()const;
-        std::pair<int16_t,int16_t> GetMinimumSize()const{return m_MinimumSize;}
-        std::pair<int16_t,int16_t> GetMaximumSize()const{return m_MaximumSize;}
-        CursorShape GetCursorShape()const{return m_CursorShape;}
-        CursorMode GetCursorMode()const{return m_CursorMode;}
-        int32_t GetRefreshRate()const{return m_RefreshRate;}
-        GLFWwindow* GetGlfwWindow()const{return m_Window;}
+        std::pair<int16_t,int16_t> GetMinimumSize()const{return m_minimumSize;}
+        std::pair<int16_t,int16_t> GetMaximumSize()const{return m_maximumSize;}
+        CursorShape GetCursorShape()const{return m_cursorShape;}
+        CursorMode GetCursorMode()const{return m_cursorMode;}
+        int32_t GetRefreshRate()const{return m_refreshRate;}
+        GLFWwindow* GetGlfwWindow()const{return m_window;}
 
         static WindowManager* FindWindowManager(GLFWwindow* window);
     private:
@@ -89,17 +89,17 @@ namespace Engine::inline Window{
         Event<> LostFocusEvent{};
         Event<> CloseEvent{};
     private:
-        const Device& m_Device;
-        GLFWwindow* m_Window{nullptr};
-        std::u8string m_Title{u8"莫名其妙的窗口"};
-        std::pair<uint16_t,uint16_t> m_Size{1600,900};
-        std::pair<int16_t,int16_t> m_Position{0,0};
-        std::pair<int16_t,int16_t> m_MinimumSize{-1,-1};
-        std::pair<int16_t,int16_t> m_MaximumSize{-1,-1};
-        bool m_IsFullscreen{false};
-        int32_t m_RefreshRate{-1};
-        CursorMode m_CursorMode{CursorMode::NORMAL};
-        CursorShape m_CursorShape{CursorShape::ARROW};
+        const Device& m_device;
+        GLFWwindow* m_window{nullptr};
+        std::u8string m_title{u8"莫名其妙的窗口"};
+        std::pair<uint16_t,uint16_t> m_size{1600,900};
+        std::pair<int16_t,int16_t> m_position{0,0};
+        std::pair<int16_t,int16_t> m_minimumSize{-1,-1};
+        std::pair<int16_t,int16_t> m_maximumSize{-1,-1};
+        bool m_isFullscreen{false};
+        int32_t m_refreshRate{-1};
+        CursorMode m_cursorMode{CursorMode::NORMAL};
+        CursorShape m_cursorShape{CursorShape::ARROW};
 
         inline static std::unordered_map<GLFWwindow*,WindowManager*> Windows{};
     };

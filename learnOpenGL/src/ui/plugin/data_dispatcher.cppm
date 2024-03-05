@@ -18,10 +18,10 @@ namespace Engine::inline UI{
         T Gather();
         void Execute() override;
     private:
-        bool m_IsValueChanged{false};
-        T* m_Data{nullptr};
-        std::function<void(T)> m_Provider;
-        std::function<T()> m_Gatherer;
+        bool m_isValueChanged{false};
+        T* m_data{nullptr};
+        std::function<void(T)> m_provider;
+        std::function<T()> m_gatherer;
     };
 }
 
@@ -30,44 +30,44 @@ module : private;
 namespace Engine::inline UI{
     template <typename T>
     void DataDispatcher<T>::BindData(const T& data){
-        m_Data=std::addressof(data);
+        m_data=std::addressof(data);
     }
 
     template <typename T>
     void DataDispatcher<T>::RegisterProvider(std::function<void(T)> provider){
-        m_Provider=provider;
+        m_provider=provider;
     }
 
     template <typename T>
     void DataDispatcher<T>::RegisterGatherer(std::function<T()> gatherer){
-        m_Gatherer=gatherer;
+        m_gatherer=gatherer;
     }
 
     template <typename T>
     void DataDispatcher<T>::NotifyChange(){
-        m_IsValueChanged=true;
+        m_isValueChanged=true;
     }
 
     template <typename T>
     void DataDispatcher<T>::Provide(T data){
-        if(m_IsValueChanged){
-            if(m_Data){
-                *m_Data=data;
+        if(m_isValueChanged){
+            if(m_data){
+                *m_data=data;
             }
             else{
-                m_Provider(data);
+                m_provider(data);
             }
-            m_IsValueChanged=false;
+            m_isValueChanged=false;
         }
     }
 
     template <typename T>
     T DataDispatcher<T>::Gather(){
-        if(m_Data){
-            return *m_Data;
+        if(m_data){
+            return *m_data;
         }
         else{
-            return m_Gatherer();
+            return m_gatherer();
         }
     }
     

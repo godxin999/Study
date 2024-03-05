@@ -12,13 +12,13 @@ namespace Engine::inline UI{
         requires std::derived_from<T,Plugin>
         T& AddPlugin(Args&&... args){
             T* plugin = new T(std::forward<Args>(args)...);
-            m_Plugins.push_back(plugin);
+            m_plugins.push_back(plugin);
             return *plugin;
         }
         template <typename T>
         requires std::derived_from<T,Plugin>
         T* GetPlugin(){
-            for(auto& plugin : m_Plugins){
+            for(auto& plugin : m_plugins){
                 if(T* p=dynamic_cast<T*>(plugin)){
                     return p;
                 }
@@ -28,7 +28,7 @@ namespace Engine::inline UI{
         void ExecutePlugins();
         void RemoveAllPlugins();
     private:
-        std::vector<Plugin*> m_Plugins{};
+        std::vector<Plugin*> m_plugins{};
     };
 }
 
@@ -36,16 +36,16 @@ module : private;
 
 namespace Engine::inline UI{
     void Pluginable::ExecutePlugins(){
-        for(auto& plugin : m_Plugins){
+        for(auto& plugin : m_plugins){
             plugin->Execute();
         }
     }
 
     void Pluginable::RemoveAllPlugins(){
-        for(auto& plugin : m_Plugins){
+        for(auto& plugin : m_plugins){
             delete plugin;
         }
-        m_Plugins.clear();
+        m_plugins.clear();
     }
     
     Pluginable::~Pluginable(){

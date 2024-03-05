@@ -19,7 +19,7 @@ namespace Engine::inline Debug{
         void Log(LogLevel level,std::string&& message);
         void SetLevel(LogLevel level);
     private:
-        std::shared_ptr<spdlog::logger> m_Logger{nullptr};
+        std::shared_ptr<spdlog::logger> m_logger{nullptr};
     };
     
 }

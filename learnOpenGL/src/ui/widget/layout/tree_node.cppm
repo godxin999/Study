@@ -28,35 +28,35 @@ namespace Engine::inline UI{
         Event<> OpenEvent{};
         Event<> CloseEvent{};
     private:
-        bool m_IsClickArrowToOpen{false};
-        bool m_IsOpened{false};
-        bool m_IsShouldOpen{false};
-        bool m_IsShouldClose{false};
+        bool m_isClickArrowToOpen{false};
+        bool m_isOpened{false};
+        bool m_isShouldOpen{false};
+        bool m_isShouldClose{false};
     };
 }
 
 module : private;
 
 namespace Engine::inline UI{
-    TreeNode::TreeNode(const std::u8string& p_name,bool isClickArrowToOpen):DataWidget(name),name(p_name),m_IsClickArrowToOpen(isClickArrowToOpen){
+    TreeNode::TreeNode(const std::u8string& p_name,bool isClickArrowToOpen):DataWidget(name),name(p_name),m_isClickArrowToOpen(isClickArrowToOpen){
         isAutoExecutePlugins=false;
     }
 
     void TreeNode::DrawImpl(){
-        bool previousIsOpened=m_IsOpened;
+        bool previousIsOpened=m_isOpened;
         
-        if(m_IsShouldOpen){
+        if(m_isShouldOpen){
             ImGui::SetNextItemOpen(true);
-            m_IsShouldOpen=false;
+            m_isShouldOpen=false;
         }
-        else if(m_IsShouldClose){
+        else if(m_isShouldClose){
             ImGui::SetNextItemOpen(false);
-            m_IsShouldClose=false;
+            m_isShouldClose=false;
         }
 
         int flags=ImGuiTreeNodeFlags_None;
         //设置是否点击箭头展开
-        if(m_IsClickArrowToOpen) flags|=ImGuiTreeNodeFlags_OpenOnArrow;
+        if(m_isClickArrowToOpen) flags|=ImGuiTreeNodeFlags_OpenOnArrow;
         if(isLeafNode) flags|=ImGuiTreeNodeFlags_Leaf;
         if(isSelected) flags|=ImGuiTreeNodeFlags_Selected;
 
@@ -76,7 +76,7 @@ namespace Engine::inline UI{
             if(!previousIsOpened){
                 OpenEvent.Invoke();
             }
-            m_IsOpened=true;
+            m_isOpened=true;
             //手动执行插件
             ExecutePlugins();
             DrawWidgets();
@@ -87,22 +87,22 @@ namespace Engine::inline UI{
             if(previousIsOpened){
                 CloseEvent.Invoke();
             }
-            m_IsOpened=false;
+            m_isOpened=false;
             ExecutePlugins();
         }
     }
 
     void TreeNode::Close(){
-        m_IsShouldClose=true;
-        m_IsShouldOpen=false;
+        m_isShouldClose=true;
+        m_isShouldOpen=false;
     }
 
     void TreeNode::Open(){
-        m_IsShouldOpen=true;
-        m_IsShouldClose=false;
+        m_isShouldOpen=true;
+        m_isShouldClose=false;
     }
 
     bool TreeNode::IsOpened()const{
-        return m_IsOpened;
+        return m_isOpened;
     }
 }

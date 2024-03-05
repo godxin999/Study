@@ -21,7 +21,7 @@ namespace Engine::inline editor{
         void UpdateToggleableItems();
         void SetEveryWindowOpenState(bool state);
     private:
-        panelMap m_Panels{};
-        MenuList* m_WindowMenu{nullptr};
+        panelMap m_panels{};
+        MenuList* m_windowMenu{nullptr};
     };
 }

@@ -14,12 +14,12 @@ namespace Engine::inline Render{
         void Unbind();
         template <typename T>
         void SendBlocks(T* data,size_t size){
-            glBindBuffer(GL_SHADER_STORAGE_BUFFER,m_BufferID);
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER,m_bufferID);
             glBufferData(GL_SHADER_STORAGE_BUFFER,size,data,GL_DYNAMIC_DRAW);
             glBindBuffer(GL_SHADER_STORAGE_BUFFER,0);
         }
     private:
-        uint32_t m_BufferID;
-        uint32_t m_BindingPoint;
+        uint32_t m_bufferID;
+        uint32_t m_bindingPoint;
     };
 }

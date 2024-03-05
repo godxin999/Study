@@ -19,9 +19,9 @@ float CalculatePointLightRange(float intensity,const glm::vec3& attCoeff){
 namespace Engine::inline Render{
     glm::mat4 Light::GenerateDataMatrix()const{
         glm::mat4 result;
-        auto position=m_Transform.GetWorldPosition();
+        auto position=m_transform.GetWorldPosition();
         result[0]=glm::vec4(position,type);
-        auto forward=m_Transform.GetWorldForward();
+        auto forward=m_transform.GetWorldForward();
         result[1]=glm::vec4(forward,cutoff);
         result[2]=glm::vec4(color,outerCutoff);
         result[3]=glm::vec4(attCoeff,intensity);

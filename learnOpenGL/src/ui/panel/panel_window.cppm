@@ -64,12 +64,12 @@ namespace Engine::inline UI{
         Event<> OpenEvent{};
         Event<> CloseEvent{};
     private:
-        bool m_IsOpened;
-        bool m_IsHovered;
-        bool m_IsFocused;
-        bool m_MustScrollToBottom{false};
-        bool m_MustScrollToTop{false};
-        bool m_ScrolledToBottom{false};
-        bool m_ScrolledToTop{false};
+        bool m_isOpened;
+        bool m_isHovered;
+        bool m_isFocused;
+        bool m_mustScrollToBottom{false};
+        bool m_mustScrollToTop{false};
+        bool m_scrolledToBottom{false};
+        bool m_scrolledToTop{false};
     };
 }

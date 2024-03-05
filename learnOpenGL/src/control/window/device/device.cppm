@@ -36,8 +36,8 @@ namespace Engine::inline Window{
         void BindErrorCallback()const;
         void CreateCursors();
         void DestroyCursors();
-        bool m_Vsync{true};
-        bool m_IsInitialized{false};
-        std::unordered_map<CursorShape,GLFWcursor*> m_Cursors;
+        bool m_vsync{true};
+        bool m_isInitialized{false};
+        std::unordered_map<CursorShape,GLFWcursor*> m_cursors;
     };
 };

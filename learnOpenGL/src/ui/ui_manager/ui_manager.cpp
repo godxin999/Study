@@ -38,26 +38,26 @@ namespace Engine::inline UI{
         }
     }
     bool UIManager::LoadFont(const std::u8string& name, const std::u8string& path, float size){
-        if(m_Fonts.find(name)==m_Fonts.end()){
+        if(m_fonts.find(name)==m_fonts.end()){
             auto& io=ImGui::GetIO();
             ImFont* font=io.Fonts->AddFontFromFileTTF(reinterpret_cast<const char*>(path.c_str()),size,nullptr,io.Fonts->GetGlyphRangesChineseFull());
             if(font){
-                m_Fonts.insert({name,font});
+                m_fonts.insert({name,font});
                 return true;
             }
         }
         return false;
     }
     bool UIManager::UnloadFont(const std::u8string& name){
-        if(m_Fonts.find(name)!=m_Fonts.end()){
-            m_Fonts.erase(name);
+        if(m_fonts.find(name)!=m_fonts.end()){
+            m_fonts.erase(name);
             return true;
         }
         return false;
     }
     bool UIManager::UseFont(const std::u8string& name){
-        if(m_Fonts.find(name)!=m_Fonts.end()){
-            ImGui::GetIO().FontDefault=m_Fonts[name];
+        if(m_fonts.find(name)!=m_fonts.end()){
+            ImGui::GetIO().FontDefault=m_fonts[name];
             return true;
         }
         return false;
@@ -67,7 +67,7 @@ namespace Engine::inline UI{
     }
     void UIManager::EnableEditorLayoutSave(bool enable){
         if(enable){
-            ImGui::GetIO().IniFilename=reinterpret_cast<const char*>(m_LayoutSaveFilename.c_str());
+            ImGui::GetIO().IniFilename=reinterpret_cast<const char*>(m_layoutSaveFilename.c_str());
         }
         else{
             ImGui::GetIO().IniFilename=nullptr;
@@ -77,7 +77,7 @@ namespace Engine::inline UI{
         return ImGui::GetIO().IniFilename;
     }
     void UIManager::SetEditorLayoutSaveFilename(const std::u8string& filename){
-        m_LayoutSaveFilename=filename;
+        m_layoutSaveFilename=filename;
     }
     void UIManager::SetEditorLayoutAutoSaveInterval(float interval){
         ImGui::GetIO().IniSavingRate=interval;
@@ -86,7 +86,7 @@ namespace Engine::inline UI{
         return ImGui::GetIO().IniSavingRate;
     }
     void UIManager::EnableDocking(bool enable){
-        m_DockingState=enable;
+        m_dockingState=enable;
         if(enable){
             ImGui::GetIO().ConfigFlags|=ImGuiConfigFlags_DockingEnable;
         }
@@ -95,21 +95,21 @@ namespace Engine::inline UI{
         }
     }
     bool UIManager::IsDockingEnabled()const{
-        return m_DockingState;
+        return m_dockingState;
     }
     void UIManager::ResetLayout(const std::u8string& layout)const{
         ImGui::LoadIniSettingsFromDisk(reinterpret_cast<const char*>(layout.c_str()));
     }
     void UIManager::SetCanvas(Canvas& canvas){
         RemoveCanvas();
-        m_Canvas=&canvas;
+        m_canvas=&canvas;
     }
     void UIManager::RemoveCanvas(){
-        m_Canvas=nullptr;
+        m_canvas=nullptr;
     }
     void UIManager::Render(){
-        if(m_Canvas){
-            m_Canvas->Draw();
+        if(m_canvas){
+            m_canvas->Draw();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         }
     }

@@ -1,7 +1,6 @@
 export module renderer;
 
 import stl;
-import glm;
 import gl_enum;
 
 namespace Engine::inline Render{
@@ -15,7 +14,7 @@ namespace Engine::inline Render{
         };
         Renderer();
         ~Renderer()=default;
-        void SetClearColor(const glm::vec4& color);
+        void SetClearColor(float r,float g,float b,float a=1.f);
         void Clear(bool color=true,bool depth=true,bool stencil=true);
         void SetRasterizationLinesWidth(float width);
         void SetRasterizationMode(RasterizationMode mode);

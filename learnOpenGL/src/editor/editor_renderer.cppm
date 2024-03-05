@@ -7,8 +7,9 @@ namespace Engine::inline editor{
     public:
         EditorRenderer(Context& context);
         ~EditorRenderer()=default;
+        
         void RenderUI();
     private:
-        Context& m_Context;
+        Context& m_context;
     };
 }

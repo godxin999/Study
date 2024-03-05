@@ -16,7 +16,7 @@ namespace Engine::inline UI{
         void MakeDockSpace(bool state);
         [[nodiscard]]bool IsDockSpace() const;
     private:
-        std::vector<std::reference_wrapper<Panel>> m_Panels{};
-        bool m_IsDockSpace{false};
+        std::vector<std::reference_wrapper<Panel>> m_panels{};
+        bool m_isDockSpace{false};
     };
 }

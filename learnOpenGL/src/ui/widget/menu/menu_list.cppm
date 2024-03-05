@@ -17,7 +17,7 @@ namespace Engine::inline UI{
         bool isLocked{false};
         Event<> ClickEvent{};
     private:
-        bool m_IsOpened{false};
+        bool m_isOpened{false};
     };
 }
 
@@ -30,16 +30,16 @@ namespace Engine::inline UI{
 
     void MenuList::DrawImpl(){
         if(ImGui::BeginMenu(reinterpret_cast<const char*>(name.c_str()),!isLocked)){
-            //成功打开菜单但是m_IsOpened为false，说明发生了点击事件
-            if(!m_IsOpened){
+            //成功打开菜单但是m_isOpened为false，说明发生了点击事件
+            if(!m_isOpened){
                 ClickEvent.Invoke();
-                m_IsOpened=true;
+                m_isOpened=true;
             }
             DrawWidgets();
             ImGui::EndMenu();
         }
         else{
-            m_IsOpened=false;
+            m_isOpened=false;
         }
     }
 }

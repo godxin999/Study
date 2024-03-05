@@ -14,10 +14,10 @@ namespace Engine::inline Render{
         void Bind() const;
         void Unbind() const;
         uint32_t GetID()const{
-            return m_BufferID;
+            return m_bufferID;
         }
     private:
-        uint32_t m_BufferID;
+        uint32_t m_bufferID;
     };
 }
 
@@ -26,8 +26,8 @@ module : private;
 namespace Engine::inline Render{
     template <typename T>
     VertexBuffer<T>::VertexBuffer(const T* data, uint32_t count){
-        glGenBuffers(1,&m_BufferID);
-        glBindBuffer(GL_ARRAY_BUFFER,m_BufferID);
+        glGenBuffers(1,&m_bufferID);
+        glBindBuffer(GL_ARRAY_BUFFER,m_bufferID);
         glBufferData(GL_ARRAY_BUFFER,count * sizeof(T),data,GL_STATIC_DRAW);
     }
 
@@ -38,12 +38,12 @@ namespace Engine::inline Render{
 
     template <typename T>
     VertexBuffer<T>::~VertexBuffer(){
-        glDeleteBuffers(1,&m_BufferID);
+        glDeleteBuffers(1,&m_bufferID);
     }
 
     template <typename T>
     void VertexBuffer<T>::Bind() const{
-        glBindBuffer(GL_ARRAY_BUFFER,m_BufferID);
+        glBindBuffer(GL_ARRAY_BUFFER,m_bufferID);
     }
     
     template <typename T>

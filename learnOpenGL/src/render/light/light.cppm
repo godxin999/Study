@@ -13,12 +13,12 @@ namespace Engine::inline Render{
     };
     export class Light{
     public:
-        Light(Transform& transform,LightType p_type):m_Transform(transform),type(static_cast<float>(p_type)){}
+        Light(Transform& transform,LightType p_type):m_transform(transform),type(static_cast<float>(p_type)){}
         ~Light() = default;
         [[nodiscard]]glm::mat4 GenerateDataMatrix()const;
         [[nodiscard]]float GetEffectRange()const;
         [[nodiscard]]const Transform& GetTransform()const{
-            return m_Transform;
+            return m_transform;
         }
     public:
         glm::vec3 color{1.f};
@@ -28,6 +28,6 @@ namespace Engine::inline Render{
         float cutoff{12.f};
         float outerCutoff{15.f};
     private:
-        Transform& m_Transform;
+        Transform& m_transform;
     };
 }

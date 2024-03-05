@@ -24,10 +24,10 @@ namespace Engine::inline editor{
         void RenderEditorUI();
         void UpdatePlayMode(float deltaTime);
         void UpdateEditMode(float deltaTime);
-        uint64_t m_ElapsedFrames{};
-        Context& m_Context;
-        Canvas m_Canvas;
-        PanelManager m_PanelManager;
-        EditorRenderer m_EditorRenderer;
+        uint64_t m_elapsedFrames{};
+        Context& m_context;
+        Canvas m_canvas;
+        PanelManager m_panelManager;
+        EditorRenderer m_editorRenderer;
     };
 };

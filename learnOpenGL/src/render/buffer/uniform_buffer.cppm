@@ -32,6 +32,6 @@ namespace Engine::inline Render{
         static void BindBlockToShader(Shader& shader,uint32_t uniformBlockLocation,uint32_t bindingPoint=0);
         static uint32_t GetBlockLocation(Shader& shader,const std::string& uniformBlockName);
     private:
-        uint32_t m_BufferID{};
+        uint32_t m_bufferID{};
     };
 }

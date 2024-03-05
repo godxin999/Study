@@ -16,8 +16,8 @@ namespace Engine::inline Tools{
         ListenerID operator+=(Callback callback);
         bool operator-=(ListenerID id);
     private:
-        std::unordered_map<ListenerID,Callback> m_Listeners{};
-        ListenerID m_AvailableID=0;
+        std::unordered_map<ListenerID,Callback> m_listeners{};
+        ListenerID m_availableID=0;
     };
 }
 
@@ -26,29 +26,29 @@ module : private;
 namespace Engine::inline Tools{
     template<typename... Args>
     ListenerID Event<Args...>::AddListener(Callback callback){
-        auto listenerID=m_AvailableID++;
-        m_Listeners.emplace(listenerID,callback);
+        auto listenerID=m_availableID++;
+        m_listeners.emplace(listenerID,callback);
         return listenerID;
     }
 
     template<typename... Args>
     bool Event<Args...>::RemoveListener(ListenerID id){
-        return m_Listeners.erase(id);
+        return m_listeners.erase(id);
     }
 
     template<typename... Args>
     void Event<Args...>::RemoveAllListeners(){
-        m_Listeners.clear();
+        m_listeners.clear();
     }
 
     template<typename... Args>
     uint64_t Event<Args...>::GetListenerCount() const{
-        return m_Listeners.size();
+        return m_listeners.size();
     }
 
     template<typename... Args>
     void Event<Args...>::Invoke(Args... args){
-        for(const auto& callback:m_Listeners|std::views::values){
+        for(const auto& callback:m_listeners|std::views::values){
             callback(args...);
         }
     }

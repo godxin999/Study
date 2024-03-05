@@ -9,7 +9,7 @@ import context;
 import device;
 
 namespace Engine::inline editor{
-    Editor::Editor(Context& context):m_Context(context),m_EditorRenderer(context),m_PanelManager(m_Canvas){
+    Editor::Editor(Context& context):m_context(context),m_editorRenderer(context),m_panelManager(m_canvas){
         SetupUI();
     }
     
@@ -18,7 +18,10 @@ namespace Engine::inline editor{
     }
     
     void Editor::PreUpdate(){
-        m_Context.device->PollEvents();
+        m_context.device->PollEvents();
+        m_context.renderer->SetClearColor(0.f,0.f,0.f);
+        m_context.renderer->Clear();
+        m_context.renderer->ClearFrameInfo();
     }
     
     void Editor::Update(float deltaTime){
@@ -31,14 +34,14 @@ namespace Engine::inline editor{
     }
     
     void Editor::PostUpdate(){
-        m_Context.windowManager->SwapBuffers();
-        m_Context.inputManager->ClearStates();
+        m_context.windowManager->SwapBuffers();
+        m_context.inputManager->ClearStates();
     }
     
     void Editor::SetupUI(){
-        m_PanelManager.CreatePanel<MenuBar>(u8"Menu Bar");
-        m_Canvas.MakeDockSpace(true);
-        m_Context.uiManager->SetCanvas(m_Canvas);
+        m_panelManager.CreatePanel<MenuBar>(u8"Menu Bar");
+        m_canvas.MakeDockSpace(true);
+        m_context.uiManager->SetCanvas(m_canvas);
     }
     
     void Editor::HandleGlobalShortcuts(){
@@ -62,7 +65,7 @@ namespace Engine::inline editor{
     }
     
     void Editor::RenderEditorUI(){
-        m_EditorRenderer.RenderUI();
+        m_editorRenderer.RenderUI();
     }
     
     void Editor::UpdatePlayMode(float deltaTime){

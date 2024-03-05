@@ -22,12 +22,12 @@ namespace Engine::inline editor{
 
     void MenuBar::RegisterPanel(const std::u8string& name,PanelWindow& panel){
         //创建panelwindow对应的菜单项
-        auto& menuItem=m_WindowMenu->CreateWidget<MenuItem>(name,u8"",true,true);
+        auto& menuItem=m_windowMenu->CreateWidget<MenuItem>(name,u8"",true,true);
         //如果菜单项被点击，那么就会触发panelwindow的打开或关闭
         menuItem.ValueChangeEvent+=[&panel](bool value){
             panel.SetOpenState(value);
         };
-        m_Panels.emplace(name,std::make_pair(std::ref(panel),std::ref(menuItem)));
+        m_panels.emplace(name,std::make_pair(std::ref(panel),std::ref(menuItem)));
     }
     
     void MenuBar::CreateFileMenu(){
@@ -42,30 +42,30 @@ namespace Engine::inline editor{
     }
 
     void MenuBar::CreateWindowMenu(){
-        m_WindowMenu=&CreateWidget<MenuList>(u8"窗口");
-        m_WindowMenu->CreateWidget<MenuItem>(u8"关闭所有").ClickEvent+=[this](){
+        m_windowMenu=&CreateWidget<MenuList>(u8"窗口");
+        m_windowMenu->CreateWidget<MenuItem>(u8"关闭所有").ClickEvent+=[this](){
             SetEveryWindowOpenState(false);
             ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Close All PanelWindows");
         };
-        m_WindowMenu->CreateWidget<MenuItem>(u8"打开所有").ClickEvent+=[this](){
+        m_windowMenu->CreateWidget<MenuItem>(u8"打开所有").ClickEvent+=[this](){
             SetEveryWindowOpenState(true);
             ServiceLocator::Get<LogManager>().Log(LogLevel::info,"Open All PanelWindows");
         };
         //创建一个分隔符，下面的菜单项即注册的panelwindow对应的菜单项
-        m_WindowMenu->CreateWidget<Separator>();
-        m_WindowMenu->ClickEvent+=[this](){
+        m_windowMenu->CreateWidget<Separator>();
+        m_windowMenu->ClickEvent+=[this](){
             UpdateToggleableItems();
         };
     }
 
     void MenuBar::UpdateToggleableItems(){
-        for(auto& [panelwindow,menuItem]:m_Panels|std::views::values){
+        for(auto& [panelwindow,menuItem]:m_panels|std::views::values){
             menuItem.get().isChecked=panelwindow.get().IsOpened();
         }
     }
 
     void MenuBar::SetEveryWindowOpenState(bool state){
-        for(auto& [panelwindow,menuItem]:m_Panels|std::views::values){
+        for(auto& [panelwindow,menuItem]:m_panels|std::views::values){
             panelwindow.get().SetOpenState(state);
         }
     }

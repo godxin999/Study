@@ -7,30 +7,30 @@ import stl;
 
 namespace Engine::inline UI{
     void Canvas::AddPanel(Panel& panel){
-        m_Panels.push_back(std::ref(panel));
+        m_panels.push_back(std::ref(panel));
     }
     void Canvas::RemovePanel(Panel& panel){
-        auto [first,last]=std::ranges::remove_if(m_Panels,[&panel](auto& p){
+        auto [first,last]=std::ranges::remove_if(m_panels,[&panel](auto& p){
             return &p.get()==&panel;
         });
-        m_Panels.erase(first,last);
+        m_panels.erase(first,last);
     }
     void Canvas::RemoveAllPanels(){
-        m_Panels.clear();
+        m_panels.clear();
     }
     void Canvas::MakeDockSpace(bool state){
-        m_IsDockSpace=state;
+        m_isDockSpace=state;
     }
     bool Canvas::IsDockSpace() const{
-        return m_IsDockSpace;
+        return m_isDockSpace;
     }
     void Canvas::Draw(){
-        if(!m_Panels.empty()){
+        if(!m_panels.empty()){
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            if(m_IsDockSpace){
+            if(m_isDockSpace){
                 ImGuiViewport* viewport=ImGui::GetMainViewport();
                 ImGui::SetNextWindowPos(viewport->Pos);
                 ImGui::SetNextWindowSize(viewport->Size);
@@ -55,7 +55,7 @@ namespace Engine::inline UI{
                 ImGui::End();
                 ImGui::PopStyleVar(3);
             }
-            for(const auto& panel:m_Panels){
+            for(const auto& panel:m_panels){
                 panel.get().Draw();
             }
 

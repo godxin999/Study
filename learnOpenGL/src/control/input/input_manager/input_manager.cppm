@@ -20,12 +20,12 @@ namespace Engine::inline Input{
         [[nodiscard]]glm::vec2 GetMousePosition() const;
         void ClearStates();
     private:
-        WindowManager& m_WindowManager;
-        ListenerID m_KeyPressedListener;
-        ListenerID m_KeyReleasedListener;
-        ListenerID m_MouseButtonPressedListener;
-        ListenerID m_MouseButtonReleasedListener;
-        std::unordered_map<Key,KeyState> m_KeyStates;
-        std::unordered_map<MouseButton,MouseButtonState> m_MouseButtonStates;
+        WindowManager& m_windowManager;
+        ListenerID m_keyPressedListener;
+        ListenerID m_keyReleasedListener;
+        ListenerID m_mouseButtonPressedListener;
+        ListenerID m_mouseButtonReleasedListener;
+        std::unordered_map<Key,KeyState> m_keyStates;
+        std::unordered_map<MouseButton,MouseButtonState> m_mouseButtonStates;
     };
 }

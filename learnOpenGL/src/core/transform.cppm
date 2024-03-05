@@ -12,7 +12,7 @@ namespace Engine::inline Core{
 
         void SetParent(Transform& parent);
         bool RemoveParent();
-        bool HasParent()const{return m_Parent;}
+        bool HasParent()const{return m_parent;}
         void GenerateMatricesWorld(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale);
         void GenerateMatricesLocal(const glm::vec3& position, const glm::quat& rotation, const glm::vec3& scale);
         void UpdateWorldMatrix();
@@ -27,28 +27,28 @@ namespace Engine::inline Core{
         void RotateLocal(const glm::quat& rotation);
         void ScaleLocal(const glm::vec3& scale);
         const glm::vec3& GetLocalPosition()const{
-            return m_LocalPosition;
+            return m_localPosition;
         }
         const glm::quat& GetLocalRotation()const{
-            return m_LocalRotation;
+            return m_localRotation;
         }
         const glm::vec3& GetLocalScale()const{
-            return m_LocalScale;
+            return m_localScale;
         }
         const glm::mat4& GetLocalMatrix()const{
-            return m_LocalMatrix;
+            return m_localMatrix;
         }
         const glm::vec3& GetWorldPosition()const{
-            return m_WorldPosition;
+            return m_worldPosition;
         }
         const glm::quat& GetWorldRotation()const{
-            return m_WorldRotation;
+            return m_worldRotation;
         }
         const glm::vec3& GetWorldScale()const{
-            return m_WorldScale;
+            return m_worldScale;
         }
         const glm::mat4& GetWorldMatrix()const{
-            return m_WorldMatrix;
+            return m_worldMatrix;
         }
         glm::vec3 GetWorldForward()const;
         glm::vec3 GetWorldRight()const;
@@ -66,19 +66,19 @@ namespace Engine::inline Core{
         Event<> TransformChangedEvent{};
         Event<> TransformDestroyedEvent{};
     private:
-        ListenerID m_TransformChangedListenerID{0};
+        ListenerID m_transformChangedListenerID{0};
 
-        glm::vec3 m_LocalPosition{};
-        glm::quat m_LocalRotation{};
-        glm::vec3 m_LocalScale{};
-        glm::mat4 m_LocalMatrix{};
+        glm::vec3 m_localPosition{};
+        glm::quat m_localRotation{};
+        glm::vec3 m_localScale{};
+        glm::mat4 m_localMatrix{};
 
-        glm::vec3 m_WorldPosition{};
-        glm::quat m_WorldRotation{};
-        glm::vec3 m_WorldScale{};
-        glm::mat4 m_WorldMatrix{};
+        glm::vec3 m_worldPosition{};
+        glm::quat m_worldRotation{};
+        glm::vec3 m_worldScale{};
+        glm::mat4 m_worldMatrix{};
 
-        Transform* m_Parent{nullptr};
+        Transform* m_parent{nullptr};
     };
 
     export constexpr glm::vec3 Forward{0.0f,0.0f,1.0f};

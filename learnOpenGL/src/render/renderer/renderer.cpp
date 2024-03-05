@@ -3,15 +3,14 @@ module;
 module renderer;
 
 import stl;
-import glm;
 import gl_enum;
 
 namespace Engine::inline Render{
     Renderer::Renderer(){
 
     }
-    void Renderer::SetClearColor(const glm::vec4& color){
-        glClearColor(color.r,color.g,color.b,color.a);
+    void Renderer::SetClearColor(float r,float g,float b,float a){
+        glClearColor(r,g,b,a);
     }
     void Renderer::Clear(bool color,bool depth,bool stencil){
         GLbitfield mask=0;

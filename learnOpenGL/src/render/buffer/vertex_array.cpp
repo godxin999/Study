@@ -6,15 +6,15 @@ import stl;
 
 namespace Engine::inline Render{
     VertexArray::VertexArray(){
-        glGenVertexArrays(1, &m_ArrayID);
+        glGenVertexArrays(1, &m_arrayID);
     }
 
     VertexArray::~VertexArray(){
-        glDeleteVertexArrays(1, &m_ArrayID);
+        glDeleteVertexArrays(1, &m_arrayID);
     }
     
     void VertexArray::Bind() const{
-        glBindVertexArray(m_ArrayID);
+        glBindVertexArray(m_arrayID);
     }
     
     void VertexArray::Unbind() const{

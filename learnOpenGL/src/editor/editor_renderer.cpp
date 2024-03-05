@@ -3,11 +3,11 @@ module editor_renderer;
 import context;
 
 namespace Engine::inline editor{
-    EditorRenderer::EditorRenderer(Context& context):m_Context(context){
+    EditorRenderer::EditorRenderer(Context& context):m_context(context){
 
     }
     
     void EditorRenderer::RenderUI(){
-        m_Context.uiManager->Render();
+        m_context.uiManager->Render();
     }
 }

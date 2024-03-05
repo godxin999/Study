@@ -8,9 +8,9 @@ namespace Engine::inline Core{
     export class Actor{
     public:
         bool IsActive()const{
-            return m_IsActive;
+            return m_isActive;
         }
     private:
-        bool m_IsActive{true};  
+        bool m_isActive{true};  
     };
 }

@@ -17,15 +17,15 @@ namespace Engine::inline Tools{
     private:
         void Initialize();
     private:
-        std::chrono::steady_clock::time_point m_StartTime;
-        std::chrono::steady_clock::time_point m_LastTime;
-        std::chrono::steady_clock::time_point m_CurrentTime;
-        std::chrono::duration<double> m_ElapsedTime;
+        std::chrono::steady_clock::time_point m_startTime;
+        std::chrono::steady_clock::time_point m_lastTime;
+        std::chrono::steady_clock::time_point m_currentTime;
+        std::chrono::duration<double> m_elapsedTime;
 
-        bool m_Initialized{false};
-        float m_TimeScale{1.0f};
-        float m_DeltaTime{0.0f};
-        float m_TotalTime{0.0f};
+        bool m_initialized{false};
+        float m_timeScale{1.0f};
+        float m_deltaTime{0.0f};
+        float m_totalTime{0.0f};
     };
 }
 
@@ -33,50 +33,50 @@ module : private;
 
 namespace Engine::inline Tools{
     void Clock::Initialize(){
-        m_StartTime = std::chrono::steady_clock::now();
-        m_LastTime = m_StartTime;
-        m_CurrentTime = m_StartTime;
-        m_Initialized = true;        
+        m_startTime = std::chrono::steady_clock::now();
+        m_lastTime = m_startTime;
+        m_currentTime = m_startTime;
+        m_initialized = true;        
     }
 
     void Clock::Update(){
-        if(!m_Initialized){
+        if(!m_initialized){
             Initialize();
         }
         else[[likely]]{
-            m_LastTime = m_CurrentTime;
-            m_CurrentTime = std::chrono::steady_clock::now();
-            m_ElapsedTime = m_CurrentTime - m_LastTime;
-            m_DeltaTime = m_ElapsedTime.count()>0.1f?0.1f:static_cast<float>(m_ElapsedTime.count());
-            m_TotalTime += m_DeltaTime*m_TimeScale;
+            m_lastTime = m_currentTime;
+            m_currentTime = std::chrono::steady_clock::now();
+            m_elapsedTime = m_currentTime - m_lastTime;
+            m_deltaTime = m_elapsedTime.count()>0.1f?0.1f:static_cast<float>(m_elapsedTime.count());
+            m_totalTime += m_deltaTime*m_timeScale;
         }
     }
 
     void Clock::Scale(float coeff){
-        m_TimeScale *= coeff;
+        m_timeScale *= coeff;
     }
 
     void Clock::SetTimeScale(float scale){
-        m_TimeScale = scale;
+        m_timeScale = scale;
     }
 
     float Clock::GetTimeScale() const{
-        return m_TimeScale;
+        return m_timeScale;
     }
 
     float Clock::GetDeltaTime() const{
-        return m_DeltaTime*m_TimeScale;
+        return m_deltaTime*m_timeScale;
     }
 
     float Clock::GetTotalTime() const{
-        return m_TotalTime;
+        return m_totalTime;
     }
 
     float Clock::GetDeltaTimeUnscaled() const{
-        return m_DeltaTime;
+        return m_deltaTime;
     }
 
     float Clock::GetFrameRate() const{
-        return 1.f/m_DeltaTime;
+        return 1.f/m_deltaTime;
     }
 }

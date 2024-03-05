@@ -14,15 +14,15 @@ namespace Engine::inline Core{
     }
     
     void Transform::SetParent(Transform& parent){
-        m_Parent=&parent;
-        m_TransformChangedListenerID=m_Parent->TransformChangedEvent.AddListener(std::bind(&Transform::OnTransformChanged,this));
+        m_parent=&parent;
+        m_transformChangedListenerID=m_parent->TransformChangedEvent.AddListener(std::bind(&Transform::OnTransformChanged,this));
         UpdateWorldMatrix();
     }
     
     bool Transform::RemoveParent(){
-        if(m_Parent){
-            m_Parent->TransformChangedEvent.RemoveListener(m_TransformChangedListenerID);
-            m_Parent=nullptr;
+        if(m_parent){
+            m_parent->TransformChangedEvent.RemoveListener(m_transformChangedListenerID);
+            m_parent=nullptr;
             UpdateWorldMatrix();
             return true;
         }
@@ -30,103 +30,103 @@ namespace Engine::inline Core{
     }
     
     void Transform::GenerateMatricesWorld(const glm::vec3& position, const glm::quat& rotation,const glm::vec3& scale){
-        m_WorldPosition=position;
-        m_WorldRotation=glm::normalize(rotation);
-        m_WorldScale=scale;
-        m_WorldMatrix=glm::translate(glm::mat4(1.0f),m_WorldPosition)*glm::mat4_cast(m_WorldRotation)*glm::scale(glm::mat4(1.0f),m_WorldScale);
+        m_worldPosition=position;
+        m_worldRotation=glm::normalize(rotation);
+        m_worldScale=scale;
+        m_worldMatrix=glm::translate(glm::mat4(1.0f),m_worldPosition)*glm::mat4_cast(m_worldRotation)*glm::scale(glm::mat4(1.0f),m_worldScale);
         UpdateLocalMatrix();
     }
     
     void Transform::GenerateMatricesLocal(const glm::vec3& position, const glm::quat& rotation,const glm::vec3& scale){
-        m_LocalPosition=position;
-        m_LocalRotation=glm::normalize(rotation);
-        m_LocalScale=scale;
-        m_LocalMatrix=glm::translate(glm::mat4(1.0f),m_LocalPosition)*glm::mat4_cast(m_LocalRotation)*glm::scale(glm::mat4(1.0f),m_LocalScale);
+        m_localPosition=position;
+        m_localRotation=glm::normalize(rotation);
+        m_localScale=scale;
+        m_localMatrix=glm::translate(glm::mat4(1.0f),m_localPosition)*glm::mat4_cast(m_localRotation)*glm::scale(glm::mat4(1.0f),m_localScale);
         UpdateWorldMatrix();
     }
     
     void Transform::UpdateWorldMatrix(){
-        m_WorldMatrix=m_Parent?m_Parent->GetWorldMatrix()*m_LocalMatrix:m_LocalMatrix;
+        m_worldMatrix=m_parent?m_parent->GetWorldMatrix()*m_localMatrix:m_localMatrix;
         PreDecomposeWorldMatrix();
         TransformChangedEvent.Invoke();
     }
     
     void Transform::UpdateLocalMatrix(){
-        m_LocalMatrix=m_Parent?glm::inverse(m_Parent->GetWorldMatrix())*m_WorldMatrix:m_WorldMatrix;
+        m_localMatrix=m_parent?glm::inverse(m_parent->GetWorldMatrix())*m_worldMatrix:m_worldMatrix;
         PreDecomposeLocalMatrix();
         TransformChangedEvent.Invoke();
     }
     
     void Transform::SetLocalPosition(const glm::vec3& position){
-        GenerateMatricesLocal(position,m_LocalRotation,m_LocalScale);
+        GenerateMatricesLocal(position,m_localRotation,m_localScale);
     }
     
     void Transform::SetLocalRotation(const glm::quat& rotation){
-        GenerateMatricesLocal(m_LocalPosition,rotation,m_LocalScale);
+        GenerateMatricesLocal(m_localPosition,rotation,m_localScale);
     }
     
     void Transform::SetLocalScale(const glm::vec3& scale){
-        GenerateMatricesLocal(m_LocalPosition,m_LocalRotation,scale);
+        GenerateMatricesLocal(m_localPosition,m_localRotation,scale);
     }
     
     void Transform::SetWorldPosition(const glm::vec3& position){
-        GenerateMatricesWorld(position,m_WorldRotation,m_WorldScale);
+        GenerateMatricesWorld(position,m_worldRotation,m_worldScale);
     }
     
     void Transform::SetWorldRotation(const glm::quat& rotation){
-        GenerateMatricesWorld(m_WorldPosition,rotation,m_WorldScale);
+        GenerateMatricesWorld(m_worldPosition,rotation,m_worldScale);
     }
     
     void Transform::SetWorldScale(const glm::vec3& scale){
-        GenerateMatricesWorld(m_WorldPosition,m_WorldRotation,scale);
+        GenerateMatricesWorld(m_worldPosition,m_worldRotation,scale);
     }
     
     void Transform::TransLateLocal(const glm::vec3& translation){
-        SetLocalPosition(m_LocalPosition+translation);
+        SetLocalPosition(m_localPosition+translation);
     }
     
     void Transform::RotateLocal(const glm::quat& rotation){
-        SetLocalRotation(m_LocalRotation*rotation);
+        SetLocalRotation(m_localRotation*rotation);
     }
     
     void Transform::ScaleLocal(const glm::vec3& scale){
-        SetLocalScale(glm::vec3(m_LocalScale.x*scale.x,m_LocalScale.y*scale.y,m_LocalScale.z*scale.z));
+        SetLocalScale(glm::vec3(m_localScale.x*scale.x,m_localScale.y*scale.y,m_localScale.z*scale.z));
     }
     
     glm::vec3 Transform::GetWorldForward()const{
-        return m_WorldRotation*Forward;
+        return m_worldRotation*Forward;
     }
     
     glm::vec3 Transform::GetWorldRight()const{
-        return m_WorldRotation*Right;
+        return m_worldRotation*Right;
     }
     
     glm::vec3 Transform::GetWorldUp()const{
-        return m_WorldRotation*Up;
+        return m_worldRotation*Up;
     }
     
     glm::vec3 Transform::GetLocalForward()const{
-        return m_LocalRotation*Forward;
+        return m_localRotation*Forward;
     }
     
     glm::vec3 Transform::GetLocalRight()const{
-        return m_LocalRotation*Right;
+        return m_localRotation*Right;
     }
     
     glm::vec3 Transform::GetLocalUp()const{
-        return m_LocalRotation*Up;
+        return m_localRotation*Up;
     }
     
     void Transform::PreDecomposeWorldMatrix(){
         glm::vec3 skew;
         glm::vec4 perspective;
-        glm::decompose(m_WorldMatrix,m_WorldScale,m_WorldRotation,m_WorldPosition,skew,perspective);
+        glm::decompose(m_worldMatrix,m_worldScale,m_worldRotation,m_worldPosition,skew,perspective);
     }
     
     void Transform::PreDecomposeLocalMatrix(){
         glm::vec3 skew;
         glm::vec4 perspective;
-        glm::decompose(m_LocalMatrix,m_LocalScale,m_LocalRotation,m_LocalPosition,skew,perspective);
+        glm::decompose(m_localMatrix,m_localScale,m_localRotation,m_localPosition,skew,perspective);
     }
 
     void Transform::OnTransformChanged(){
@@ -134,10 +134,10 @@ namespace Engine::inline Core{
     }
     
     void Transform::OnTransformDestroyed(){
-        /*GenerateMatricesLocal(m_WorldPosition,m_WorldRotation,m_WorldScale);
-        m_Parent=nullptr;
+        /*GenerateMatricesLocal(m_worldPosition,m_worldRotation,m_worldScale);
+        m_parent=nullptr;
         UpdateWorldMatrix();*/
-        m_Parent=nullptr;
-        GenerateMatricesLocal(m_WorldPosition,m_WorldRotation,m_WorldScale);
+        m_parent=nullptr;
+        GenerateMatricesLocal(m_worldPosition,m_worldRotation,m_worldScale);
     }
 }

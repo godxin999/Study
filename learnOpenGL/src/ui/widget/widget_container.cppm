@@ -19,20 +19,20 @@ namespace Engine::inline UI{
         void CollectGarbage();
         void DrawWidgets();
         void ReverseDrawOrder(bool reverse = true){
-            m_IsReverseDraw=reverse;
+            m_isReverseDraw=reverse;
         }
         template <typename T, typename... Args>
         T& CreateWidget(Args&&... args){
-            m_Widgets.emplace_back(new T(std::forward<Args>(args)...), MemoryMode::INTERNAL_MANAGEMENT);
-            T& widget=*(dynamic_cast<T*>(m_Widgets.back().first));
+            m_widgets.emplace_back(new T(std::forward<Args>(args)...), MemoryMode::INTERNAL_MANAGEMENT);
+            T& widget=*(dynamic_cast<T*>(m_widgets.back().first));
             widget.SetParent(this);
             return widget;
         }
         std::vector<std::pair<Widget*, MemoryMode>>& GetWidgets(){
-            return m_Widgets;
+            return m_widgets;
         }
     protected:
-        std::vector<std::pair<Widget*, MemoryMode>> m_Widgets{};
-        bool m_IsReverseDraw{false};
+        std::vector<std::pair<Widget*, MemoryMode>> m_widgets{};
+        bool m_isReverseDraw{false};
     };
 }

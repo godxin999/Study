@@ -17,11 +17,11 @@ namespace Engine::inline Window{
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,4);//主版本号
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);//次版本号
         glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);//核心模式
-        m_IsInitialized=true;
+        m_isInitialized=true;
     }
     
     Device::~Device(){
-        if(m_IsInitialized){
+        if(m_isInitialized){
             DestroyCursors();
             glfwTerminate();
         }
@@ -33,16 +33,16 @@ namespace Engine::inline Window{
     }
     
     GLFWcursor* Device::GetCursorInstance(CursorShape shape)const{
-        return m_Cursors.at(shape);
+        return m_cursors.at(shape);
     }
     
     bool Device::HasVsync()const{
-        return m_Vsync;
+        return m_vsync;
     }
     
     void Device::SetVsync(bool vsync){
-        m_Vsync=vsync;
-        glfwSwapInterval(m_Vsync?1:0);
+        m_vsync=vsync;
+        glfwSwapInterval(m_vsync?1:0);
     }
     
     void Device::PollEvents()const{
@@ -60,18 +60,18 @@ namespace Engine::inline Window{
     }
     
     void Device::CreateCursors(){
-        m_Cursors.emplace(CursorShape::ARROW,glfwCreateStandardCursor(static_cast<int>(CursorShape::ARROW)));
-        m_Cursors.emplace(CursorShape::IBEAM,glfwCreateStandardCursor(static_cast<int>(CursorShape::IBEAM)));
-        m_Cursors.emplace(CursorShape::CROSSHAIR,glfwCreateStandardCursor(static_cast<int>(CursorShape::CROSSHAIR)));
-        m_Cursors.emplace(CursorShape::HAND,glfwCreateStandardCursor(static_cast<int>(CursorShape::HAND)));
-        m_Cursors.emplace(CursorShape::HRESIZE,glfwCreateStandardCursor(static_cast<int>(CursorShape::HRESIZE)));
-        m_Cursors.emplace(CursorShape::VRESIZE,glfwCreateStandardCursor(static_cast<int>(CursorShape::VRESIZE)));
+        m_cursors.emplace(CursorShape::ARROW,glfwCreateStandardCursor(static_cast<int>(CursorShape::ARROW)));
+        m_cursors.emplace(CursorShape::IBEAM,glfwCreateStandardCursor(static_cast<int>(CursorShape::IBEAM)));
+        m_cursors.emplace(CursorShape::CROSSHAIR,glfwCreateStandardCursor(static_cast<int>(CursorShape::CROSSHAIR)));
+        m_cursors.emplace(CursorShape::HAND,glfwCreateStandardCursor(static_cast<int>(CursorShape::HAND)));
+        m_cursors.emplace(CursorShape::HRESIZE,glfwCreateStandardCursor(static_cast<int>(CursorShape::HRESIZE)));
+        m_cursors.emplace(CursorShape::VRESIZE,glfwCreateStandardCursor(static_cast<int>(CursorShape::VRESIZE)));
     }
     
     void Device::DestroyCursors(){
-        for(auto* cursor:m_Cursors|std::views::values){
+        for(auto* cursor:m_cursors|std::views::values){
             glfwDestroyCursor(cursor);
         }
-        m_Cursors.clear();
+        m_cursors.clear();
     }
 }

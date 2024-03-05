@@ -11,11 +11,13 @@ import glm;
 import buffer;
 import gl_enum;
 import service_locator;
+import renderer;
 
 namespace Engine::inline editor{
     Context::Context(){
         logManager=std::make_unique<LogManager>();
         ServiceLocator::Register<LogManager>(*logManager);
+        
         device=std::make_unique<Device>();
         windowManager=std::make_unique<WindowManager>(*device);
         inputManager=std::make_unique<InputManager>(*windowManager);
@@ -23,17 +25,18 @@ namespace Engine::inline editor{
         windowManager->MakeCurrentContext();
         windowManager->LoadGlad();
         
-
         auto [monitorWidth,monitorHeight]=device->GetMonitorSize();
         auto [windowWidth,windowHeight]=windowManager->GetSize();
         windowManager->SetPosition((monitorWidth-windowWidth)/2,(monitorHeight-windowHeight)/2);
 
         device->SetVsync(true);
 
+        renderer=std::make_unique<Renderer>();
+
         uiManager=std::make_unique<UIManager>(windowManager->GetGlfwWindow());
-        uiManager->LoadFont(u8"LXGWBrightGB-Regular_Big",u8"../../../../assets/fonts/LXGWBrightGB-Regular.ttf",35.f);
+        //uiManager->LoadFont(u8"LXGWBrightGB-Regular_Big",u8"../../../../assets/fonts/LXGWBrightGB-Regular.ttf",35.f);
         uiManager->LoadFont(u8"LXGWBrightGB-Regular_Medium",u8"../../../../assets/fonts/LXGWBrightGB-Regular.ttf",30.f);
-        uiManager->LoadFont(u8"LXGWBrightGB-Regular_Small",u8"../../../../assets/fonts/LXGWBrightGB-Regular.ttf",25.f);
+        //uiManager->LoadFont(u8"LXGWBrightGB-Regular_Small",u8"../../../../assets/fonts/LXGWBrightGB-Regular.ttf",25.f);
         uiManager->UseFont(u8"LXGWBrightGB-Regular_Medium");
         uiManager->SetEditorLayoutAutoSaveInterval(60.f);
         uiManager->EnableEditorLayoutSave(true);

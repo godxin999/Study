@@ -21,9 +21,9 @@ namespace Engine::inline Render{
         void Unbind() const;
         void BindAttribute(uint32_t index, size_t size, DataType type, bool normalized, uint64_t stride, const void* pointer);
         uint32_t GetID() const{
-            return m_ArrayID;
+            return m_arrayID;
         }
     private:
-        uint32_t m_ArrayID;
+        uint32_t m_arrayID;
     };
 }

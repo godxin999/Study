@@ -7,20 +7,20 @@ import shader;
 
 namespace Engine::inline Render{
     UniformBuffer::UniformBuffer(size_t size,uint32_t bindingPoint,uint32_t offset,AccessSpecifier accessSpecifier){
-        glGenBuffers(1,&m_BufferID);
-        glBindBuffer(GL_UNIFORM_BUFFER,m_BufferID);
+        glGenBuffers(1,&m_bufferID);
+        glBindBuffer(GL_UNIFORM_BUFFER,m_bufferID);
         glBufferData(GL_UNIFORM_BUFFER,size,nullptr,static_cast<GLenum>(accessSpecifier));
         glBindBuffer(GL_UNIFORM_BUFFER,0);
         //将uniform buffer绑定到binding point
-        glBindBufferRange(GL_UNIFORM_BUFFER,bindingPoint,m_BufferID,offset,size);
+        glBindBufferRange(GL_UNIFORM_BUFFER,bindingPoint,m_bufferID,offset,size);
     }
     
     UniformBuffer::~UniformBuffer(){
-        glDeleteBuffers(1,&m_BufferID);
+        glDeleteBuffers(1,&m_bufferID);
     }
     
     void UniformBuffer::Bind(){
-        glBindBuffer(GL_UNIFORM_BUFFER,m_BufferID);
+        glBindBuffer(GL_UNIFORM_BUFFER,m_bufferID);
     }
     
     void UniformBuffer::Unbind(){
@@ -28,7 +28,7 @@ namespace Engine::inline Render{
     }
     
     uint32_t UniformBuffer::GetID()const{
-        return m_BufferID;
+        return m_bufferID;
     }
     
     void UniformBuffer::BindBlockToShader(Shader& shader,uint32_t uniformBlockLocation,uint32_t bindingPoint){

@@ -15,10 +15,10 @@ namespace Engine::inline UI{
             widgetID=widget.widgetID;
         }
         void Destroy(){
-            m_IsDestroyed=true;
+            m_isDestroyed=true;
         }
         bool IsDestroyed() const{
-            return m_IsDestroyed;
+            return m_isDestroyed;
         }
         WidgetContainer* GetParent() const{
             return parent;
@@ -40,7 +40,7 @@ namespace Engine::inline UI{
         bool isAutoExecutePlugins{true};
     private:
         inline static uint64_t WidgetCounter{0};
-        bool m_IsDestroyed{false};
+        bool m_isDestroyed{false};
     };
 }
 
