@@ -11,7 +11,7 @@ namespace Engine::inline Render{
         glBindBuffer(GL_UNIFORM_BUFFER,m_bufferID);
         glBufferData(GL_UNIFORM_BUFFER,size,nullptr,static_cast<GLenum>(accessSpecifier));
         glBindBuffer(GL_UNIFORM_BUFFER,0);
-        //将uniform buffer绑定到binding point
+        //将uniform buffer绑定到binding point，范围为offset到offset+size
         glBindBufferRange(GL_UNIFORM_BUFFER,bindingPoint,m_bufferID,offset,size);
     }
     

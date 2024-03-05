@@ -13,11 +13,11 @@ namespace Engine::inline Render{
         glDeleteVertexArrays(1, &m_arrayID);
     }
     
-    void VertexArray::Bind() const{
+    void VertexArray::Bind(){
         glBindVertexArray(m_arrayID);
     }
     
-    void VertexArray::Unbind() const{
+    void VertexArray::Unbind(){
         glBindVertexArray(0);
     }
     

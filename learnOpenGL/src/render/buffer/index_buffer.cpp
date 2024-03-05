@@ -20,11 +20,11 @@ namespace Engine::inline Render{
         glDeleteBuffers(1,&m_bufferID);
     }
     
-    void IndexBuffer::Bind() const{
+    void IndexBuffer::Bind(){
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,m_bufferID);
     }
     
-    void IndexBuffer::Unbind() const{
+    void IndexBuffer::Unbind(){
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
     }
 }

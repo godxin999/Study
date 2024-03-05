@@ -11,8 +11,8 @@ namespace Engine::inline Render{
         VertexBuffer(const T* data, uint32_t count);
         VertexBuffer(const std::vector<T>& data);
         ~VertexBuffer();
-        void Bind() const;
-        void Unbind() const;
+        void Bind();
+        void Unbind();
         uint32_t GetID()const{
             return m_bufferID;
         }
@@ -29,6 +29,7 @@ namespace Engine::inline Render{
         glGenBuffers(1,&m_bufferID);
         glBindBuffer(GL_ARRAY_BUFFER,m_bufferID);
         glBufferData(GL_ARRAY_BUFFER,count * sizeof(T),data,GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER,0);
     }
 
     template <typename T>
@@ -42,12 +43,12 @@ namespace Engine::inline Render{
     }
 
     template <typename T>
-    void VertexBuffer<T>::Bind() const{
+    void VertexBuffer<T>::Bind(){
         glBindBuffer(GL_ARRAY_BUFFER,m_bufferID);
     }
     
     template <typename T>
-    void VertexBuffer<T>::Unbind() const{
+    void VertexBuffer<T>::Unbind(){
         glBindBuffer(GL_ARRAY_BUFFER,0);
     }
 }

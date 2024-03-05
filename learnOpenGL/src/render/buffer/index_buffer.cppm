@@ -8,8 +8,8 @@ namespace Engine::inline Render{
         IndexBuffer(const uint32_t* data, uint32_t count);
         IndexBuffer(const std::vector<uint32_t>& data);
         ~IndexBuffer();
-        void Bind() const;
-        void Unbind() const;
+        void Bind();
+        void Unbind();
         uint32_t GetID()const{
             return m_bufferID;
         }

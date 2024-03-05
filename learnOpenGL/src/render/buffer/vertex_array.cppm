@@ -17,8 +17,8 @@ namespace Engine::inline Render{
     public:
         VertexArray();
         ~VertexArray();
-        void Bind() const;
-        void Unbind() const;
+        void Bind();
+        void Unbind();
         void BindAttribute(uint32_t index, size_t size, DataType type, bool normalized, uint64_t stride, const void* pointer);
         uint32_t GetID() const{
             return m_arrayID;
