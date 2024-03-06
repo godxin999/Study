@@ -7,9 +7,13 @@ import panel_manager;
 import editor_renderer;
 import context;
 import device;
+import service_locator;
+import renderer;
 
 namespace Engine::inline editor{
     Editor::Editor(Context& context):m_context(context),m_editorRenderer(context),m_panelManager(m_canvas){
+        ServiceLocator::Register<EditorRenderer>(m_editorRenderer);
+        ServiceLocator::Register<Renderer>(*m_context.renderer);
         SetupUI();
     }
     

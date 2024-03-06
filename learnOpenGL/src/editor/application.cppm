@@ -1,6 +1,3 @@
-module;
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
 export module application;
 import service_locator;
 import stl;
@@ -102,7 +99,7 @@ void render(){
         model=glm::rotate(model,glm::radians(angle),glm::vec3(1.f,.3f,.5f));
         LightingShader.SetMat4("model",model);
         LightingShader.SetMat4("transInvModel",glm::transpose(glm::inverse(model)));
-        glDrawArrays(GL_TRIANGLES,0,36);
+        //glDrawArrays(GL_TRIANGLES,0,36);
     }
     /*LightCubeShader.Bind();
     
@@ -118,11 +115,11 @@ void render(){
     glDrawArrays(GL_TRIANGLES,0,36);*/
 }
 void update(){
-    camera->Update();
+    //camera->Update();
 }
 void init(){
     //启用深度测试
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
 
     LightingShader=Shader("../../../../shaders/light.vs","../../../../shaders/light.fs");
     LightCubeShader=Shader("../../../../shaders/light_cube.vs","../../../../shaders/light_cube.fs");
@@ -154,8 +151,8 @@ void init(){
     VBO->Unbind();
     LightCubeVAO->Unbind();
 
-    camera=new Engine::Camera(45.f,800.f/600.f,.1f,1000.f);
-    camera->SetPostion(glm::vec3(0.f,0.f,10.f));
+    //camera=new Engine::Camera(45.f,800.f/600.f,.1f,1000.f);
+    //camera->SetPostion(glm::vec3(0.f,0.f,10.f));
 
 }
 

@@ -31,6 +31,7 @@ export namespace ImGui{
 	using ImGui::SetWindowSize;
 	using ImGui::GetIO;
     using ImGui::PopStyleVar;
+	using ImGui::PushStyleVar;
 	using ImGui::Render;
     using ImGui::CreateContext;
     using ImGui::DestroyContext;

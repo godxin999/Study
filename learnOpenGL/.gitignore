@@ -1,8 +1,13 @@
 # Xmake cache
 .xmake/
+.vscode/
+.idea/
 build/
 vsxmake2022/
-
+cmake-build-debug/
+cmake-build-debug-event-trace/
+cmake-build-release/
+.cache/
 
 # MacOS Cache
 .DS_Store
@@ -10,3 +15,6 @@ vsxmake2022/
 
 !core/
 !debug/
+
+compile_commands.json
+CMakeLists.txt
