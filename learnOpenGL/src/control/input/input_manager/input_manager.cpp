@@ -5,7 +5,6 @@ module input_manager;
 import event;
 import window_manager;
 import stl;
-import glm;
 
 namespace Engine::inline Input{
     InputManager::InputManager(WindowManager& windowManager):m_windowManager(windowManager){
@@ -63,10 +62,10 @@ namespace Engine::inline Input{
         return m_mouseButtonStates.find(button)!=m_mouseButtonStates.end()&&m_mouseButtonStates.at(button)==MouseButtonState::MOUSE_BUTTON_RELEASE;
     }
     
-    glm::vec2 InputManager::GetMousePosition() const{
+    std::pair<double, double> InputManager::GetMousePosition() const{
         double x,y;
         glfwGetCursorPos(m_windowManager.GetGlfwWindow(),&x,&y);
-        return {static_cast<float>(x),static_cast<float>(y)};
+        return {x,y};
     }
     
     void InputManager::ClearStates(){

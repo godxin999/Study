@@ -17,7 +17,7 @@ namespace Engine::inline editor{
     public:
         View(const std::u8string& name,bool isOpened,const PanelWindowSettings& settings);
         ~View()=default;
-        void Update(float deltaTime);
+        virtual void Update(float deltaTime);
         void DrawImpl() override;
         void Render();
         Camera& GetCamera();
@@ -27,7 +27,7 @@ namespace Engine::inline editor{
     protected:
         virtual void RenderImpl()=0;
         void PrepareCamera();
-    private:
+    protected:
         EditorRenderer& m_editorRenderer;
         Camera m_camera{};
         Image* m_image{nullptr};
@@ -51,6 +51,7 @@ namespace Engine::inline editor{
     }
 
     void View::DrawImpl(){
+        //设置内边距为0
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
 		PanelWindow::DrawImpl();
 		ImGui::PopStyleVar();
@@ -76,14 +77,14 @@ namespace Engine::inline editor{
         size.y-=25;//25是标题栏的高度
         return {static_cast<uint16_t>(size.x),static_cast<uint16_t>(size.y)};
     }
-	
+	//设置UBO
     void View::SetUBO(){
         auto& context=Engine::ServiceLocator::Get<Engine::Context>();
         context.ubo->SetSubData(m_camera.GetViewMatrix(),0);
         context.ubo->SetSubData(m_camera.GetProjMatrix(),sizeof(glm::mat4));
         context.ubo->SetSubData(m_camera.GetPosition(),sizeof(glm::mat4)*2);
     }
-
+    //根据窗口大小更新相机矩阵
     void View::PrepareCamera(){
 		auto [width,height]=GetSafeSize();
 		m_camera.UpdateCameraMatrices(width,height);

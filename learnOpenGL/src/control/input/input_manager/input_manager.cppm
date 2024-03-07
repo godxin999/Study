@@ -4,8 +4,6 @@ export import input_manager.input_state;
 import event;
 import window_manager;
 import stl;
-import glm;
-
 namespace Engine::inline Input{
     export class InputManager{
     public:
@@ -17,7 +15,7 @@ namespace Engine::inline Input{
         [[nodiscard]]bool IsMouseButtonPressed(MouseButton button) const;
         [[nodiscard]]bool IsKeyReleased(Key key) const;
         [[nodiscard]]bool IsMouseButtonReleased(MouseButton button) const;
-        [[nodiscard]]glm::vec2 GetMousePosition() const;
+        [[nodiscard]]std::pair<double, double> GetMousePosition() const;
         void ClearStates();
     private:
         WindowManager& m_windowManager;

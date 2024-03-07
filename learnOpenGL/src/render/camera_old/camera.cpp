@@ -18,14 +18,14 @@ namespace Engine::inline Render{
     void Camera::Update(){
         //Zoom((10-Input::GetMouseScroll())/10.f);
         if(m_inputManager.IsKeyPressed(Key::KEY_LEFT_ALT) && m_inputManager.IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT)){
-            glm::vec2 MousePosition=m_inputManager.GetMousePosition();
+            /*glm::vec2 MousePosition=m_inputManager.GetMousePosition();
             if(MousePosition!=m_lastMousePosition){
                 Rotate(m_lastMousePosition,MousePosition);
                 m_lastMousePosition = MousePosition;
-            }
+            }*/
         }
         else{
-            m_lastMousePosition=m_inputManager.GetMousePosition();
+            //m_lastMousePosition=m_inputManager.GetMousePosition();
         }
         UpdateViewMatrix();
         UpdateProjMatrix();

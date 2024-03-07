@@ -24,7 +24,6 @@ namespace Engine::inline UI{
     };
     export class PanelWindow:public PanelTransformable{
     public:
-        PanelWindow()=default;
         PanelWindow(const std::u8string& name=u8"",bool isOpened=true,const PanelWindowSettings& settings=PanelWindowSettings{});
         ~PanelWindow()=default;
         void Open();
@@ -64,9 +63,9 @@ namespace Engine::inline UI{
         Event<> OpenEvent{};
         Event<> CloseEvent{};
     private:
-        bool m_isOpened;
-        bool m_isHovered;
-        bool m_isFocused;
+        bool m_isOpened{true};
+        bool m_isHovered{false};
+        bool m_isFocused{false};
         bool m_mustScrollToBottom{false};
         bool m_mustScrollToTop{false};
         bool m_scrolledToBottom{false};

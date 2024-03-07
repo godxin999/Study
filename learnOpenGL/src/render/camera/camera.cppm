@@ -3,6 +3,9 @@ export module camera;
 import glm;
 import stl;
 
+namespace Engine::inline editor{
+    export class CameraController;
+}
 namespace Engine::inline Render{
     export enum class CameraType{
         PERSPECTIVE,
@@ -10,6 +13,7 @@ namespace Engine::inline Render{
     };
     export class Camera{
     public:
+        friend class Engine::editor::CameraController;
         Camera()=default;
         ~Camera()=default;
         void UpdateCameraMatrices(uint16_t width,uint16_t height);
@@ -44,7 +48,7 @@ namespace Engine::inline Render{
 
         float m_nearClip{ 1.f };
         float m_farClip{ 1000.f };
-        float m_fov{ 45.f };//竖直方向的视野角度，单位为弧度
+        float m_fov{ 45.f };//竖直方向的视野角度
         float m_size{ 5.f };
 
         glm::vec3 m_clearColor{0.f};
