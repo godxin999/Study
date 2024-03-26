@@ -17,9 +17,9 @@ namespace Engine::inline editor{
         void CreatePanel(const std::u8string& name,Args&&... args){
             //如果是PanelWindow的派生类，那么需要注册到菜单栏
             if constexpr (std::derived_from<T,PanelWindow>){
-                m_panels.emplace(name,std::make_unique<T>(std::forward<Args>(args)...));
+                m_panels.emplace(name,std::make_unique<T>(name,std::forward<Args>(args)...));
                 T& panel=GetPanel<T>(name);
-                GetPanel<MenuBar>("Menu Bar").RegisterPanel(name,panel);
+                GetPanel<MenuBar>(u8"Menu Bar").RegisterPanel(name,panel);
             }
             else{
                 m_panels.emplace(name,std::make_unique<T>(std::forward<Args>(args)...));

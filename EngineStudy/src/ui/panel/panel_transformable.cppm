@@ -10,11 +10,11 @@ namespace Engine::inline UI{
         PanelTransformable(
             const glm::vec2& p_defaultPosition=glm::vec2(-1.f), 
             const glm::vec2& p_defaultSize=glm::vec2(-1.f), 
-            const HorizontalAlignment& p_defaultHorizontalAlignment=HorizontalAlignment::LEFT, 
-            const VerticalAlignment& p_defaultVerticalAlignment=VerticalAlignment::TOP,
+            HorizontalAlignment p_defaultHorizontalAlignment=HorizontalAlignment::LEFT, 
+            VerticalAlignment p_defaultVerticalAlignment=VerticalAlignment::TOP,
             bool p_isIgnoreConfigFile=false
         );
-        ~PanelTransformable()=default;
+        virtual ~PanelTransformable()=default;
         void SetPostion(const glm::vec2& position);
         void SetSize(const glm::vec2& size);
         void SetAlignment(HorizontalAlignment horizontalAlignment,VerticalAlignment verticalAlignment);
@@ -24,7 +24,6 @@ namespace Engine::inline UI{
         VerticalAlignment GetVerticalAlignment() const;
     protected:
         void Update();
-        virtual void DrawImpl()=0;
     private:
         glm::vec2 CalculatePositionAlignmentOffset(bool defaultValue=false);
         void UpdatePosition();

@@ -37,10 +37,10 @@ namespace Engine::inline UI{
 
         if(previousState!=isExpanded){
             if(isExpanded){
-                ExpandEvent.Invoke();
+                ExpandEvent();
             }
             else{
-                CollapseEvent.Invoke();
+                CollapseEvent();
             }
         }
     }

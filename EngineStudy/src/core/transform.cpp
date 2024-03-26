@@ -10,7 +10,7 @@ namespace Engine::inline Core{
     }
     
     Transform::~Transform(){
-        TransformDestroyedEvent.Invoke();
+        TransformDestroyedEvent();
     }
     
     void Transform::SetParent(Transform& parent){
@@ -48,13 +48,13 @@ namespace Engine::inline Core{
     void Transform::UpdateWorldMatrix(){
         m_worldMatrix=m_parent?m_parent->GetWorldMatrix()*m_localMatrix:m_localMatrix;
         PreDecomposeWorldMatrix();
-        TransformChangedEvent.Invoke();
+        TransformChangedEvent();
     }
     
     void Transform::UpdateLocalMatrix(){
         m_localMatrix=m_parent?glm::inverse(m_parent->GetWorldMatrix())*m_worldMatrix:m_worldMatrix;
         PreDecomposeLocalMatrix();
-        TransformChangedEvent.Invoke();
+        TransformChangedEvent();
     }
     
     void Transform::SetLocalPosition(const glm::vec3& position){

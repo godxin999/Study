@@ -33,10 +33,10 @@ namespace Engine::inline UI{
     void MenuItem::DrawImpl(){
         bool previousValue=isChecked;
         if(ImGui::MenuItem(reinterpret_cast<const char*>((name+widgetID).c_str()),reinterpret_cast<const char*>(shortcut.c_str()),checkable?std::addressof(isChecked):nullptr,enable)){
-            ClickEvent.Invoke();
+            ClickEvent();
         }
         if(previousValue!=isChecked){
-            ValueChangeEvent.Invoke(isChecked);
+            ValueChangeEvent(isChecked);
             NotifyChange();
         }
     }

@@ -225,10 +225,10 @@ namespace Engine::inline Window{
         glfwSetKeyCallback(m_window,[](GLFWwindow* window,int key,int scancode,int action,int mods){
             if(WindowManager* manager=FindWindowManager(window)){
                 if(action==GLFW_PRESS){
-                    manager->KeyPressedEvent.Invoke(static_cast<Key>(key));
+                    manager->KeyPressedEvent(static_cast<Key>(key));
                 }
                 else if(action==GLFW_RELEASE){
-                    manager->KeyReleasedEvent.Invoke(static_cast<Key>(key));
+                    manager->KeyReleasedEvent(static_cast<Key>(key));
                 }
             }
         });
@@ -238,10 +238,10 @@ namespace Engine::inline Window{
         glfwSetMouseButtonCallback(m_window,[](GLFWwindow* window,int button,int action,int mods){
             if(WindowManager* manager=FindWindowManager(window)){
                 if(action==GLFW_PRESS){
-                    manager->MouseButtonPressedEvent.Invoke(static_cast<MouseButton>(button));
+                    manager->MouseButtonPressedEvent(static_cast<MouseButton>(button));
                 }
                 else if(action==GLFW_RELEASE){
-                    manager->MouseButtonReleasedEvent.Invoke(static_cast<MouseButton>(button));
+                    manager->MouseButtonReleasedEvent(static_cast<MouseButton>(button));
                 }
             }
         });
@@ -250,7 +250,7 @@ namespace Engine::inline Window{
     void WindowManager::BindResizeCallback()const{
         glfwSetWindowSizeCallback(m_window,[](GLFWwindow* window,int width,int height){
             if(WindowManager* manager=FindWindowManager(window)){
-                manager->ResizeEvent.Invoke(static_cast<uint16_t>(width),static_cast<uint16_t>(height));
+                manager->ResizeEvent(static_cast<uint16_t>(width),static_cast<uint16_t>(height));
             }
         });
     }
@@ -258,7 +258,7 @@ namespace Engine::inline Window{
     void WindowManager::BindFrameBufferResizeCallback()const{
         glfwSetFramebufferSizeCallback(m_window,[](GLFWwindow* window,int width,int height){
             if(WindowManager* manager=FindWindowManager(window)){
-                manager->FrameBufferResizeEvent.Invoke(static_cast<uint16_t>(width),static_cast<uint16_t>(height));
+                manager->FrameBufferResizeEvent(static_cast<uint16_t>(width),static_cast<uint16_t>(height));
             }
         });
     }
@@ -266,7 +266,7 @@ namespace Engine::inline Window{
     void WindowManager::BindMoveCallback()const{
         glfwSetWindowPosCallback(m_window,[](GLFWwindow* window,int x,int y){
             if(WindowManager* manager=FindWindowManager(window)){
-                manager->MoveEvent.Invoke(static_cast<int16_t>(x),static_cast<int16_t>(y));
+                manager->MoveEvent(static_cast<int16_t>(x),static_cast<int16_t>(y));
             }
         });
     }
@@ -274,7 +274,7 @@ namespace Engine::inline Window{
     void WindowManager::BindCursorMoveCallback()const{
         glfwSetCursorPosCallback(m_window,[](GLFWwindow* window,double x,double y){
             if(WindowManager* manager=FindWindowManager(window)){
-                manager->CursorMoveEvent.Invoke(static_cast<int16_t>(x),static_cast<int16_t>(y));
+                manager->CursorMoveEvent(static_cast<int16_t>(x),static_cast<int16_t>(y));
             }
         });
     }
@@ -283,10 +283,10 @@ namespace Engine::inline Window{
         glfwSetWindowIconifyCallback(m_window,[](GLFWwindow* window,int iconified){
             if(WindowManager* manager=FindWindowManager(window)){
                 if(iconified){
-                    manager->MinimizeEvent.Invoke();
+                    manager->MinimizeEvent();
                 }
                 else{
-                    manager->MaximizeEvent.Invoke();
+                    manager->MaximizeEvent();
                 }
             }
         });
@@ -296,10 +296,10 @@ namespace Engine::inline Window{
         glfwSetWindowFocusCallback(m_window,[](GLFWwindow* window,int focused){
             if(WindowManager* manager=FindWindowManager(window)){
                 if(focused){
-                    manager->GainFocusEvent.Invoke();
+                    manager->GainFocusEvent();
                 }
                 else{
-                    manager->LostFocusEvent.Invoke();
+                    manager->LostFocusEvent();
                 }
             }
         });
@@ -308,7 +308,7 @@ namespace Engine::inline Window{
     void WindowManager::BindCloseCallback()const{
         glfwSetWindowCloseCallback(m_window,[](GLFWwindow* window){
             if(WindowManager* manager=FindWindowManager(window)){
-                manager->CloseEvent.Invoke();
+                manager->CloseEvent();
             }
         });
     }

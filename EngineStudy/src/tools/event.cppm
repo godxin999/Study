@@ -12,7 +12,7 @@ namespace Engine::inline Tools{
         bool RemoveListener(ListenerID id);
         void RemoveAllListeners();
         uint64_t GetListenerCount() const;
-        void Invoke(Args... args);
+        void operator()(Args... args);
         ListenerID operator+=(Callback callback);
         bool operator-=(ListenerID id);
     private:
@@ -47,7 +47,7 @@ namespace Engine::inline Tools{
     }
 
     template<typename... Args>
-    void Event<Args...>::Invoke(Args... args){
+    void Event<Args...>::operator()(Args... args){
         for(const auto& callback:m_listeners|std::views::values){
             callback(args...);
         }

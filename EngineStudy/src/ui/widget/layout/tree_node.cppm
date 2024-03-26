@@ -65,16 +65,16 @@ namespace Engine::inline UI{
         if(ImGui::IsItemClicked()&&(ImGui::GetMousePos().x-ImGui::GetItemRectMin().x)>ImGui::GetTreeNodeToLabelSpacing()){
             //检测是否为左键
             if(ImGui::IsMouseDoubleClicked(0)){
-                DoubleClickEvent.Invoke();
+                DoubleClickEvent();
             }
             else{
-                ClickEvent.Invoke();
+                ClickEvent();
             }
         }
 
         if(opened){
             if(!previousIsOpened){
-                OpenEvent.Invoke();
+                OpenEvent();
             }
             m_isOpened=true;
             //手动执行插件
@@ -85,7 +85,7 @@ namespace Engine::inline UI{
         }
         else{
             if(previousIsOpened){
-                CloseEvent.Invoke();
+                CloseEvent();
             }
             m_isOpened=false;
             ExecutePlugins();

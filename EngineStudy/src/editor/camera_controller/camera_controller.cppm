@@ -10,7 +10,7 @@ import transform;
 namespace Engine::inline editor{
     export class CameraController{
     public:
-        CameraController(Camera& camera);
+        CameraController(Camera& camera,bool enableFocusInput=false);
         ~CameraController()=default;
         void HandleInput(float deltaTime);
         void SetSpeed(float speed);
@@ -28,6 +28,7 @@ namespace Engine::inline editor{
         InputManager& m_inputManager;
         WindowManager& m_windowManager;
 
+        bool m_enableFocusInput{false};
         bool m_firstMouse{true};
         bool m_leftMouseButtonPressed{false};
         bool m_rightMouseButtonPressed{false};

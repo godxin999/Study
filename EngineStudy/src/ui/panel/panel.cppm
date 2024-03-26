@@ -7,7 +7,7 @@ namespace Engine::inline UI{
     export class Panel: public Drawable,public WidgetContainer{
     public:
         Panel();
-        ~Panel()=default;
+        virtual ~Panel()=default;
         void Draw() override;
         const std::u8string& GetPanelID() const;
     protected:

@@ -10,8 +10,8 @@ namespace Engine::inline UI{
     PanelTransformable::PanelTransformable(
         const glm::vec2& p_defaultPosition, 
         const glm::vec2& p_defaultSize, 
-        const HorizontalAlignment& p_defaultHorizontalAlignment, 
-        const VerticalAlignment& p_defaultVerticalAlignment,
+        HorizontalAlignment p_defaultHorizontalAlignment, 
+        VerticalAlignment p_defaultVerticalAlignment,
         bool p_isIgnoreConfigFile):
         defaultPosition(p_defaultPosition),
         defaultSize(p_defaultSize),

@@ -55,7 +55,7 @@ namespace Engine::inline Window{
     
     void Device::BindErrorCallback()const{
         glfwSetErrorCallback([](int error,const char* description){
-            ErrorEvent.Invoke(static_cast<DeviceError>(error),description);
+            ErrorEvent(static_cast<DeviceError>(error),description);
         });
     }
     

@@ -2,6 +2,7 @@ export module renderer;
 
 import stl;
 import gl_enum;
+import camera;
 
 namespace Engine::inline Render{
     export class Renderer{
@@ -12,10 +13,11 @@ namespace Engine::inline Render{
             uint64_t polygonCount{0};
             uint64_t vertexCount{0};
         };
-        Renderer();
+        Renderer()=default;
         ~Renderer()=default;
         void SetClearColor(float r,float g,float b,float a=1.f);
         void Clear(bool color=true,bool depth=true,bool stencil=true);
+        void Clear(Camera& p_camera,bool color=true,bool depth=true,bool stencil=true){}
         void SetRasterizationLinesWidth(float width);
         void SetRasterizationMode(RasterizationMode mode);
         void SetRenderCapability(RenderingCapability capability,bool enable);

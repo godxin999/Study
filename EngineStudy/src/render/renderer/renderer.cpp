@@ -4,11 +4,10 @@ module renderer;
 
 import stl;
 import gl_enum;
+import camera;
+import glm;
 
 namespace Engine::inline Render{
-    Renderer::Renderer(){
-
-    }
     void Renderer::SetClearColor(float r,float g,float b,float a){
         glClearColor(r,g,b,a);
     }
@@ -19,6 +18,15 @@ namespace Engine::inline Render{
         if(stencil) mask|=GL_STENCIL_BUFFER_BIT;
         glClear(mask);
     }
+    void Renderer::Clear(Camera& p_camera,bool color,bool depth,bool stencil){
+        float previousClearColor[4];
+        glGetFloatv(GL_COLOR_CLEAR_VALUE,previousClearColor);
+        const glm::vec3& clearColor=p_camera.GetClearColor();
+        SetClearColor(clearColor.r,clearColor.g,clearColor.b,1.f);
+        Clear(color,depth,stencil);
+        SetClearColor(previousClearColor[0],previousClearColor[1],previousClearColor[2],previousClearColor[3]);
+    }
+
     void Renderer::SetRasterizationLinesWidth(float width){
         glLineWidth(width);
     }

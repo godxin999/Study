@@ -10,7 +10,7 @@ import service_locator;
 import imgui;
 
 namespace Engine::inline editor{
-    CameraController::CameraController(Camera& camera):m_camera(camera),m_inputManager(ServiceLocator::Get<InputManager>()),m_windowManager(ServiceLocator::Get<WindowManager>()){
+    CameraController::CameraController(Camera& camera,bool enableFocusInput):m_camera(camera),m_inputManager(ServiceLocator::Get<InputManager>()),m_windowManager(ServiceLocator::Get<WindowManager>()),m_enableFocusInput(enableFocusInput){
 
     }
     

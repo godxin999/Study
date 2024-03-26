@@ -7,6 +7,7 @@ import input_manager;
 import log_manager;
 import device;
 import renderer;
+import scene_manager;
 
 
 namespace Engine::inline editor{
@@ -28,5 +29,7 @@ namespace Engine::inline editor{
 
         std::unique_ptr<UniformBuffer> ubo{nullptr};
         std::unique_ptr<ShaderStorageBuffer> lightSSBO{nullptr};
+
+        SceneManager sceneManager;
     };
 };

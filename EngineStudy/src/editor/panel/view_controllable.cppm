@@ -6,13 +6,13 @@ import panel_window;
 import stl;
 
 namespace Engine::inline editor{
-    class ViewControllable : public View{
+    export class ViewControllable : public View{
     public:
-        ViewControllable(const std::u8string& title,bool opened,const PanelWindowSettings& setting);
+        ViewControllable(const std::u8string& title,bool opened,const PanelWindowSettings& setting,bool enableFocusInput=false);
         ~ViewControllable()=default;
         void Update(float deltaTime)override;
         CameraController& GetCameraController();
-    private:
+    protected:
         CameraController m_cameraController;
     };
 }
@@ -20,7 +20,7 @@ namespace Engine::inline editor{
 module : private;
 
 namespace Engine::inline editor{
-    ViewControllable::ViewControllable(const std::u8string& title,bool opened,const PanelWindowSettings& setting):View(title,opened,setting),m_cameraController(m_camera){
+    ViewControllable::ViewControllable(const std::u8string& title,bool opened,const PanelWindowSettings& setting,bool enableFocusInput):View(title,opened,setting),m_cameraController(m_camera,enableFocusInput){
 
     }
 

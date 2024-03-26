@@ -10,22 +10,26 @@ namespace Engine::inline UI{
         bool closable{false};
         bool resizable{true};
         bool movable{true};
-        bool dockable{false};
+        bool dockable{false};//是否可停靠
         bool scrollable{true};
         bool hideBackground{false};
         bool forceHorizontalScrollbar{false};
         bool forceVerticalScrollbar{false};
         bool allowHorizontalScrollbar{false};
-        bool bringToFrontOnFocus{true};
-        bool collapsable{false};
+        bool bringToFrontOnFocus{true};//获得焦点时是否置顶
+        bool collapsable{false};//是否可折叠
         bool allowInputs{true};
         bool titleBar{true};
         bool autoSize{false};
     };
     export class PanelWindow:public PanelTransformable{
     public:
-        PanelWindow(const std::u8string& name=u8"",bool isOpened=true,const PanelWindowSettings& settings=PanelWindowSettings{});
-        ~PanelWindow()=default;
+        PanelWindow(
+            const std::u8string& name=u8"",
+            bool isOpened=true,
+            const PanelWindowSettings& settings=PanelWindowSettings{}
+        );
+        virtual ~PanelWindow()=default;
         void Open();
         void Close();
         void Focus();

@@ -14,7 +14,7 @@ import service_locator;
 import renderer;
 
 namespace Engine::inline editor{
-    Context::Context(){
+    Context::Context():sceneManager(u8"../"){
         logManager=std::make_unique<LogManager>();
         ServiceLocator::Register<LogManager>(*logManager);
         
@@ -44,7 +44,8 @@ namespace Engine::inline editor{
 
         ServiceLocator::Register<WindowManager>(*windowManager);
         ServiceLocator::Register<InputManager>(*inputManager);
-
+        ServiceLocator::Register<Renderer>(*renderer);
+        ServiceLocator::Register<SceneManager>(sceneManager);
 
         ubo=std::make_unique<UniformBuffer>(
             sizeof(glm::mat4)*2+sizeof(glm::vec4),0,0,AccessSpecifier::STREAM_DRAW

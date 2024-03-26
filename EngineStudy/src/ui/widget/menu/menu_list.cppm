@@ -32,7 +32,7 @@ namespace Engine::inline UI{
         if(ImGui::BeginMenu(reinterpret_cast<const char*>(name.c_str()),!isLocked)){
             //成功打开菜单但是m_isOpened为false，说明发生了点击事件
             if(!m_isOpened){
-                ClickEvent.Invoke();
+                ClickEvent();
                 m_isOpened=true;
             }
             DrawWidgets();

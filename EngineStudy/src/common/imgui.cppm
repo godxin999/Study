@@ -14,6 +14,9 @@ export ImFont;
 export ImGuiTreeNodeFlags_;
 export ImTextureID;
 export ImGuiCond_;
+export ImGuiDragDropFlags_;
+export ImGuiPayload;
+export ImGuiDragDropFlags;
 
 export namespace ImGui{
     using ImGui::SameLine;
@@ -74,4 +77,11 @@ export namespace ImGui{
     using ImGui::GetScrollMaxY;
     using ImGui::SetScrollY;
     using ImGui::FindWindowByName;
+    using ImGui::BeginDragDropSource;
+    using ImGui::SetDragDropPayload;
+    using ImGui::EndDragDropSource;
+    using ImGui::Text;
+    using ImGui::BeginDragDropTarget;
+    using ImGui::AcceptDragDropPayload;
+    using ImGui::EndDragDropTarget;
 }

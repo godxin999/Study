@@ -20,12 +20,12 @@ namespace Engine::inline Core{
     void SceneManager::LoadEmptyScene(){
         UnloadCurrentScene();
         m_currentScene = new Scene();
-        SceneLoadEvent.Invoke();
+        SceneLoadEvent();
     }
     void SceneManager::LoadEmptyLightedScene(){
         UnloadCurrentScene();
         m_currentScene = new Scene();
-        SceneLoadEvent.Invoke();
+        SceneLoadEvent();
 
         //Light...
     }
@@ -52,7 +52,7 @@ namespace Engine::inline Core{
         if(m_currentScene){
             delete m_currentScene;
             m_currentScene = nullptr;
-            SceneUnloadEvent.Invoke();
+            SceneUnloadEvent();
         }
         ClearCurrentScenePath();
     }
@@ -71,11 +71,11 @@ namespace Engine::inline Core{
     void SceneManager::StoreCurrentScenePath(const std::u8string& path){
         m_currentScenePath = path;
         m_currentSceneLoadedFromFile = true;
-        CurrentScenePathChangeEvent.Invoke(m_currentScenePath);
+        CurrentScenePathChangeEvent(m_currentScenePath);
     }
     void SceneManager::ClearCurrentScenePath(){
         m_currentScenePath.clear();
         m_currentSceneLoadedFromFile = false;
-        CurrentScenePathChangeEvent.Invoke(m_currentScenePath);
+        CurrentScenePathChangeEvent(m_currentScenePath);
     }
 }
