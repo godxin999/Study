@@ -11,7 +11,7 @@ namespace Engine::inline UI{
     public:
         DragDropSource(const std::u8string& identifier,const std::u8string& tooltip,T data);
         void Execute() override;
-        [nodiscard]bool isDragged()const;
+        [[nodiscard]]bool isDragged()const;
     public:
         std::u8string identifier;
         std::u8string tooltip;

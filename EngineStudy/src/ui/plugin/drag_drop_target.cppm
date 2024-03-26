@@ -11,7 +11,7 @@ namespace Engine::inline UI{
     public:
         DragDropTarget(const std::u8string& identifier);
         void Execute() override;
-        [nodiscard]bool isHovered()const;
+        [[nodiscard]]bool isHovered()const;
     public:
         std::u8string identifier;
         Event<T> DataReceivedEvent;
