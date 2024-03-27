@@ -10,5 +10,5 @@ add_requires("imgui v1.90.4-docking",{configs = {glfw_opengl3 = true}})
 target("EngineStudy")
     set_kind("binary")
     set_policy("build.c++.modules", true)
-    add_files("src/**/*.cppm","src/**/*.cpp")
+    add_files("src/**/*.cppm","src/**/*.cpp","src/**/**/*.cppm","src/**/**/*.cpp")
     add_packages("glfw","glad","stb","glm","spdlog","imgui");

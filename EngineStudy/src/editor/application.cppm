@@ -12,7 +12,7 @@ import texture;
 import light;
 import clock;
 import transform;
-
+/*
 float vertices[] = {
         // positions          // normals           // texture coords
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
@@ -71,7 +71,7 @@ glm::vec3 cubePositions[] = {
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-
+/*
 std::unique_ptr<Engine::VertexBuffer<float>> VBO;
 std::unique_ptr<Engine::VertexArray> CubeVAO,LightCubeVAO;
 Shader LightingShader,LightCubeShader;
@@ -112,7 +112,7 @@ void render(){
     LightCubeShader.SetMat4("projection",camera->GetProjMatrix());
 
     LightCubeVAO->Bind();
-    glDrawArrays(GL_TRIANGLES,0,36);*/
+    glDrawArrays(GL_TRIANGLES,0,36);
 }
 void update(){
     //camera->Update();
@@ -155,7 +155,7 @@ void init(){
     //camera->SetPostion(glm::vec3(0.f,0.f,10.f));
 
 }
-
+*/
 namespace Engine::inline editor{
     export class Application{
     public:
